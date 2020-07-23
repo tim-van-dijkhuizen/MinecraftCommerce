@@ -1,0 +1,5 @@
+name: CustomPayments
+version: "1.0.0"
+author: Tim van Dijkhuizen
+description: Custom payments - An in-game shop plugin
+main: nl.timvandijkhuizen.custompayments.CustomPayments
