@@ -1,14 +1,21 @@
 package nl.timvandijkhuizen.custompayments.storage;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.ElementQuery;
 import nl.timvandijkhuizen.custompayments.base.Field;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.storage.query.ProductQuery;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
 
@@ -42,6 +49,9 @@ public class StorageMysql extends Storage {
 		dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		
 		dbSource = new HikariDataSource(dbConfig);
+		
+		// Setup database
+		this.setup();
 	}
 	
 	@Override
@@ -67,25 +77,115 @@ public class StorageMysql extends Storage {
 		}
 		
 		// Create tables
-		connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields (" +
-            "id INTEGER PRIMARY KEY," +
+		connection.prepareStatement("CREATE TABLE IF NOT EXISTS products (" +
+            "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
             "name VARCHAR(50) NOT NULL," +
-        ")").execute();
+            "description TEXT NOT NULL," +
+            "price FLOAT NOT NULL" +
+        ");").execute();
+		
+		connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields (" +
+            "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+            "name VARCHAR(50) NOT NULL" +
+        ");").execute();
     }
 
+    
+    /**
+     * Products
+     */
+    
 	@Override
-	public <T> boolean createField(Field<T> field) {
-		return false;
+	public List<Product> getProducts(ProductQuery query) throws Exception {
+		PreparedStatement statement = createSelect("products", query);
+		
+		// Get result
+        ResultSet result = statement.executeQuery();
+        List<Product> products = new ArrayList<>();
+
+        while (result.next()) {
+        	int id = result.getInt(1);
+        	String name = result.getString(2);
+        	String description = result.getString(3);
+        	float price = result.getFloat(4);
+        	
+            products.add(new Product(id, name, description, price));
+        }
+        
+        return products;
+	}
+    
+	@Override
+	public void createProduct(Product product) throws Exception {
+		Connection connection = getConnection();
+		
+		// Create statement
+		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (name, description, price) VALUES (?, ?, ?);");
+		
+		// Set arguments
+		statement.setString(1, product.getName());
+		statement.setString(2, product.getDescription());
+		statement.setFloat(3, product.getPrice());
+		
+		// Execute query
+		statement.execute();
+	}
+	
+	@Override
+	public void updateProduct(Product product) throws Exception {
+		Connection connection = getConnection();
+		
+		// Create statement
+		PreparedStatement statement = connection.prepareStatement("UPDATE products SET name=?, description=?, price=? WHERE id=?;");
+		
+		// Set arguments
+		statement.setString(1, product.getName());
+		statement.setString(2, product.getDescription());
+		statement.setFloat(3, product.getPrice());
+		statement.setInt(4, product.getId());
+		
+		// Execute query
+		statement.execute();
+	}
+	
+	@Override
+	public void deleteProduct(Product product) throws Exception {
+		Connection connection = getConnection();
+		
+		// Create statement
+		PreparedStatement statement = connection.prepareStatement("DELETE FROM products WHERE id=?;");
+		
+		// Set arguments
+		statement.setInt(4, product.getId());
+		
+		// Execute query
+		statement.execute();
+	}
+    
+    /**
+     * Fields
+     */
+	
+	@Override
+	public void createField(Field<?> field) throws Exception {
+
+	}
+	
+	@Override
+	public void updateField(Field<?> field) throws Exception {
+
 	}
 
 	@Override
-	public <T> boolean editField(Field<T> field) {
-		return false;
-	}
+	public void deleteField(Field<?> field) throws Exception {
 
-	@Override
-	public <T> boolean deleteField(Field<T> field) {
-		return false;
+	}
+	
+	private PreparedStatement createSelect(String table, ElementQuery query) throws SQLException {
+		Connection connection = getConnection();
+		String sql = "SELECT * FROM " + table;
+		
+		return connection.prepareStatement(sql);
 	}
 
 }

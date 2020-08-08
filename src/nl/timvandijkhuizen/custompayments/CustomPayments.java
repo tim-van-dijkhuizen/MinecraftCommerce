@@ -3,11 +3,14 @@ package nl.timvandijkhuizen.custompayments;
 import java.util.HashMap;
 
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.custompayments.storage.StorageMysql;
+import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigConverter;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.plugin.PluginBase;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
@@ -29,8 +32,14 @@ public class CustomPayments extends PluginBase {
 
 	@Override
 	public Service[] registerServices() throws Exception {
+		CommandService commandService = new CommandService(this);
+		
+		commandService.register(new CommandCustomPayments());
+		
 		return new Service[] {
-			getDatabase()
+			getDatabase(),
+			new MenuService(),
+			commandService
 		};
 	}
 
@@ -63,6 +72,10 @@ public class CustomPayments extends PluginBase {
 	
 	public YamlConfig getConfig() {
 		return config;
+	}
+	
+	public Storage getStorage() {
+		return getService("storage");
 	}
 
 }

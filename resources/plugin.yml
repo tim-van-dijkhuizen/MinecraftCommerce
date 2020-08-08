@@ -1,5 +1,11 @@
 name: CustomPayments
-version: "1.0.0"
-author: Tim van Dijkhuizen
 description: Custom payments - An in-game shop plugin
+author: Tim van Dijkhuizen
+version: "1.0.0"
 main: nl.timvandijkhuizen.custompayments.CustomPayments
+
+commands:
+   custompayments:
+      description: Manage custom payments
+      aliases: [cp]
+      usage: /custompayments
