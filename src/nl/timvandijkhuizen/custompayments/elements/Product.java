@@ -2,11 +2,14 @@ package nl.timvandijkhuizen.custompayments.elements;
 
 import java.util.Set;
 
+import org.bukkit.Material;
+
 import nl.timvandijkhuizen.custompayments.base.Element;
 
 public class Product extends Element {
 
 	// Properties
+	private Material icon;
 	private String name;
 	private String description;
 	private float price;
@@ -14,14 +17,16 @@ public class Product extends Element {
 	// Caches
 	private Set<Command> commands;
 	
-	public Product(String name, String description, float price) {
+	public Product(Material icon, String name, String description, float price) {
+		this.icon = icon;
 		this.name = name;
 		this.description = description;
 		this.price = price;
 	}
 	
-	public Product(int id, String name, String description, float price) {
+	public Product(int id, Material icon, String name, String description, float price) {
 		this.setId(id);
+		this.icon = icon;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -45,6 +50,14 @@ public class Product extends Element {
 		}
 		
 		return true;
+	}
+	
+	public Material getIcon() {
+		return icon;
+	}
+	
+	public void setIcon(Material icon) {
+		this.icon = icon;
 	}
 	
 	public String getName() {

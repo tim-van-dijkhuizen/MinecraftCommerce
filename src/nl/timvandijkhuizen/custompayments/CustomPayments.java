@@ -5,17 +5,19 @@ import java.util.HashMap;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
+import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.custompayments.storage.StorageMysql;
+import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigConverter;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
-import nl.timvandijkhuizen.spigotutils.plugin.PluginBase;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class CustomPayments extends PluginBase {
-
+	
 	private static CustomPayments instance;
 	private YamlConfig config;
 
@@ -23,6 +25,7 @@ public class CustomPayments extends PluginBase {
 	public void load() throws Exception {
 		instance = this;
 		config = new YamlConfig(this);
+		MainThread.setPlugin(this);
 	}
 
 	@Override
@@ -39,6 +42,7 @@ public class CustomPayments extends PluginBase {
 		return new Service[] {
 			getDatabase(),
 			new MenuService(),
+			new ProductService(),
 			commandService
 		};
 	}

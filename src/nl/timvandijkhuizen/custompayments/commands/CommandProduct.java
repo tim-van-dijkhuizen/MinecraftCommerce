@@ -1,18 +1,13 @@
 package nl.timvandijkhuizen.custompayments.commands;
 
-import java.util.List;
-
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.base.Storage;
-import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.menu.Menus;
+import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuService;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class CommandProduct extends BaseCommand {
 
@@ -28,28 +23,23 @@ public class CommandProduct extends BaseCommand {
 	
 	@Override
 	public void onPlayerUse(Player player, String[] args) throws Exception {
-		Storage storage = CustomPayments.getInstance().getStorage();
-		MenuService menuService = CustomPayments.getInstance().getService("menus");
+		ProductService productService = CustomPayments.getInstance().getService("products");
+		
+		player.sendMessage(UI.color("Loading...",UI.TEXT_COLOR));
 		
 		// Create menu
-		List<Product> products = storage.getProducts(null);
-		PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1);
-		
-		for(Product product : products) {
-			MenuItemBuilder item = new MenuItemBuilder(Material.DIAMOND);
+		productService.getProducts(null, products -> {
+			if(products == null) {
+				showError("Failed to load products.");
+			}
 			
-			item.setName(product.getName());
-			item.setLore(product.getDescription());
-			
-			menu.addPagedButton(item);
-		}
-		
-		menuService.openMenu(player, menu);
+			Menus.PRODUCT_LIST.open(player, products);
+		});
 	}
 
 	@Override
 	public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-		
+		console.sendMessage("");
 	}
 
 }

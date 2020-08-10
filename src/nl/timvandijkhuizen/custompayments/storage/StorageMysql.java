@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -15,6 +17,7 @@ import nl.timvandijkhuizen.custompayments.base.ElementQuery;
 import nl.timvandijkhuizen.custompayments.base.Field;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
 import nl.timvandijkhuizen.custompayments.storage.query.ProductQuery;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
@@ -79,6 +82,7 @@ public class StorageMysql extends Storage {
 		// Create tables
 		connection.prepareStatement("CREATE TABLE IF NOT EXISTS products (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+            "icon VARCHAR(255) NOT NULL," +
             "name VARCHAR(50) NOT NULL," +
             "description TEXT NOT NULL," +
             "price FLOAT NOT NULL" +
@@ -105,11 +109,12 @@ public class StorageMysql extends Storage {
 
         while (result.next()) {
         	int id = result.getInt(1);
-        	String name = result.getString(2);
-        	String description = result.getString(3);
-        	float price = result.getFloat(4);
+        	Material icon = DbHelper.parseMaterial(result.getString(2));
+        	String name = result.getString(3);
+        	String description = result.getString(4);
+        	float price = result.getFloat(5);
         	
-            products.add(new Product(id, name, description, price));
+            products.add(new Product(id, icon, name, description, price));
         }
         
         return products;
@@ -120,12 +125,13 @@ public class StorageMysql extends Storage {
 		Connection connection = getConnection();
 		
 		// Create statement
-		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (name, description, price) VALUES (?, ?, ?);");
+		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (name, icon, description, price) VALUES (?, ?, ?, ?);");
 		
 		// Set arguments
-		statement.setString(1, product.getName());
-		statement.setString(2, product.getDescription());
-		statement.setFloat(3, product.getPrice());
+		statement.setString(1, DbHelper.prepareMaterial(product.getIcon()));
+		statement.setString(2, product.getName());
+		statement.setString(3, product.getDescription());
+		statement.setFloat(4, product.getPrice());
 		
 		// Execute query
 		statement.execute();
@@ -136,13 +142,14 @@ public class StorageMysql extends Storage {
 		Connection connection = getConnection();
 		
 		// Create statement
-		PreparedStatement statement = connection.prepareStatement("UPDATE products SET name=?, description=?, price=? WHERE id=?;");
+		PreparedStatement statement = connection.prepareStatement("UPDATE products SET icon=?, name=?, description=?, price=? WHERE id=?;");
 		
 		// Set arguments
-		statement.setString(1, product.getName());
-		statement.setString(2, product.getDescription());
-		statement.setFloat(3, product.getPrice());
-		statement.setInt(4, product.getId());
+		statement.setString(1, DbHelper.prepareMaterial(product.getIcon()));
+		statement.setString(2, product.getName());
+		statement.setString(3, product.getDescription());
+		statement.setFloat(4, product.getPrice());
+		statement.setInt(5, product.getId());
 		
 		// Execute query
 		statement.execute();
@@ -156,7 +163,7 @@ public class StorageMysql extends Storage {
 		PreparedStatement statement = connection.prepareStatement("DELETE FROM products WHERE id=?;");
 		
 		// Set arguments
-		statement.setInt(4, product.getId());
+		statement.setInt(1, product.getId());
 		
 		// Execute query
 		statement.execute();
