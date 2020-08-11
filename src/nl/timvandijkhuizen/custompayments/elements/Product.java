@@ -34,13 +34,28 @@ public class Product extends Element {
 	
 	@Override
 	public boolean validate() {
+		if(icon == null) {
+			addError("icon", "Icon is required");
+			return false;
+		}
+		
 		if(name == null || name.length()  == 0) {
 			addError("name", "Name is required");
 			return false;
 		}
 		
+		if(name.length() > 40) {
+			addError("name", "Name cannot be longer than 40 characters");
+			return false;
+		}
+		
 		if(description == null || description.length()  == 0) {
 			addError("description", "Description is required");
+			return false;
+		}
+		
+		if(description.length() > 500) {
+			addError("description", "Description cannot be longer than 500 characters");
 			return false;
 		}
 		

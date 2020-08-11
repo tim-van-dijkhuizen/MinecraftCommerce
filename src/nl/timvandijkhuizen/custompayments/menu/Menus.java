@@ -5,7 +5,9 @@ import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCreate;
+import nl.timvandijkhuizen.custompayments.menu.content.MenuHome;
+import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
+import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -15,8 +17,19 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 
 public enum Menus {
 	
+	HOME(new MenuHome()),
+	
+	CONFIG(null),
+	
 	PRODUCT_LIST(new MenuProductList()),
-	PRODUCT_CREATE(new MenuProductCreate());
+	PRODUCT_EDIT(new MenuProductEdit()),
+	PRODUCT_ICON(new MenuProductIcon()),
+	PRODUCT_COMMANDS(null),
+	
+	FIELD_LIST(null),
+	FIELD_EDIT(null),
+	
+	ORDER_LIST(null);
 	
 	private PredefinedMenu predefinedMenu;
 	

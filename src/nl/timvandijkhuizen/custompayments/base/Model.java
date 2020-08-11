@@ -32,4 +32,12 @@ public abstract class Model {
 		return errors.getOrDefault(attribute, new HashSet<String>());
 	}
 	
+	public boolean hasErrors() {
+		return !getErrors().isEmpty();
+	}
+	
+	public boolean hasErrors(String attribute) {
+		return !getErrors(attribute).isEmpty();
+	}
+	
 }

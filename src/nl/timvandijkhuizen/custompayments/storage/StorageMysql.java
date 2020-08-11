@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,19 +80,32 @@ public class StorageMysql extends Storage {
 			throw new Exception("Failed to connect to MySQL database");
 		}
 		
-		// Create tables
-		connection.prepareStatement("CREATE TABLE IF NOT EXISTS products (" +
+		// Create statements
+		// ===========================
+		PreparedStatement createProducts = connection.prepareStatement("CREATE TABLE IF NOT EXISTS products (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
             "icon VARCHAR(255) NOT NULL," +
-            "name VARCHAR(50) NOT NULL," +
+            "name VARCHAR(40) NOT NULL," +
             "description TEXT NOT NULL," +
             "price FLOAT NOT NULL" +
-        ");").execute();
+        ");");
 		
-		connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields (" +
+		PreparedStatement createFields = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
             "name VARCHAR(50) NOT NULL" +
-        ");").execute();
+        ");");
+		
+		// Execute queries
+		// ===========================
+		createProducts.execute();
+		createFields.execute();
+		
+		// Cleanup
+		// ===========================
+		createProducts.close();
+		createFields.close();
+		
+		connection.close();
     }
 
     
@@ -101,7 +115,9 @@ public class StorageMysql extends Storage {
     
 	@Override
 	public List<Product> getProducts(ProductQuery query) throws Exception {
-		PreparedStatement statement = createSelect("products", query);
+		Connection connection = getConnection();
+		String sql = createSelect("products", query);
+		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		// Get result
         ResultSet result = statement.executeQuery();
@@ -117,6 +133,11 @@ public class StorageMysql extends Storage {
             products.add(new Product(id, icon, name, description, price));
         }
         
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+        
         return products;
 	}
     
@@ -125,7 +146,7 @@ public class StorageMysql extends Storage {
 		Connection connection = getConnection();
 		
 		// Create statement
-		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (name, icon, description, price) VALUES (?, ?, ?, ?);");
+		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (icon, name, description, price) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 		
 		// Set arguments
 		statement.setString(1, DbHelper.prepareMaterial(product.getIcon()));
@@ -134,7 +155,19 @@ public class StorageMysql extends Storage {
 		statement.setFloat(4, product.getPrice());
 		
 		// Execute query
-		statement.execute();
+		statement.executeUpdate();
+		
+		// Set ID
+		ResultSet ids = statement.getGeneratedKeys();
+		
+		if(ids.next()) {
+			product.setId(ids.getInt(1));
+		}
+		
+		// Cleanup
+		ids.close();
+		statement.close();
+		connection.close();
 	}
 	
 	@Override
@@ -153,6 +186,10 @@ public class StorageMysql extends Storage {
 		
 		// Execute query
 		statement.execute();
+		
+		// Cleanup
+		statement.close();
+		connection.close();
 	}
 	
 	@Override
@@ -167,6 +204,10 @@ public class StorageMysql extends Storage {
 		
 		// Execute query
 		statement.execute();
+		
+		// Cleanup
+		statement.close();
+		connection.close();
 	}
     
     /**
@@ -188,11 +229,9 @@ public class StorageMysql extends Storage {
 
 	}
 	
-	private PreparedStatement createSelect(String table, ElementQuery query) throws SQLException {
-		Connection connection = getConnection();
+	private String createSelect(String table, ElementQuery query) {
 		String sql = "SELECT * FROM " + table;
-		
-		return connection.prepareStatement(sql);
+		return sql;
 	}
 
 }

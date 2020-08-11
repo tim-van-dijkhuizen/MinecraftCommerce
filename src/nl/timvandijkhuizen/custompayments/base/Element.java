@@ -4,7 +4,7 @@ public abstract class Element extends Model {
 
 	private Integer id;
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	

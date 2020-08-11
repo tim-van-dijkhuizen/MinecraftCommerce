@@ -25,12 +25,13 @@ public class CommandProduct extends BaseCommand {
 	public void onPlayerUse(Player player, String[] args) throws Exception {
 		ProductService productService = CustomPayments.getInstance().getService("products");
 		
-		player.sendMessage(UI.color("Loading...",UI.TEXT_COLOR));
+		player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
 		
 		// Create menu
 		productService.getProducts(null, products -> {
 			if(products == null) {
-				showError("Failed to load products.");
+				player.sendMessage(UI.color("Failed to load products.", UI.ERROR_COLOR));
+				return;
 			}
 			
 			Menus.PRODUCT_LIST.open(player, products);

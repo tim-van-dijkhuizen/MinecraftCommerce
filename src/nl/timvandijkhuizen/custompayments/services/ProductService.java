@@ -30,6 +30,12 @@ public class ProductService implements Service {
 
 	}
 	
+	/**
+	 * Returns all products that match the specified query.
+	 * 
+	 * @param query
+	 * @param callback
+	 */
 	public void getProducts(ProductQuery query, Consumer<List<Product>> callback) {
 		Storage storage = CustomPayments.getInstance().getStorage();
 		
@@ -40,6 +46,54 @@ public class ProductService implements Service {
 			} catch(Exception e) {
 				MainThread.execute(() -> callback.accept(null));
 				ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
+			}
+		});
+	}
+	
+	/**
+	 * Saves a product.
+	 * 
+	 * @param product
+	 * @param callback
+	 */
+	public void saveProduct(Product product, Consumer<Boolean> callback) {
+		Storage storage = CustomPayments.getInstance().getStorage();
+		boolean isNew = product.getId() == null;
+		
+		// Validate the model
+		if(!product.validate()) {
+			callback.accept(false);
+			return;
+		}
+		
+		// Create or edit product
+		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+			try {
+				if(isNew) {
+					storage.createProduct(product);
+				} else {
+					storage.updateProduct(product);
+				}
+				
+				MainThread.execute(() -> callback.accept(true));
+			} catch(Exception e) {
+				MainThread.execute(() -> callback.accept(false));
+				ConsoleHelper.printError("Failed to create/update product: " + e.getMessage(), e);
+			}
+		});
+	}
+	
+	public void deleteProduct(Product product, Consumer<Boolean> callback) {
+		Storage storage = CustomPayments.getInstance().getStorage();
+		
+		// Delete product
+		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+			try {
+				storage.deleteProduct(product);
+				MainThread.execute(() -> callback.accept(true));
+			} catch(Exception e) {
+				MainThread.execute(() -> callback.accept(false));
+				ConsoleHelper.printError("Failed to delete product: " + e.getMessage(), e);
 			}
 		});
 	}
