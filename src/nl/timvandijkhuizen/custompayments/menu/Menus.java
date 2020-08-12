@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.menu.content.MenuHome;
+import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryEdit;
+import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryList;
+import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCategory;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
@@ -21,9 +24,13 @@ public enum Menus {
 	
 	CONFIG(null),
 	
+	CATEGORY_LIST(new MenuCategoryList()),
+	CATEGORY_EDIT(new MenuCategoryEdit()),
+	
 	PRODUCT_LIST(new MenuProductList()),
 	PRODUCT_EDIT(new MenuProductEdit()),
 	PRODUCT_ICON(new MenuProductIcon()),
+	PRODUCT_CATEGORY(new MenuProductCategory()),
 	PRODUCT_COMMANDS(null),
 	
 	FIELD_LIST(null),

@@ -1,13 +1,13 @@
 package nl.timvandijkhuizen.custompayments.menu.content.products;
 
-import java.util.stream.Stream;
+import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
@@ -17,29 +17,28 @@ import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuProductIcon implements PredefinedMenu {
+public class MenuProductCategory implements PredefinedMenu {
 
 	@Override
 	public Menu create(Player player, DataValue... args) {
 		Product product = args[0].as(Product.class);
-		Material selected = args[1].as(Material.class);
-		PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1);
+		List<Category> categories = args[1].asList(Category.class);
+		Category selected = args[2].as(Category.class);
+		PagedMenu menu = new PagedMenu("Product Category", 3, 7, 1, 1);
 		
-		// Add icon buttons
-		Material[] icons = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
-		
-		for(Material icon : icons) {
-			MenuItemBuilder item = new MenuItemBuilder(icon);
+		// Add category buttons
+		for(Category category : categories) {
+			MenuItemBuilder item = new MenuItemBuilder(Material.CHEST_MINECART);
 			
-			item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.PRIMARY_COLOR, ChatColor.BOLD));
+			item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
 			
 			// Enchant if selected
-			if(icon == selected) {
+			if(selected != null && category.getId() == selected.getId()) {
 				item.addEnchantGlow();
 			}
 			
 			item.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-				product.setIcon(icon);
+				product.setCategory(category);
 				whoClicked.playSound(whoClicked.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 				Menus.PRODUCT_EDIT.open(player, product);
 			});

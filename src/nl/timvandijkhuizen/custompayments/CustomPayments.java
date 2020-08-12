@@ -5,6 +5,7 @@ import java.util.HashMap;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
+import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.custompayments.storage.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.MainThread;
@@ -42,6 +43,7 @@ public class CustomPayments extends PluginBase {
 		return new Service[] {
 			getDatabase(),
 			new MenuService(),
+			new CategoryService(),
 			new ProductService(),
 			commandService
 		};

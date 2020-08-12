@@ -9,7 +9,12 @@ public abstract class Model {
 
 	private Map<String, Set<String>> errors = new HashMap<>();
 	
-	public abstract boolean validate();
+	protected abstract boolean validate();
+	
+	public boolean isValid() {
+		errors.clear();
+		return validate();
+	}
 	
 	public void addError(String attribute, String error) {
 		Set<String> attributeErrors = errors.getOrDefault(attribute, new HashSet<>());

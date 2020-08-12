@@ -12,7 +12,7 @@ public class DbHelper {
 		try {
 			return Material.valueOf(raw);
 		} catch(IllegalArgumentException e) {
-			return Material.DIAMOND;
+			return Material.CHEST;
 		}
 	}
 	

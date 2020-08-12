@@ -30,7 +30,8 @@ public class CommandCustomPayments extends BaseCommand {
 	
 	public BaseCommand[] getSubCommands() {
 		return new BaseCommand[]{
-			new CommandProduct()
+			new CommandProduct(),
+			new CommandCategory()
 		};
 	}
 

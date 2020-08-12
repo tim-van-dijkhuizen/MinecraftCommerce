@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.menu.Menus;
+import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenCategoryList;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -33,8 +34,17 @@ public class MenuHome implements PredefinedMenu {
 		
 		menu.setButton(configButton, 11);
 		
+		// Categories button
+		MenuItemBuilder categoriesButton = new MenuItemBuilder(Material.CHEST_MINECART);
+		
+		categoriesButton.setName(UI.color("Product Categories", UI.PRIMARY_COLOR, ChatColor.BOLD));
+		categoriesButton.setLore(UI.color("Manage product categories", UI.TEXT_COLOR));
+		categoriesButton.setClickListener(new OpenCategoryList());
+		
+		menu.setButton(categoriesButton, 13);
+		
 		// Products button
-		MenuItemBuilder productsButton = new MenuItemBuilder(Material.DIAMOND);
+		MenuItemBuilder productsButton = new MenuItemBuilder(Material.CHEST);
 		
 		productsButton.setName(UI.color("Products", UI.PRIMARY_COLOR, ChatColor.BOLD));
 		productsButton.setLore(UI.color("Manage products", UI.TEXT_COLOR));

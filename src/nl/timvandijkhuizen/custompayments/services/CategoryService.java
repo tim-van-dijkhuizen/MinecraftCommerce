@@ -7,16 +7,16 @@ import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Storage;
-import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class ProductService implements Service {
+public class CategoryService implements Service {
 
 	@Override
 	public String getHandle() {
-		return "products";
+		return "categories";
 	}
 
 	@Override
@@ -30,69 +30,69 @@ public class ProductService implements Service {
 	}
 	
 	/**
-	 * Returns all products that match the specified query.
+	 * Returns all categories that match the specified query.
 	 * 
 	 * @param query
 	 * @param callback
 	 */
-	public void getProducts(Consumer<List<Product>> callback) {
+	public void getCategories(Consumer<List<Category>> callback) {
 		Storage storage = CustomPayments.getInstance().getStorage();
 		
 		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
 			try {
-				List<Product> products = storage.getProducts();
-				MainThread.execute(() -> callback.accept(products));
+				List<Category> categories = storage.getCategories();
+				MainThread.execute(() -> callback.accept(categories));
 			} catch(Exception e) {
 				MainThread.execute(() -> callback.accept(null));
-				ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
+				ConsoleHelper.printError("Failed to load categories: " + e.getMessage(), e);
 			}
 		});
 	}
 	
 	/**
-	 * Saves a product.
+	 * Saves a category.
 	 * 
-	 * @param product
+	 * @param category
 	 * @param callback
 	 */
-	public void saveProduct(Product product, Consumer<Boolean> callback) {
+	public void saveCategory(Category category, Consumer<Boolean> callback) {
 		Storage storage = CustomPayments.getInstance().getStorage();
-		boolean isNew = product.getId() == null;
+		boolean isNew = category.getId() == null;
 		
 		// Validate the model
-		if(!product.isValid()) {
+		if(!category.isValid()) {
 			callback.accept(false);
 			return;
 		}
 		
-		// Create or edit product
+		// Create or edit category
 		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
 			try {
 				if(isNew) {
-					storage.createProduct(product);
+					storage.createCategory(category);
 				} else {
-					storage.updateProduct(product);
+					storage.updateCategory(category);
 				}
 				
 				MainThread.execute(() -> callback.accept(true));
 			} catch(Exception e) {
 				MainThread.execute(() -> callback.accept(false));
-				ConsoleHelper.printError("Failed to create/update product: " + e.getMessage(), e);
+				ConsoleHelper.printError("Failed to create/update category: " + e.getMessage(), e);
 			}
 		});
 	}
 	
-	public void deleteProduct(Product product, Consumer<Boolean> callback) {
+	public void deleteCategory(Category category, Consumer<Boolean> callback) {
 		Storage storage = CustomPayments.getInstance().getStorage();
 		
-		// Delete product
+		// Delete category
 		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
 			try {
-				storage.deleteProduct(product);
+				storage.deleteCategory(category);
 				MainThread.execute(() -> callback.accept(true));
 			} catch(Exception e) {
 				MainThread.execute(() -> callback.accept(false));
-				ConsoleHelper.printError("Failed to delete product: " + e.getMessage(), e);
+				ConsoleHelper.printError("Failed to delete category: " + e.getMessage(), e);
 			}
 		});
 	}
