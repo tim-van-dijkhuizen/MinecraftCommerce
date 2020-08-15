@@ -19,45 +19,45 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductIcon implements PredefinedMenu {
 
-	@Override
-	public Menu create(Player player, DataValue... args) {
-		Product product = args[0].as(Product.class);
-		Material selected = args[1].as(Material.class);
-		PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1);
-		
-		// Add icon buttons
-		Material[] icons = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
-		
-		for(Material icon : icons) {
-			MenuItemBuilder item = new MenuItemBuilder(icon);
-			
-			item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.PRIMARY_COLOR, ChatColor.BOLD));
-			
-			// Enchant if selected
-			if(icon == selected) {
-				item.addEnchantGlow();
-			}
-			
-			item.setClickListener(event -> {
-				product.setIcon(icon);
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
-				Menus.PRODUCT_EDIT.open(player, product);
-			});
-			
-			menu.addPagedButton(item);
-		}
-		
-		// Cancel button
-		MenuItemBuilder cancelButton = Menu.CANCEL_BUTTON.clone();
-		
-		cancelButton.setClickListener(event -> {
-			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-			Menus.PRODUCT_EDIT.open(player, product);
-		});
-		
-		menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 4);
-		
-		return menu;
-	}
+    @Override
+    public Menu create(Player player, DataValue... args) {
+        Product product = args[0].as(Product.class);
+        Material selected = args[1].as(Material.class);
+        PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1);
+
+        // Add icon buttons
+        Material[] icons = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
+
+        for (Material icon : icons) {
+            MenuItemBuilder item = new MenuItemBuilder(icon);
+
+            item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.PRIMARY_COLOR, ChatColor.BOLD));
+
+            // Enchant if selected
+            if (icon == selected) {
+                item.addEnchantGlow();
+            }
+
+            item.setClickListener(event -> {
+                product.setIcon(icon);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                Menus.PRODUCT_EDIT.open(player, product);
+            });
+
+            menu.addPagedButton(item);
+        }
+
+        // Cancel button
+        MenuItemBuilder cancelButton = Menu.CANCEL_BUTTON.clone();
+
+        cancelButton.setClickListener(event -> {
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            Menus.PRODUCT_EDIT.open(player, product);
+        });
+
+        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 4);
+
+        return menu;
+    }
 
 }

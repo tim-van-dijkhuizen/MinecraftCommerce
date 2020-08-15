@@ -8,31 +8,31 @@ import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
 
 public class CommandCustomPayments extends BaseCommand {
 
-	@Override
-	public String getCommand() {
-		return "custompayments";
-	}
-	
-	@Override
-	public String getUsage() {
-		return "/custompayments";
-	}
-	
-	@Override
-	public void onPlayerUse(Player player, String[] args) throws Exception {
-		Menus.HOME.open(player);
-	}
+    @Override
+    public String getCommand() {
+        return "custompayments";
+    }
 
-	@Override
-	public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-		
-	}
-	
-	public BaseCommand[] getSubCommands() {
-		return new BaseCommand[]{
-			new CommandProduct(),
-			new CommandCategory()
-		};
-	}
+    @Override
+    public String getUsage() {
+        return "/custompayments";
+    }
+
+    @Override
+    public void onPlayerUse(Player player, String[] args) throws Exception {
+        Menus.HOME.open(player);
+    }
+
+    @Override
+    public void onConsoleUse(CommandSender console, String[] args) throws Exception {
+
+    }
+
+    public BaseCommand[] getSubCommands() {
+        return new BaseCommand[] {
+            new CommandProduct(),
+            new CommandCategory()
+        };
+    }
 
 }

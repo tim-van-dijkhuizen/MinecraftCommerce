@@ -9,20 +9,20 @@ import nl.timvandijkhuizen.custompayments.base.Storage;
 
 public class RegisterStorageTypesEvent extends Event {
 
-	private static final HandlerList HANDLERS_LIST = new HandlerList();
-	private HashMap<String, Class<? extends Storage>> storageTypes = new HashMap<>();
-	
-	@Override
-	public HandlerList getHandlers() {
-		return HANDLERS_LIST;
-	}
+    private static final HandlerList HANDLERS_LIST = new HandlerList();
+    private HashMap<String, Class<? extends Storage>> storageTypes = new HashMap<>();
 
-	public void addStorageType(String handle, Class<? extends Storage> storageType) {
-		storageTypes.put(handle, storageType);
-	}
-	
-	public HashMap<String, Class<? extends Storage>> getStorageTypes() {
-		return storageTypes;
-	}
-	
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS_LIST;
+    }
+
+    public void addStorageType(String handle, Class<? extends Storage> storageType) {
+        storageTypes.put(handle, storageType);
+    }
+
+    public HashMap<String, Class<? extends Storage>> getStorageTypes() {
+        return storageTypes;
+    }
+
 }

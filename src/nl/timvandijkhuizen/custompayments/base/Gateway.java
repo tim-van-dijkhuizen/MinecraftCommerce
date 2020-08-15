@@ -6,11 +6,33 @@ import nl.timvandijkhuizen.custompayments.elements.TransactionResponse;
 
 public interface Gateway {
 
-	public String getHandle();
-	public boolean supportsCallback();
-	
-	// Actions
-	public Transaction createTransaction(Order order);
-	public void processCallback(TransactionResponse response);
-	
+    /**
+     * Returns the handle of the gateway.
+     * 
+     * @return
+     */
+    public String getHandle();
+
+    /**
+     * Creates a transaction.
+     * 
+     * @param order
+     * @return
+     */
+    public Transaction createTransaction(Order order);
+
+    /**
+     * Returns whether the gateway supports callback's.
+     * 
+     * @return
+     */
+    public boolean supportsCallback();
+
+    /**
+     * Processes a transaction response.
+     * 
+     * @param response
+     */
+    public void processCallback(TransactionResponse response);
+
 }

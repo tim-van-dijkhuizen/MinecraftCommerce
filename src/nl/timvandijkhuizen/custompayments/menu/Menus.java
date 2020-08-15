@@ -20,40 +20,40 @@ import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 
 public enum Menus {
-	
-	HOME(new MenuHome()),
-	
-	CONFIG(null),
-	
-	CATEGORY_LIST(new MenuCategoryList()),
-	CATEGORY_EDIT(new MenuCategoryEdit()),
-	
-	PRODUCT_LIST(new MenuProductList()),
-	PRODUCT_EDIT(new MenuProductEdit()),
-	PRODUCT_ICON(new MenuProductIcon()),
-	PRODUCT_CATEGORY(new MenuProductCategory()),
-	PRODUCT_COMMANDS(new MenuProductCommands()),
-	
-	FIELD_LIST(null),
-	FIELD_EDIT(null),
-	
-	ORDER_LIST(null);
-	
-	private PredefinedMenu predefinedMenu;
-	
-	Menus(PredefinedMenu predefinedMenu) {
-		this.predefinedMenu = predefinedMenu;
-	}
-	
-	public void open(Player player, Object... args) {
-		MenuService menuService = CustomPayments.getInstance().getService("menus");
-		Menu menu = predefinedMenu.create(player, Stream.of(args).map(obj -> new DataValue(obj)).toArray(DataValue[]::new));
-		
-		if(menu instanceof PagedMenu) {
-			menuService.openMenu(player, (PagedMenu) menu);
-		} else {
-			menuService.openMenu(player, menu);
-		}
-	}
-	
+
+    HOME(new MenuHome()),
+
+    CONFIG(null),
+
+    CATEGORY_LIST(new MenuCategoryList()),
+    CATEGORY_EDIT(new MenuCategoryEdit()),
+
+    PRODUCT_LIST(new MenuProductList()),
+    PRODUCT_EDIT(new MenuProductEdit()),
+    PRODUCT_ICON(new MenuProductIcon()),
+    PRODUCT_CATEGORY(new MenuProductCategory()),
+    PRODUCT_COMMANDS(new MenuProductCommands()),
+
+    FIELD_LIST(null),
+    FIELD_EDIT(null),
+
+    ORDER_LIST(null);
+
+    private PredefinedMenu predefinedMenu;
+
+    Menus(PredefinedMenu predefinedMenu) {
+        this.predefinedMenu = predefinedMenu;
+    }
+
+    public void open(Player player, Object... args) {
+        MenuService menuService = CustomPayments.getInstance().getService("menus");
+        Menu menu = predefinedMenu.create(player, Stream.of(args).map(obj -> new DataValue(obj)).toArray(DataValue[]::new));
+
+        if (menu instanceof PagedMenu) {
+            menuService.openMenu(player, (PagedMenu) menu);
+        } else {
+            menuService.openMenu(player, menu);
+        }
+    }
+
 }

@@ -14,27 +14,27 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class OpenProductList implements MenuAction {
 
-	@Override
-	public void onClick(MenuItemClickEvent event) {
-		ProductService productService = CustomPayments.getInstance().getService("products");
-		Player whoClicked = event.getPlayer();
-		Menu activeMenu = event.getMenu();
-		MenuItemBuilder clickedItem = event.getItem();
-		
-		whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-		clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
-		activeMenu.setButton(clickedItem, 15);
+    @Override
+    public void onClick(MenuItemClickEvent event) {
+        ProductService productService = CustomPayments.getInstance().getService("products");
+        Player whoClicked = event.getPlayer();
+        Menu activeMenu = event.getMenu();
+        MenuItemBuilder clickedItem = event.getItem();
 
-		// Create menu
-		productService.getProducts(products -> {
-			if(products == null) {
-				clickedItem.setLore(UI.color("Error: Failed to load products.", UI.ERROR_COLOR));
-				activeMenu.setButton(clickedItem, 15);
-				return;
-			}
-			
-			Menus.PRODUCT_LIST.open(whoClicked, products);
-		});
-	}
-	
+        whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+        clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
+        activeMenu.setButton(clickedItem, 15);
+
+        // Create menu
+        productService.getProducts(products -> {
+            if (products == null) {
+                clickedItem.setLore(UI.color("Error: Failed to load products.", UI.ERROR_COLOR));
+                activeMenu.setButton(clickedItem, 15);
+                return;
+            }
+
+            Menus.PRODUCT_LIST.open(whoClicked, products);
+        });
+    }
+
 }
