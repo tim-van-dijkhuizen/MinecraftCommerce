@@ -4,11 +4,10 @@ import nl.timvandijkhuizen.custompayments.base.Element;
 
 public class Command extends Element {
 
-	private int productId;
+	private Integer productId;
 	private String command;
 	
-	public Command(int productId, String command) {
-		this.productId = productId;
+	public Command(String command) {
 		this.command = command;
 	}
 	
@@ -23,7 +22,11 @@ public class Command extends Element {
 		return false;
 	}
 	
-	public int getProductId() {
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+	
+	public Integer getProductId() {
 		return productId;
 	}
 	

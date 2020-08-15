@@ -90,7 +90,7 @@ public class MenuProductCommands implements PredefinedMenu {
 				
 				@Override
 				public Prompt acceptInput(ConversationContext context, String input) {
-					Command newCommand = new Command(product.getId(), input);
+					Command newCommand = new Command(input);
 					
 					product.addCommand(newCommand);
 					Menus.PRODUCT_COMMANDS.open(player, product);

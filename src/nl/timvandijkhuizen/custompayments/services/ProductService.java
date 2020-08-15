@@ -84,6 +84,8 @@ public class ProductService implements Service {
 		
 		// Create or edit product
 		Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+			DataList<Command> commands = product.getCommands();
+			
 			try {
 				if(isNew) {
 					storage.createProduct(product);
@@ -91,9 +93,12 @@ public class ProductService implements Service {
 					storage.updateProduct(product);
 				}
 				
-				// Update commands
-				DataList<Command> commands = product.getCommands();
+				// Set product id on commands
+				for(Command command : commands) {
+					command.setProductId(product.getId());
+				}
 				
+				// Update commands
 				for(Command command : commands.getToAdd()) {
 					storage.createCommand(command);
 				}
