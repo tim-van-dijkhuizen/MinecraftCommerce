@@ -12,6 +12,12 @@ public class Command extends Element {
 		this.command = command;
 	}
 	
+	public Command(int id, int productId, String command) {
+		this.setId(id);
+		this.productId = productId;
+		this.command = command;
+	}
+	
 	@Override
 	public boolean validate() {
 		return false;

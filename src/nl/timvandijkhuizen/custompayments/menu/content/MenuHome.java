@@ -27,8 +27,8 @@ public class MenuHome implements PredefinedMenu {
 		configButton.setName(UI.color("Configuration", UI.PRIMARY_COLOR, ChatColor.BOLD));
 		configButton.setLore(UI.color("Modify your configuration", UI.TEXT_COLOR));
 		
-		configButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+		configButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.CONFIG.open(player);
 		});
 		
@@ -58,8 +58,8 @@ public class MenuHome implements PredefinedMenu {
 		fieldsButton.setName(UI.color("Order fields", UI.PRIMARY_COLOR, ChatColor.BOLD));
 		fieldsButton.setLore(UI.color("Manage order fields", UI.TEXT_COLOR));
 		
-		fieldsButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+		fieldsButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.FIELD_LIST.open(player);
 		});
 		
@@ -71,8 +71,8 @@ public class MenuHome implements PredefinedMenu {
 		orderButton.setName(UI.color("Orders", UI.PRIMARY_COLOR, ChatColor.BOLD));
 		orderButton.setLore(UI.color("Manage orders", UI.TEXT_COLOR));
 		
-		orderButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+		orderButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.ORDER_LIST.open(player);
 		});
 		
@@ -91,9 +91,9 @@ public class MenuHome implements PredefinedMenu {
 		// Go back button
 		MenuItemBuilder closeButton = Menu.CLOSE_BUTTON.clone();
 		
-		closeButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-			whoClicked.closeInventory();
+		closeButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+			player.closeInventory();
 		});
 		
 		menu.setButton(closeButton, 40);

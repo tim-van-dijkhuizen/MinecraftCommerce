@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.custompayments.base;
 import java.util.List;
 
 import nl.timvandijkhuizen.custompayments.elements.Category;
+import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
@@ -24,6 +25,11 @@ public abstract class Storage implements Service {
 	public abstract void createProduct(Product product) throws Exception;
 	public abstract void updateProduct(Product product) throws Exception;
 	public abstract void deleteProduct(Product product) throws Exception;
+	
+	// Product commands
+    public abstract List<Command> getCommandsByProductId(int productId) throws Exception;
+	public abstract void createCommand(Command command) throws Exception;
+	public abstract void deleteCommand(Command command) throws Exception;
     
 	// Fields
 	public abstract void createField(Field<?> field) throws Exception;

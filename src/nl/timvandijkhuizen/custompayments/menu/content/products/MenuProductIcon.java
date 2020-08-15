@@ -38,9 +38,9 @@ public class MenuProductIcon implements PredefinedMenu {
 				item.addEnchantGlow();
 			}
 			
-			item.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+			item.setClickListener(event -> {
 				product.setIcon(icon);
-				whoClicked.playSound(whoClicked.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 				Menus.PRODUCT_EDIT.open(player, product);
 			});
 			
@@ -50,8 +50,8 @@ public class MenuProductIcon implements PredefinedMenu {
 		// Cancel button
 		MenuItemBuilder cancelButton = Menu.CANCEL_BUTTON.clone();
 		
-		cancelButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+		cancelButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.PRODUCT_EDIT.open(player, product);
 		});
 		

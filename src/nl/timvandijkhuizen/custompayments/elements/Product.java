@@ -1,10 +1,9 @@
 package nl.timvandijkhuizen.custompayments.elements;
 
-import java.util.Set;
-
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.custompayments.base.Element;
+import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class Product extends Element {
 
@@ -14,25 +13,25 @@ public class Product extends Element {
 	private String description;
 	private Category category;
 	private float price;
+	private DataList<Command> commands;
 	
-	// Caches
-	private Set<Command> commands;
-	
-	public Product(Material icon, String name, String description, Category category, float price) {
-		this.icon = icon;
-		this.name = name;
-		this.description = description;
-		this.category = category;
-		this.price = price;
+	public Product() {
+		this.icon = Material.CHEST;
+		this.name = "";
+		this.description = "";
+		this.category = null;
+		this.price = 1;
+		this.commands = new DataList<>();
 	}
 	
-	public Product(int id, Material icon, String name, String description, Category category, float price) {
+	public Product(int id, Material icon, String name, String description, Category category, float price, DataList<Command> commands) {
 		this.setId(id);
 		this.icon = icon;
 		this.name = name;
 		this.description = description;
 		this.category = category;
 		this.price = price;
+		this.commands = commands;
 	}
 	
 	@Override
@@ -120,12 +119,16 @@ public class Product extends Element {
 		this.price = price;
 	}
 	
-	public Set<Command> getCommands() {
-		if(commands == null) {
-			// TODO: Load commands from command service
-		}
-		
+	public DataList<Command> getCommands() {
 		return commands;
+	}
+	
+	public void addCommand(Command command) {
+		commands.add(command);
+	}
+	
+	public void removeCommand(Command command) {
+		commands.remove(command);
 	}
 	
 }

@@ -10,6 +10,7 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Category;
@@ -19,6 +20,7 @@ import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItemClickEvent;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -28,7 +30,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
 	@Override
 	public Menu create(Player player, DataValue... args) {
 		CategoryService categoryService = CustomPayments.getInstance().getService("categories");
-		Category category = args.length == 1 ? args[0].as(Category.class) : new Category("", "");
+		Category category = args.length == 1 ? args[0].as(Category.class) : new Category();
 		Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " category", MenuSize.LG);
 		
 		// Name button
@@ -39,26 +41,26 @@ public class MenuCategoryEdit implements PredefinedMenu {
 		nameButton.setLore(UI.color("Click to set the category name.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 		
 		if(category.getName().length() > 0) {
-			nameButton.addLoreLine(UI.color(category.getName(), UI.SECONDARY_COLOR));
+			nameButton.addLore(UI.color(category.getName(), UI.SECONDARY_COLOR));
 		} else {
-			nameButton.addLoreLine(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			nameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 		}
 		
 		// Add validation errors to lore
 		if(category.hasErrors("name")) {
-			nameButton.addLoreLines("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+			nameButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
 			nameButton.addEnchantGlow();
 			
 			for(String error : category.getErrors("name")) {
-				nameButton.addLoreLine(UI.color(" - " + error, UI.ERROR_COLOR));
+				nameButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
 			}
 		}
 		
 		// Set click listener
-		nameButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+		nameButton.setClickListener(event -> {
 			ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 			
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			
 		    Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
 				@Override
@@ -72,9 +74,9 @@ public class MenuCategoryEdit implements PredefinedMenu {
 					Menus.CATEGORY_EDIT.open(player, category);
 					return null;
 				}
-			}).withLocalEcho(false).buildConversation(whoClicked);
+			}).withLocalEcho(false).buildConversation(player);
 		    
-		    whoClicked.closeInventory();
+		    player.closeInventory();
 		    conversation.begin();
 		});
 		
@@ -91,27 +93,27 @@ public class MenuCategoryEdit implements PredefinedMenu {
 			String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 			
 			for(String line : lines) {
-				descriptionButton.addLoreLine(UI.color(line, UI.SECONDARY_COLOR));
+				descriptionButton.addLore(UI.color(line, UI.SECONDARY_COLOR));
 			}
 		} else {
-			descriptionButton.addLoreLine(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			descriptionButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 		}
 		
 		// Add validation errors to lore
 		if(category.hasErrors("description")) {
-			descriptionButton.addLoreLines("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+			descriptionButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
 			descriptionButton.addEnchantGlow();
 			
 			for(String error : category.getErrors("description")) {
-				descriptionButton.addLoreLine(UI.color(" - " + error, UI.ERROR_COLOR));
+				descriptionButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
 			}
 		}
 		
 		// Set click listener
-		descriptionButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+		descriptionButton.setClickListener(event -> {
 			ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
-			
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			
 		    Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
 				@Override
@@ -125,9 +127,9 @@ public class MenuCategoryEdit implements PredefinedMenu {
 					Menus.CATEGORY_EDIT.open(player, category);
 					return null;
 				}
-			}).withLocalEcho(false).buildConversation(whoClicked);
+			}).withLocalEcho(false).buildConversation(player);
 		    
-		    whoClicked.closeInventory();
+		    player.closeInventory();
 		    conversation.begin();
 		});
 		
@@ -159,7 +161,9 @@ public class MenuCategoryEdit implements PredefinedMenu {
 			saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.ERROR_COLOR));
 		}
 		
-		saveButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+		saveButton.setClickListener(event -> {
+			ClickType clickType = event.getClickType();
+			
 			saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
 			menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
 			
@@ -167,13 +171,11 @@ public class MenuCategoryEdit implements PredefinedMenu {
 			categoryService.saveCategory(category, success -> {
 				if(success) {
 					OpenCategoryList action = new OpenCategoryList();
-					action.onClick(whoClicked, menu, clickedItem, clickType);
-					return;
+					action.onClick(new MenuItemClickEvent(player, menu, saveButton, clickType));
+				} else {
+					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
+					Menus.CATEGORY_EDIT.open(player, category);
 				}
-				
-				// Refresh menu
-				whoClicked.playSound(whoClicked.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
-				Menus.CATEGORY_EDIT.open(player, category);
 			});
 		});
 		

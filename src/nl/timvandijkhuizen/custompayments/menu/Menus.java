@@ -9,6 +9,7 @@ import nl.timvandijkhuizen.custompayments.menu.content.MenuHome;
 import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryList;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCategory;
+import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCommands;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
@@ -31,7 +32,7 @@ public enum Menus {
 	PRODUCT_EDIT(new MenuProductEdit()),
 	PRODUCT_ICON(new MenuProductIcon()),
 	PRODUCT_CATEGORY(new MenuProductCategory()),
-	PRODUCT_COMMANDS(null),
+	PRODUCT_COMMANDS(new MenuProductCommands()),
 	
 	FIELD_LIST(null),
 	FIELD_EDIT(null),

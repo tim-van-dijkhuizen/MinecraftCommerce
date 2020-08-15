@@ -30,9 +30,8 @@ public class CategoryService implements Service {
 	}
 	
 	/**
-	 * Returns all categories that match the specified query.
+	 * Returns all categories.
 	 * 
-	 * @param query
 	 * @param callback
 	 */
 	public void getCategories(Consumer<List<Category>> callback) {
@@ -82,6 +81,12 @@ public class CategoryService implements Service {
 		});
 	}
 	
+	/**
+	 * Deletes a category.
+	 * 
+	 * @param category
+	 * @param callback
+	 */
 	public void deleteCategory(Category category, Consumer<Boolean> callback) {
 		Storage storage = CustomPayments.getInstance().getStorage();
 		

@@ -40,14 +40,21 @@ public class MenuCategoryList implements PredefinedMenu {
 			String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 			
 			for(String line : lines) {
-				item.addLoreLine(UI.color(line, UI.TEXT_COLOR));
+				item.addLore(UI.color(line, UI.TEXT_COLOR));
 			}
 			
-			item.addLoreLines("", UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 			
 			// Set click listener
-			item.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-				if(clickType == ClickType.SHIFT_RIGHT) {
+			item.setClickListener(event -> {
+				Player whoClicked = event.getPlayer();
+				ClickType clickType = event.getClickType();
+				
+				if(clickType == ClickType.LEFT) {
+					whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+					Menus.CATEGORY_EDIT.open(player, category);
+				} else if(clickType == ClickType.RIGHT) {
 					item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
 					menu.refresh();
 					
@@ -61,9 +68,6 @@ public class MenuCategoryList implements PredefinedMenu {
 							menu.refresh();
 						}
 					});
-				} else {
-					whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-					Menus.CATEGORY_EDIT.open(player, category);
 				}
 			});
 			
@@ -73,9 +77,11 @@ public class MenuCategoryList implements PredefinedMenu {
 		// Go back button
 		MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
 		
-		backButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+		backButton.setClickListener(event -> {
+			Player whoClicked = event.getPlayer();
+			
 			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-			Menus.HOME.open(player);
+			Menus.HOME.open(whoClicked);
 		});
 		
 		menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
@@ -85,7 +91,9 @@ public class MenuCategoryList implements PredefinedMenu {
 		
 		createButton.setName(UI.color("Create Category", UI.SECONDARY_COLOR, ChatColor.BOLD));
 		
-		createButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
+		createButton.setClickListener(event -> {
+			Player whoClicked = event.getPlayer();	
+	
 			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.CATEGORY_EDIT.open(whoClicked);
 		});

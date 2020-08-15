@@ -17,10 +17,12 @@ import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Field;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.elements.Category;
+import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class StorageMysql extends Storage {
 
@@ -97,6 +99,13 @@ public class StorageMysql extends Storage {
             "FOREIGN KEY(categoryId) REFERENCES categories(id) ON DELETE CASCADE" +
         ");");
 		
+		PreparedStatement createCommands = connection.prepareStatement("CREATE TABLE IF NOT EXISTS commands (" +
+            "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+            "productId INTEGER NOT NULL," +
+            "command VARCHAR(255) NOT NULL," +
+            "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE" +
+        ");");
+		
 		PreparedStatement createFields = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
             "name VARCHAR(50) NOT NULL" +
@@ -106,12 +115,14 @@ public class StorageMysql extends Storage {
 		// ===========================
 		createCategories.execute();
 		createProducts.execute();
+		createCommands.execute();
 		createFields.execute();
 		
 		// Cleanup
 		// ===========================
 		createCategories.close();
 		createProducts.close();
+		createCommands.close();
 		createFields.close();
 		
 		connection.close();
@@ -150,9 +161,8 @@ public class StorageMysql extends Storage {
 	@Override
 	public void createCategory(Category category) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("INSERT INTO categories (name, description) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
+		String sql = "INSERT INTO categories (name, description) VALUES (?, ?);";
+		PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		
 		// Set arguments
 		statement.setString(1, category.getName());
@@ -177,9 +187,8 @@ public class StorageMysql extends Storage {
 	@Override
 	public void updateCategory(Category category) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("UPDATE categories SET name=?, description=? WHERE id=?;");
+		String sql = "UPDATE categories SET name=?, description=? WHERE id=?;";
+		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		// Set arguments
 		statement.setString(1, category.getName());
@@ -197,9 +206,8 @@ public class StorageMysql extends Storage {
 	@Override
 	public void deleteCategory(Category category) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("DELETE FROM categories WHERE id=?;");
+		String sql = "DELETE FROM categories WHERE id=?;";
+		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		// Set arguments
 		statement.setInt(1, category.getId());
@@ -240,7 +248,12 @@ public class StorageMysql extends Storage {
         	String categoryDescription = result.getString(8);
         	Category category = new Category(categoryId, categoryName, categoryDescription);
         	
-            products.add(new Product(id, icon, name, description, category, price));
+        	// Get commands
+        	List<Command> rawCommands = this.getCommandsByProductId(id);
+        	DataList<Command> commands = new DataList<Command>(rawCommands);
+        	
+        	// Add product to list
+            products.add(new Product(id, icon, name, description, category, price, commands));
         }
         
         // Cleanup
@@ -254,9 +267,8 @@ public class StorageMysql extends Storage {
 	@Override
 	public void createProduct(Product product) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("INSERT INTO products (icon, name, description, categoryId, price) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+		String sql = "INSERT INTO products (icon, name, description, categoryId, price) VALUES (?, ?, ?, ?, ?);";
+		PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		
 		// Set arguments
 		statement.setString(1, DbHelper.prepareMaterial(product.getIcon()));
@@ -284,9 +296,8 @@ public class StorageMysql extends Storage {
 	@Override
 	public void updateProduct(Product product) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("UPDATE products SET icon=?, name=?, description=?, categoryId=?, price=? WHERE id=?;");
+		String sql = "UPDATE products SET icon=?, name=?, description=?, categoryId=?, price=? WHERE id=?;";
+		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		// Set arguments
 		statement.setString(1, DbHelper.prepareMaterial(product.getIcon()));
@@ -307,12 +318,85 @@ public class StorageMysql extends Storage {
 	@Override
 	public void deleteProduct(Product product) throws Exception {
 		Connection connection = getConnection();
-		
-		// Create statement
-		PreparedStatement statement = connection.prepareStatement("DELETE FROM products WHERE id=?;");
+		String sql = "DELETE FROM products WHERE id=?;";
+		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		// Set arguments
 		statement.setInt(1, product.getId());
+		
+		// Execute query
+		statement.execute();
+		
+		// Cleanup
+		statement.close();
+		connection.close();
+	}
+	
+	/**
+	 * Product commands
+	 */
+	
+	@Override
+	public List<Command> getCommandsByProductId(int productId) throws Exception {
+		Connection connection = getConnection();
+		String sql = "SELECT * FROM commands WHERE productId=?";
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		statement.setInt(1, productId);
+		
+		// Get result
+        ResultSet result = statement.executeQuery();
+        List<Command> commands = new ArrayList<>();
+
+        while (result.next()) {
+        	int id = result.getInt(1);
+        	String command = result.getString(3);
+        	
+        	commands.add(new Command(id, productId, command));
+        }
+        
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+        
+        return commands;
+	}
+
+	@Override
+	public void createCommand(Command command) throws Exception {
+		Connection connection = getConnection();
+		String sql = "INSERT INTO commands (productId, command) VALUES (?, ?);";
+		PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+		
+		// Set arguments
+		statement.setInt(1, command.getProductId());
+		statement.setString(2, command.getCommand());
+		
+		// Execute query
+		statement.executeUpdate();
+		
+		// Set ID
+		ResultSet ids = statement.getGeneratedKeys();
+		
+		if(ids.next()) {
+			command.setId(ids.getInt(1));
+		}
+		
+		// Cleanup
+		ids.close();
+		statement.close();
+		connection.close();
+	}
+
+	@Override
+	public void deleteCommand(Command command) throws Exception {
+		Connection connection = getConnection();
+		String sql = "DELETE FROM commands WHERE id=?;";
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		// Set arguments
+		statement.setInt(1, command.getId());
 		
 		// Execute query
 		statement.execute();

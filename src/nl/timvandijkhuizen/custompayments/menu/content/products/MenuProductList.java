@@ -40,20 +40,26 @@ public class MenuProductList implements PredefinedMenu {
 			String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
 			
 			for(String line : lines) {
-				item.addLoreLine(UI.color(line, UI.TEXT_COLOR));
+				item.addLore(UI.color(line, UI.TEXT_COLOR));
 			}
 			
-			item.addLoreLines("", UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+			item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 			
 			// Set click listener
-			item.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-				if(clickType == ClickType.SHIFT_RIGHT) {
+			item.setClickListener(event -> {
+				ClickType clickType = event.getClickType();
+				
+				if(clickType == ClickType.LEFT) {
+					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+					Menus.PRODUCT_EDIT.open(player, product);
+				} else if(clickType == ClickType.RIGHT) {
 					item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
 					menu.refresh();
 					
 					productService.deleteProduct(product, success -> {
 						if(success) {
-							whoClicked.playSound(whoClicked.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 1);
+							player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 1);
 							menu.removePagedButton(item);
 							menu.refresh();
 						} else {
@@ -61,9 +67,6 @@ public class MenuProductList implements PredefinedMenu {
 							menu.refresh();
 						}
 					});
-				} else {
-					whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-					Menus.PRODUCT_EDIT.open(player, product);
 				}
 			});
 			
@@ -73,8 +76,8 @@ public class MenuProductList implements PredefinedMenu {
 		// Go back button
 		MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
 		
-		backButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+		backButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 			Menus.HOME.open(player);
 		});
 		
@@ -83,11 +86,11 @@ public class MenuProductList implements PredefinedMenu {
 		// Create new product button
 		MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
 		
-		createButton.setName(UI.color("Create product", UI.SECONDARY_COLOR, ChatColor.BOLD));
+		createButton.setName(UI.color("Create Product", UI.SECONDARY_COLOR, ChatColor.BOLD));
 		
-		createButton.setClickListener((whoClicked, activeMenu, clickedItem, clickType) -> {
-			whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-			Menus.PRODUCT_EDIT.open(whoClicked);
+		createButton.setClickListener(event -> {
+			player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+			Menus.PRODUCT_EDIT.open(player);
 		});
 		
 		menu.setButton(createButton, menu.getSize().getSlots() - 9 + 5);

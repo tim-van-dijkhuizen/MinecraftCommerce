@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
@@ -55,13 +55,13 @@ public class CustomPayments extends PluginBase {
 	}
 	
 	private Storage getDatabase() throws Exception {
-		HashMap<String, Class<? extends Storage>> storageTypes = new HashMap<>();
-		RegisterStorageTypesEvent storageTypeEvent = new RegisterStorageTypesEvent(storageTypes);
+		RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
 		
-		storageTypeEvent.addStorageType("mysql", StorageMysql.class);
-		getServer().getPluginManager().callEvent(storageTypeEvent);
+		event.addStorageType("mysql", StorageMysql.class);
+		getServer().getPluginManager().callEvent(event);
 		
 		// Register chosen storage type
+		Map<String, Class<? extends Storage>> storageTypes = event.getStorageTypes();
 		String storageTypeKey = config.getString("storage.type");
 		
 		if(storageTypes.containsKey(storageTypeKey)) {
