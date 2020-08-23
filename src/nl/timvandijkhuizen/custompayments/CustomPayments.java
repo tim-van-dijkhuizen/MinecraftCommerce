@@ -34,7 +34,7 @@ public class CustomPayments extends PluginBase {
         // Setup config
         config = new YamlConfig(this);
         
-        config.addOption(new ConfigOption<>("storage.type", ConfigTypes.STRING, new ConfigIcon(Material.CHEST, "Storage Type")));
+        config.addOption(new ConfigOption<>("storage.type", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Type")).setReadOnly(true));
     }
 
     @Override
