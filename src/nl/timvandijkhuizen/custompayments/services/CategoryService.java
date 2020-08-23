@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.elements.Category;
-import nl.timvandijkhuizen.custompayments.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class CategoryService implements Service {

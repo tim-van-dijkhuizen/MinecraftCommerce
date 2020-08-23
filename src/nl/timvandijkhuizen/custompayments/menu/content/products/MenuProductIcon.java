@@ -19,16 +19,15 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductIcon implements PredefinedMenu {
 
+    public static final Material[] ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
+    
     @Override
     public Menu create(Player player, DataValue... args) {
         Product product = args[0].as(Product.class);
         Material selected = args[1].as(Material.class);
-        PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1, 1, 5, 7);
 
-        // Add icon buttons
-        Material[] icons = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
-
-        for (Material icon : icons) {
+        for (Material icon : ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
 
             item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.PRIMARY_COLOR, ChatColor.BOLD));
@@ -55,7 +54,7 @@ public class MenuProductIcon implements PredefinedMenu {
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

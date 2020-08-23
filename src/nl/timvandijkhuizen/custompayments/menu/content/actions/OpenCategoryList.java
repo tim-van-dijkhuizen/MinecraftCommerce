@@ -9,13 +9,13 @@ import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuAction;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClickEvent;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class OpenCategoryList implements MenuAction {
 
     @Override
-    public void onClick(MenuItemClickEvent event) {
+    public void onClick(MenuItemClick event) {
         CategoryService categoryService = CustomPayments.getInstance().getService("categories");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
@@ -23,13 +23,13 @@ public class OpenCategoryList implements MenuAction {
 
         whoClicked.playSound(whoClicked.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
         clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
-        activeMenu.setButton(clickedItem, 15);
+        activeMenu.refresh();
 
         // Create menu
         categoryService.getCategories(categories -> {
             if (categories == null) {
                 clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.ERROR_COLOR));
-                activeMenu.setButton(clickedItem, 15);
+                activeMenu.refresh();
             }
 
             Menus.CATEGORY_LIST.open(whoClicked, categories);

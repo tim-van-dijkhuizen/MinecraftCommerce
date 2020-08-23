@@ -2,6 +2,8 @@ package nl.timvandijkhuizen.custompayments;
 
 import java.util.Map;
 
+import org.bukkit.Material;
+
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
@@ -11,7 +13,9 @@ import nl.timvandijkhuizen.custompayments.storage.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
-import nl.timvandijkhuizen.spigotutils.config.ConfigConverter;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
@@ -25,8 +29,12 @@ public class CustomPayments extends PluginBase {
     @Override
     public void load() throws Exception {
         instance = this;
-        config = new YamlConfig(this);
         MainThread.setPlugin(this);
+        
+        // Setup config
+        config = new YamlConfig(this);
+        
+        config.addOption(new ConfigOption<>("storage.type", ConfigTypes.STRING, new ConfigIcon(Material.CHEST, "Storage Type")));
     }
 
     @Override
@@ -49,11 +57,6 @@ public class CustomPayments extends PluginBase {
         };
     }
 
-    @Override
-    public ConfigConverter<?>[] registerConfigConverters() throws Exception {
-        return new ConfigConverter<?>[] {};
-    }
-
     private Storage getDatabase() throws Exception {
         RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
 
@@ -62,7 +65,7 @@ public class CustomPayments extends PluginBase {
 
         // Register chosen storage type
         Map<String, Class<? extends Storage>> storageTypes = event.getStorageTypes();
-        String storageTypeKey = config.getString("storage.type");
+        String storageTypeKey = config.getOptionValue("storage.type");
 
         if (storageTypes.containsKey(storageTypeKey)) {
             Class<? extends Storage> storageClass = storageTypes.get(storageTypeKey);

@@ -23,7 +23,7 @@ import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClickEvent;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -192,13 +192,13 @@ public class MenuProductEdit implements PredefinedMenu {
 
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             categoryButton.setLore(UI.color("Loading...", UI.TEXT_COLOR));
-            menu.setButton(categoryButton, 29);
+            menu.refresh();
 
             // Create menu
             categoryService.getCategories(categories -> {
                 if (categories == null) {
                     categoryButton.setLore(UI.color("Error: Failed to load categories.", UI.ERROR_COLOR));
-                    menu.setButton(categoryButton, 29);
+                    menu.refresh();
                 }
 
                 Menus.PRODUCT_CATEGORY.open(player, product, categories, product.getCategory());
@@ -302,13 +302,13 @@ public class MenuProductEdit implements PredefinedMenu {
             ClickType clickType = event.getClickType();
 
             saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
-            menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+            menu.refresh();
 
             // Save product
             productService.saveProduct(product, success -> {
                 if (success) {
                     OpenProductList action = new OpenProductList();
-                    action.onClick(new MenuItemClickEvent(player, menu, saveButton, clickType));
+                    action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
                     Menus.PRODUCT_EDIT.open(player, product);

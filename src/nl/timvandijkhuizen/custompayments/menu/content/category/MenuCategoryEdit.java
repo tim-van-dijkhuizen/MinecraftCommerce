@@ -20,7 +20,7 @@ import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClickEvent;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -165,13 +165,13 @@ public class MenuCategoryEdit implements PredefinedMenu {
             ClickType clickType = event.getClickType();
 
             saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
-            menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+            menu.refresh();
 
             // Save category
             categoryService.saveCategory(category, success -> {
                 if (success) {
                     OpenCategoryList action = new OpenCategoryList();
-                    action.onClick(new MenuItemClickEvent(player, menu, saveButton, clickType));
+                    action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
                     Menus.CATEGORY_EDIT.open(player, category);

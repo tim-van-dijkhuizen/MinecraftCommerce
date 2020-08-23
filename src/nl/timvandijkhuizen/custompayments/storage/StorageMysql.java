@@ -20,6 +20,9 @@ import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
 import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
@@ -33,18 +36,26 @@ public class StorageMysql extends Storage {
     public void load() throws Exception {
         YamlConfig config = CustomPayments.getInstance().getConfig();
 
-        // Get config values
-        if (!config.contains("storage.host") || !config.contains("storage.port") || !config.contains("storage.database") || !config.contains("storage.username") || !config.contains("storage.password")) {
+        // Add MySQL options
+        config.addOption(new ConfigOption<>("storage.host", ConfigTypes.STRING, new ConfigIcon(Material.CHEST, "Storage Host")));
+        config.addOption(new ConfigOption<>("storage.port", ConfigTypes.INTEGER, new ConfigIcon(Material.CHEST, "Storage Port")));
+        config.addOption(new ConfigOption<>("storage.database", ConfigTypes.STRING, new ConfigIcon(Material.CHEST, "Storage Database")));
+        config.addOption(new ConfigOption<>("storage.username", ConfigTypes.STRING, new ConfigIcon(Material.CHEST, "Storage Username")));
+        config.addOption(new ConfigOption<>("storage.password", ConfigTypes.PASSWORD, new ConfigIcon(Material.CHEST, "Storage Password")));
+        
+        // Get MySQL option values
+        String host = config.getOptionValue("storage.host");
+        Integer port = config.getOptionValue("storage.port");
+        String database = config.getOptionValue("storage.database");
+        String username = config.getOptionValue("storage.username");
+        String password = config.getOptionValue("storage.password");
+
+        // Validate option values
+        if (host == null || port == null || database == null || username == null || password == null) {
             throw new ConfigurationException("Missing required MySQL configuration");
         }
-
-        String host = config.getString("storage.host");
-        int port = config.getInt("storage.port");
-        String database = config.getString("storage.database");
-        String username = config.getString("storage.username");
-        String password = config.getString("storage.password");
-
-        // Create config and datasource
+        
+        // Create MySQL configuration and datasource
         dbConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         dbConfig.setUsername(username);
         dbConfig.setPassword(password);

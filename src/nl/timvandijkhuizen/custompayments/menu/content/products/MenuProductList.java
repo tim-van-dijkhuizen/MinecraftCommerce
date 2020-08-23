@@ -25,7 +25,7 @@ public class MenuProductList implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataValue... args) {
         ProductService productService = CustomPayments.getInstance().getService("products");
-        PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1, 1, 7);
+        PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1);
 
         // Add product buttons
         List<Product> products = args[0].asList(Product.class);

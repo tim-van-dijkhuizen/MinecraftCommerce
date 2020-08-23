@@ -15,11 +15,11 @@ import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.events.RegisterCommandVariablesEvent;
-import nl.timvandijkhuizen.custompayments.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.custompayments.variables.VariableUniqueId;
 import nl.timvandijkhuizen.custompayments.variables.VariableUsername;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class ProductService implements Service {

@@ -29,7 +29,7 @@ public class MenuProductCommands implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataValue... args) {
         ProductService productService = CustomPayments.getInstance().getService("products");
-        PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1, 1, 7);
+        PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1);
         Product product = args[0].as(Product.class);
 
         // Add command buttons

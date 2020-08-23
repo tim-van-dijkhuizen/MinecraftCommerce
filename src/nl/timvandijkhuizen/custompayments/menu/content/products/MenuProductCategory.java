@@ -24,7 +24,7 @@ public class MenuProductCategory implements PredefinedMenu {
         Product product = args[0].as(Product.class);
         List<Category> categories = args[1].asList(Category.class);
         Category selected = args[2].as(Category.class);
-        PagedMenu menu = new PagedMenu("Product Category", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Product Category", 3, 7, 1, 1, 1, 5, 7);
 
         // Add category buttons
         for (Category category : categories) {
@@ -54,7 +54,7 @@ public class MenuProductCategory implements PredefinedMenu {
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }
