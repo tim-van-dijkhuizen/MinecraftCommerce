@@ -38,7 +38,7 @@ public class StorageMysql extends Storage {
 
         // Add MySQL options
         config.addOption(new ConfigOption<>("storage.host", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Host")).setReadOnly(true));
-        config.addOption(new ConfigOption<>("storage.port", ConfigTypes.INTEGER).setIcon(new ConfigIcon(Material.CHEST, "Storage Port")));
+        config.addOption(new ConfigOption<>("storage.port", ConfigTypes.INTEGER).setIcon(new ConfigIcon(Material.CHEST, "Storage Port")).setReadOnly(true));
         config.addOption(new ConfigOption<>("storage.database", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Database")).setReadOnly(true));
         config.addOption(new ConfigOption<>("storage.username", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Username")).setReadOnly(true));
         config.addOption(new ConfigOption<>("storage.password", ConfigTypes.PASSWORD).setIcon(new ConfigIcon(Material.CHEST, "Storage Password")).setReadOnly(true));
