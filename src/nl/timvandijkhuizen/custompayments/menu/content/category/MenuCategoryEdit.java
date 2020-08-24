@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.custompayments.menu.content.category;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -60,7 +59,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         nameButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
@@ -113,7 +112,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         descriptionButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
@@ -164,16 +163,19 @@ public class MenuCategoryEdit implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             ClickType clickType = event.getClickType();
 
+            UI.playSound(player, UI.CLICK_SOUND);
             saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
             menu.refresh();
 
             // Save category
             categoryService.saveCategory(category, success -> {
                 if (success) {
-                    OpenCategoryList action = new OpenCategoryList();
+                    OpenCategoryList action = new OpenCategoryList(false);
+                    
+                    UI.playSound(player, UI.SUCCESS_SOUND);
                     action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
-                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
+                    UI.playSound(player, UI.ERROR_SOUND);
                     Menus.CATEGORY_EDIT.open(player, category);
                 }
             });

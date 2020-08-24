@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.custompayments.menu.content.products;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -43,6 +42,7 @@ public class MenuProductCommands implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 if (clickType == ClickType.RIGHT) {
+                    UI.playSound(player, UI.DELETE_SOUND);
                     product.removeCommand(command);
                     menu.removePagedButton(item);
                     menu.refresh();
@@ -56,7 +56,7 @@ public class MenuProductCommands implements PredefinedMenu {
         MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
 
         backButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
@@ -80,7 +80,7 @@ public class MenuProductCommands implements PredefinedMenu {
         createButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
@@ -92,6 +92,7 @@ public class MenuProductCommands implements PredefinedMenu {
                 public Prompt acceptInput(ConversationContext context, String input) {
                     Command newCommand = new Command(input);
 
+                    UI.playSound(player, UI.SUCCESS_SOUND);
                     product.addCommand(newCommand);
                     Menus.PRODUCT_COMMANDS.open(player, product);
 

@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -50,8 +49,9 @@ public class MenuProductList implements PredefinedMenu {
             item.setClickListener(event -> {
                 ClickType clickType = event.getClickType();
 
+                UI.playSound(player, UI.CLICK_SOUND);
+                
                 if (clickType == ClickType.LEFT) {
-                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                     Menus.PRODUCT_EDIT.open(player, product);
                 } else if (clickType == ClickType.RIGHT) {
                     item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
@@ -59,10 +59,11 @@ public class MenuProductList implements PredefinedMenu {
 
                     productService.deleteProduct(product, success -> {
                         if (success) {
-                            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 1);
+                            UI.playSound(player, UI.DELETE_SOUND);
                             menu.removePagedButton(item);
                             menu.refresh();
                         } else {
+                            UI.playSound(player, UI.ERROR_SOUND);
                             item.setLore(UI.color("Error: Failed to delete product.", UI.ERROR_COLOR));
                             menu.refresh();
                         }
@@ -77,7 +78,7 @@ public class MenuProductList implements PredefinedMenu {
         MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
 
         backButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.HOME.open(player);
         });
 
@@ -89,7 +90,7 @@ public class MenuProductList implements PredefinedMenu {
         createButton.setName(UI.color("Create Product", UI.SECONDARY_COLOR, ChatColor.BOLD));
 
         createButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.PRODUCT_EDIT.open(player);
         });
 

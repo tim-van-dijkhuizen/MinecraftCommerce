@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.custompayments.menu.content.products;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -55,7 +54,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set click listener
         iconButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.PRODUCT_ICON.open(player, product, product.getIcon());
         });
 
@@ -88,7 +87,7 @@ public class MenuProductEdit implements PredefinedMenu {
         nameButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
@@ -141,7 +140,7 @@ public class MenuProductEdit implements PredefinedMenu {
         descriptionButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
@@ -190,13 +189,14 @@ public class MenuProductEdit implements PredefinedMenu {
         categoryButton.setClickListener(event -> {
             CategoryService categoryService = CustomPayments.getInstance().getService("categories");
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             categoryButton.setLore(UI.color("Loading...", UI.TEXT_COLOR));
             menu.refresh();
 
             // Create menu
             categoryService.getCategories(categories -> {
                 if (categories == null) {
+                    UI.playSound(player, UI.ERROR_SOUND);
                     categoryButton.setLore(UI.color("Error: Failed to load categories.", UI.ERROR_COLOR));
                     menu.refresh();
                 }
@@ -228,7 +228,7 @@ public class MenuProductEdit implements PredefinedMenu {
         priceButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
 
             Conversation conversation = factory.withFirstPrompt(new NumericPrompt() {
                 @Override
@@ -266,7 +266,7 @@ public class MenuProductEdit implements PredefinedMenu {
         }
 
         commandsButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.PRODUCT_COMMANDS.open(player, product);
         });
 
@@ -301,16 +301,19 @@ public class MenuProductEdit implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             ClickType clickType = event.getClickType();
 
+            UI.playSound(player, UI.CLICK_SOUND);
             saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
             menu.refresh();
 
             // Save product
             productService.saveProduct(product, success -> {
                 if (success) {
-                    OpenProductList action = new OpenProductList();
+                    OpenProductList action = new OpenProductList(false);
+                    
+                    UI.playSound(player, UI.SUCCESS_SOUND);
                     action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
-                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 5, 1);
+                    UI.playSound(player, UI.ERROR_SOUND);
                     Menus.PRODUCT_EDIT.open(player, product);
                 }
             });

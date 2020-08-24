@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.config;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
@@ -60,7 +59,7 @@ public class MenuConfig implements PredefinedMenu {
         MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
 
         backButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.HOME.open(player);
         });
 

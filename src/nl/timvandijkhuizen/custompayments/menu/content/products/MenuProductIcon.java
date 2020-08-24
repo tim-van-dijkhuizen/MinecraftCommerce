@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.elements.Product;
@@ -39,7 +38,7 @@ public class MenuProductIcon implements PredefinedMenu {
 
             item.setClickListener(event -> {
                 product.setIcon(icon);
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                UI.playSound(player, UI.CLICK_SOUND);
                 Menus.PRODUCT_EDIT.open(player, product);
             });
 
@@ -50,7 +49,7 @@ public class MenuProductIcon implements PredefinedMenu {
         MenuItemBuilder cancelButton = Menu.CANCEL_BUTTON.clone();
 
         cancelButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.PRODUCT_EDIT.open(player, product);
         });
 

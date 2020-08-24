@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.custompayments.menu.content;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.menu.Menus;
@@ -28,7 +27,7 @@ public class MenuHome implements PredefinedMenu {
         configButton.setLore(UI.color("Modify your configuration", UI.TEXT_COLOR));
 
         configButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.CONFIG.open(player);
         });
 
@@ -59,7 +58,7 @@ public class MenuHome implements PredefinedMenu {
         fieldsButton.setLore(UI.color("Manage order fields", UI.TEXT_COLOR));
 
         fieldsButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.FIELD_LIST.open(player);
         });
 
@@ -72,7 +71,7 @@ public class MenuHome implements PredefinedMenu {
         orderButton.setLore(UI.color("Manage orders", UI.TEXT_COLOR));
 
         orderButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             Menus.ORDER_LIST.open(player);
         });
 
@@ -92,7 +91,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder closeButton = Menu.CLOSE_BUTTON.clone();
 
         closeButton.setClickListener(event -> {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            UI.playSound(player, UI.CLICK_SOUND);
             player.closeInventory();
         });
 
