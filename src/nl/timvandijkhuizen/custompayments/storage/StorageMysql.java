@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Material;
 
@@ -15,16 +17,21 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Field;
+import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
+import nl.timvandijkhuizen.custompayments.base.GatewayType;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
+import nl.timvandijkhuizen.custompayments.elements.Gateway;
+import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
+import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
-import nl.timvandijkhuizen.spigotutils.config.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class StorageMysql extends Storage {
@@ -34,21 +41,47 @@ public class StorageMysql extends Storage {
 
     @Override
     public void load() throws Exception {
-        YamlConfig config = CustomPayments.getInstance().getConfig();
+        PluginConfiguration config = CustomPayments.getInstance().getConfig();
 
-        // Add MySQL options
-        config.addOption(new ConfigOption<>("storage.host", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Host")).setReadOnly(true));
-        config.addOption(new ConfigOption<>("storage.port", ConfigTypes.INTEGER).setIcon(new ConfigIcon(Material.CHEST, "Storage Port")).setReadOnly(true));
-        config.addOption(new ConfigOption<>("storage.database", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Database")).setReadOnly(true));
-        config.addOption(new ConfigOption<>("storage.username", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Username")).setReadOnly(true));
-        config.addOption(new ConfigOption<>("storage.password", ConfigTypes.PASSWORD).setIcon(new ConfigIcon(Material.CHEST, "Storage Password")).setReadOnly(true));
+        // Create configuration options
+        ConfigOption<String> optionHost = new ConfigOption<>("storage.host", ConfigTypes.STRING)
+            .setIcon(new ConfigIcon(Material.CHEST, "Storage Host"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        ConfigOption<Integer> optionPort = new ConfigOption<>("storage.port", ConfigTypes.INTEGER)
+            .setIcon(new ConfigIcon(Material.CHEST, "Storage Port"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        ConfigOption<String> optionDatabase = new ConfigOption<>("storage.database", ConfigTypes.STRING)
+            .setIcon(new ConfigIcon(Material.CHEST, "Storage Database"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        ConfigOption<String> optionUsername = new ConfigOption<>("storage.username", ConfigTypes.STRING)
+            .setIcon(new ConfigIcon(Material.CHEST, "Storage Username"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        ConfigOption<String> optionPassword = new ConfigOption<>("storage.password", ConfigTypes.PASSWORD)
+            .setIcon(new ConfigIcon(Material.CHEST, "Storage Password"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        // Add configuration options
+        config.addOption(optionHost);
+        config.addOption(optionPort);
+        config.addOption(optionDatabase);
+        config.addOption(optionUsername);
+        config.addOption(optionPassword);
         
         // Get MySQL option values
-        String host = config.getOptionValue("storage.host");
-        Integer port = config.getOptionValue("storage.port");
-        String database = config.getOptionValue("storage.database");
-        String username = config.getOptionValue("storage.username");
-        String password = config.getOptionValue("storage.password");
+        String host = optionHost.getValue(config);
+        Integer port = optionPort.getValue(config);
+        String database = optionDatabase.getValue(config);
+        String username = optionUsername.getValue(config);
+        String password = optionPassword.getValue(config);
 
         // Validate option values
         if (host == null || port == null || database == null || username == null || password == null) {
@@ -120,6 +153,22 @@ public class StorageMysql extends Storage {
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "name VARCHAR(50) NOT NULL"
         + ");");
+        
+        PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
+            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "reference VARCHAR(20) NOT NULL,"
+            + "playerUniqueId VARCHAR(36) NOT NULL,"
+            + "playerName VARCHAR(16) NOT NULL,"
+            + "currency VARCHAR(255) NOT NULL,"
+            + "completed BOOLEAN NOT NULL"
+        + ");");
+        
+        PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
+            +"id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "displayName VARCHAR(40) NOT NULL,"
+            + "type VARCHAR(50) NOT NULL,"
+            + "config JSON NOT NULL"
+        + ");");
 
         // Execute queries
         // ===========================
@@ -127,6 +176,8 @@ public class StorageMysql extends Storage {
         createProducts.execute();
         createCommands.execute();
         createFields.execute();
+        createOrders.execute();
+        createGateways.execute();
 
         // Cleanup
         // ===========================
@@ -134,6 +185,8 @@ public class StorageMysql extends Storage {
         createProducts.close();
         createCommands.close();
         createFields.close();
+        createOrders.close();
+        createGateways.close();
 
         connection.close();
     }
@@ -156,6 +209,7 @@ public class StorageMysql extends Storage {
             int id = result.getInt(1);
             String name = result.getString(2);
             String description = result.getString(3);
+            
 
             categories.add(new Category(id, name, description));
         }
@@ -433,6 +487,210 @@ public class StorageMysql extends Storage {
     @Override
     public void deleteField(Field<?> field) throws Exception {
 
+    }
+    
+    /**
+     * Orders
+     */
+
+    @Override
+    public List<Order> getOrders() throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM orders";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        List<Order> orders = new ArrayList<>();
+
+        while (result.next()) {
+            int id = result.getInt(1);
+            String reference = result.getString(2);
+            UUID playerUniqueId = UUID.fromString(result.getString(3));
+            String playerName = result.getString(4);
+            Currency currency = Currency.getInstance(result.getString(5));
+            boolean completed = result.getBoolean(6);
+
+            // Add order to list
+            orders.add(new Order(id, reference, playerUniqueId, playerName, currency, completed));
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return orders;
+    }
+
+    @Override
+    public void createOrder(Order order) throws Exception {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO orders (reference, playerUniqueId, playerName, currency, completed) VALUES (?, ?, ?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // Set arguments
+        statement.setString(1, order.getReference());
+        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setString(3, order.getPlayerName());
+        statement.setString(4, order.getCurrency().getCurrencyCode());
+        statement.setBoolean(5, order.isCompleted());
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            order.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void updateOrder(Order order) throws Exception {
+        Connection connection = getConnection();
+        String sql = "UPDATE orders SET reference=?, playerUniqueId=?, playerName=?, currency=?, completed=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setString(1, order.getReference());
+        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setString(3, order.getPlayerName());
+        statement.setString(4, order.getCurrency().getCurrencyCode());
+        statement.setBoolean(5, order.isCompleted());
+        statement.setInt(6, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void deleteOrder(Order order) throws Exception {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM orders WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setInt(1, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    /**
+     * Gateways
+     */
+
+    @Override
+    public List<Gateway> getGateways() throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM gateways";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        List<Gateway> gateways = new ArrayList<>();
+
+        while (result.next()) {
+            int id = result.getInt(1);
+            String displayName = result.getString(2);
+            String typeHandle = result.getString(3);
+            String json = result.getString(4);
+
+            // Get type by handle
+            GatewayType type = gatewayService.getTypeByHandle(typeHandle);
+            
+            if(type != null) {
+                GatewayConfig config = DbHelper.parseGatewayConfig(json, type);
+                gateways.add(new Gateway(id, displayName, type, config));
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return gateways;
+    }
+
+    @Override
+    public void createGateway(Gateway gateway) throws Exception {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO gateways (displayName, type, config) VALUES (?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // Set arguments
+        statement.setString(1, gateway.getDisplayName());
+        statement.setString(2, gateway.getType().getHandle());
+        statement.setString(3, DbHelper.prepareGatewayConfig(gateway.getConfig()));
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            gateway.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void updateGateway(Gateway gateway) throws Exception {
+        Connection connection = getConnection();
+        String sql = "UPDATE gateways SET displayName=?, type=?, config=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setString(1, gateway.getDisplayName());
+        statement.setString(2, gateway.getType().getHandle());
+        statement.setString(3, DbHelper.prepareGatewayConfig(gateway.getConfig()));
+        statement.setInt(4, gateway.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void deleteGateway(Gateway gateway) throws Exception {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM gateways WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setInt(1, gateway.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
     }
 
 }

@@ -33,7 +33,7 @@ public class MenuProductEdit implements PredefinedMenu {
     public Menu create(Player player, DataValue... args) {
         ProductService productService = CustomPayments.getInstance().getService("products");
         Product product = args.length == 1 ? args[0].as(Product.class) : new Product();
-        Menu menu = new Menu((product.getId() != null ? "Edit" : "Create") + " product", MenuSize.XXL);
+        Menu menu = new Menu((product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);
 
         // Icon button
         // ===========================

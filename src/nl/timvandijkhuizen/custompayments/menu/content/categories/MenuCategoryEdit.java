@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.menu.content.category;
+package nl.timvandijkhuizen.custompayments.menu.content.categories;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
     public Menu create(Player player, DataValue... args) {
         CategoryService categoryService = CustomPayments.getInstance().getService("categories");
         Category category = args.length == 1 ? args[0].as(Category.class) : new Category();
-        Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " category", MenuSize.LG);
+        Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
 
         // Name button
         // ===========================

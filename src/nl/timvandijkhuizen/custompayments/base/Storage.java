@@ -4,6 +4,8 @@ import java.util.List;
 
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
+import nl.timvandijkhuizen.custompayments.elements.Gateway;
+import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
@@ -126,5 +128,69 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void deleteField(Field<?> field) throws Exception;
+    
+    /**
+     * Returns all orders.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract List<Order> getOrders() throws Exception;
+
+    /**
+     * Creates an order.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void createOrder(Order order) throws Exception;
+
+    /**
+     * Updates an order.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void updateOrder(Order order) throws Exception;
+
+    /**
+     * Deletes an order.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void deleteOrder(Order order) throws Exception;
+    
+    /**
+     * Returns all gateways.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract List<Gateway> getGateways() throws Exception;
+
+    /**
+     * Creates a gateway.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void createGateway(Gateway gateway) throws Exception;
+
+    /**
+     * Updates a gateway.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void updateGateway(Gateway gateway) throws Exception;
+
+    /**
+     * Deletes a gateway.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void deleteGateway(Gateway gateway) throws Exception;
 
 }

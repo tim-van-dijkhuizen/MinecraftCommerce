@@ -1,18 +1,44 @@
 package nl.timvandijkhuizen.custompayments.base;
 
+import java.util.Collection;
+
+import org.bukkit.Material;
+
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Transaction;
 import nl.timvandijkhuizen.custompayments.elements.TransactionResponse;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
-public interface Gateway {
+public interface GatewayType {
 
     /**
-     * Returns the handle of the gateway.
+     * Returns the type name.
+     * 
+     * @return
+     */
+    public String getName();
+    
+    /**
+     * Returns the type handle.
      * 
      * @return
      */
     public String getHandle();
 
+    /**
+     * Returns the type icon.
+     * 
+     * @return
+     */
+    public Material getIcon();
+    
+    /**
+     * Returns all configuration options.
+     * 
+     * @return
+     */
+    public Collection<ConfigOption<?>> getOptions();
+    
     /**
      * Creates a transaction.
      * 

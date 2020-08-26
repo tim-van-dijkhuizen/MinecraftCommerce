@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenCategoryList;
+import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenGatewayList;
+import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenOrderList;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -21,7 +23,7 @@ public class MenuHome implements PredefinedMenu {
         Menu menu = new Menu("Custom payments", MenuSize.XL);
 
         // Configuration button
-        MenuItemBuilder configButton = new MenuItemBuilder(Material.REPEATER);
+        MenuItemBuilder configButton = new MenuItemBuilder(Material.COMPARATOR);
 
         configButton.setName(UI.color("Configuration", UI.PRIMARY_COLOR, ChatColor.BOLD));
         configButton.setLore(UI.color("Modify your configuration", UI.TEXT_COLOR));
@@ -64,16 +66,21 @@ public class MenuHome implements PredefinedMenu {
 
         menu.setButton(fieldsButton, 20);
 
+        // Gateways button
+        MenuItemBuilder gatewayButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+
+        gatewayButton.setName(UI.color("Gateways", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        gatewayButton.setLore(UI.color("Manage gateways", UI.TEXT_COLOR));
+        gatewayButton.setClickListener(new OpenGatewayList());
+
+        menu.setButton(gatewayButton, 22);
+        
         // Orders button
-        MenuItemBuilder orderButton = new MenuItemBuilder(Material.BOOK);
+        MenuItemBuilder orderButton = new MenuItemBuilder(Material.WRITABLE_BOOK);
 
         orderButton.setName(UI.color("Orders", UI.PRIMARY_COLOR, ChatColor.BOLD));
         orderButton.setLore(UI.color("Manage orders", UI.TEXT_COLOR));
-
-        orderButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
-            Menus.ORDER_LIST.open(player);
-        });
+        orderButton.setClickListener(new OpenOrderList());
 
         menu.setButton(orderButton, 24);
 

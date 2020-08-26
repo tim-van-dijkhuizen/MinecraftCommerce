@@ -20,7 +20,7 @@ public class Category extends Element {
 
     @Override
     protected boolean validate() {
-        if (name == null || name.length() == 0) {
+        if (name.length() == 0) {
             addError("name", "Name is required");
             return false;
         }
@@ -30,7 +30,7 @@ public class Category extends Element {
             return false;
         }
 
-        if (description == null || description.length() == 0) {
+        if (description.length() == 0) {
             addError("description", "Description is required");
             return false;
         }

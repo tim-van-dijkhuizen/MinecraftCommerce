@@ -19,7 +19,7 @@ public class Command extends Element {
 
     @Override
     public boolean validate() {
-        return false;
+        return true;
     }
 
     public void setProductId(Integer productId) {

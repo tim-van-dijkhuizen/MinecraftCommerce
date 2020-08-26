@@ -5,9 +5,15 @@ import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.menu.content.MenuHome;
-import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryEdit;
-import nl.timvandijkhuizen.custompayments.menu.content.category.MenuCategoryList;
+import nl.timvandijkhuizen.custompayments.menu.content.categories.MenuCategoryEdit;
+import nl.timvandijkhuizen.custompayments.menu.content.categories.MenuCategoryList;
 import nl.timvandijkhuizen.custompayments.menu.content.config.MenuConfig;
+import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayEdit;
+import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayList;
+import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayOptions;
+import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayType;
+import nl.timvandijkhuizen.custompayments.menu.content.orders.MenuOrderList;
+import nl.timvandijkhuizen.custompayments.menu.content.orders.MenuOrderView;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCategory;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCommands;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
@@ -36,7 +42,13 @@ public enum Menus {
     FIELD_LIST(null),
     FIELD_EDIT(null),
 
-    ORDER_LIST(null);
+    GATEWAY_LIST(new MenuGatewayList()),
+    GATEWAY_EDIT(new MenuGatewayEdit()),
+    GATEWAY_TYPE(new MenuGatewayType()),
+    GATEWAY_OPTIONS(new MenuGatewayOptions()),
+    
+    ORDER_LIST(new MenuOrderList()),
+    ORDER_VIEW(new MenuOrderView());
 
     private PredefinedMenu predefinedMenu;
 

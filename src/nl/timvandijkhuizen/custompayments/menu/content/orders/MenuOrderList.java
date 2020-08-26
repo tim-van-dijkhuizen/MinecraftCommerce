@@ -1,17 +1,16 @@
-package nl.timvandijkhuizen.custompayments.menu.content.category;
+package nl.timvandijkhuizen.custompayments.menu.content.orders;
 
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.elements.Category;
+import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
-import nl.timvandijkhuizen.custompayments.services.CategoryService;
+import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
@@ -19,30 +18,26 @@ import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuCategoryList implements PredefinedMenu {
+public class MenuOrderList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        CategoryService categoryService = CustomPayments.getInstance().getService("categories");
-        PagedMenu menu = new PagedMenu("Product Categories", 3, 7, 1, 1);
+        OrderService orderService = CustomPayments.getInstance().getService("orders");
+        PagedMenu menu = new PagedMenu("Orders", 3, 7, 1, 1, 1, 5, 7);
 
-        // Add category buttons
-        List<Category> categories = args[0].asList(Category.class);
+        // Add order buttons
+        List<Order> orders = args[0].asList(Order.class);
 
-        for (Category category : categories) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.CHEST_MINECART);
+        for (Order order : orders) {
+            MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);
 
-            // Set category name
-            item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            // Set order name
+            item.setName(UI.color(order.getReference(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setLore(UI.color("UUID: ", UI.TEXT_COLOR) + UI.color(order.getPlayerUniqueId().toString(), UI.SECONDARY_COLOR));
+            item.addLore(UI.color("Username: ", UI.TEXT_COLOR) + UI.color(order.getPlayerName(), UI.SECONDARY_COLOR));
+            item.addLore(UI.color("Currency: ", UI.TEXT_COLOR) + UI.color(order.getCurrency().getDisplayName(), UI.SECONDARY_COLOR));
 
-            // Split lore into smaller lines
-            String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
-
-            for (String line : lines) {
-                item.addLore(UI.color(line, UI.TEXT_COLOR));
-            }
-
-            item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.addLore("", UI.color("Use left-click to view.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
             // Set click listener
@@ -52,19 +47,19 @@ public class MenuCategoryList implements PredefinedMenu {
                 UI.playSound(player, UI.CLICK_SOUND);
                 
                 if (clickType == ClickType.LEFT) {
-                    Menus.CATEGORY_EDIT.open(player, category);
+                    Menus.ORDER_VIEW.open(player, order);
                 } else if (clickType == ClickType.RIGHT) {
                     item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
                     menu.refresh();
 
-                    categoryService.deleteCategory(category, success -> {
+                    orderService.deleteOrder(order, success -> {
                         if (success) {
                             UI.playSound(player, UI.DELETE_SOUND);
                             menu.removePagedButton(item);
                             menu.refresh();
                         } else {
                             UI.playSound(player, UI.ERROR_SOUND);
-                            item.setLore(UI.color("Error: Failed to delete category.", UI.ERROR_COLOR));
+                            item.setLore(UI.color("Error: Failed to delete order.", UI.ERROR_COLOR));
                             menu.refresh();
                         }
                     });
@@ -83,18 +78,6 @@ public class MenuCategoryList implements PredefinedMenu {
         });
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
-
-        // Create new category button
-        MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
-
-        createButton.setName(UI.color("Create Category", UI.SECONDARY_COLOR, ChatColor.BOLD));
-
-        createButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
-            Menus.CATEGORY_EDIT.open(player);
-        });
-
-        menu.setButton(createButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

@@ -5,36 +5,36 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
-import nl.timvandijkhuizen.custompayments.services.ProductService;
+import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class CommandProduct extends BaseCommand {
+public class CommandGateways extends BaseCommand {
 
     @Override
     public String getCommand() {
-        return "products";
+        return "gateways";
     }
 
     @Override
     public String getUsage() {
-        return "/custompayments products";
+        return "/custompayments gateways";
     }
 
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
-        ProductService productService = CustomPayments.getInstance().getService("products");
+        GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
 
         player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
 
         // Create menu
-        productService.getProducts(products -> {
-            if (products == null) {
-                player.sendMessage(UI.color("Failed to load products.", UI.ERROR_COLOR));
+        gatewayService.getGateways(gateways -> {
+            if (gateways == null) {
+                player.sendMessage(UI.color("Failed to load gateways.", UI.ERROR_COLOR));
                 return;
             }
 
-            Menus.PRODUCT_LIST.open(player, products);
+            Menus.GATEWAY_LIST.open(player, gateways);
         });
     }
 

@@ -1,13 +1,13 @@
-package nl.timvandijkhuizen.custompayments.menu.content.config;
+package nl.timvandijkhuizen.custompayments.menu.content.gateways;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
+import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
@@ -16,14 +16,15 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class MenuConfig implements PredefinedMenu {
+public class MenuGatewayOptions implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        PluginConfiguration config = CustomPayments.getInstance().getConfig();
-        PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
+        Gateway gateway = args[0].as(Gateway.class);
+        GatewayConfig config = gateway.getConfig();
+        PagedMenu menu = new PagedMenu("Gateway Options", 3, 7, 1, 1, 1, 5, 7);
 
-        // Add config options
+        // Add configuration options
         for (ConfigOption option : config.getOptions()) {
             ConfigIcon icon = option.getIcon();
             
@@ -37,29 +38,20 @@ public class MenuConfig implements PredefinedMenu {
             
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
             item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
-            
-            if(option.isReadOnly()) {
-                item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
-            } else {
-                item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
-                item.addEnchantGlow();
-            }
+            item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             
             // Set click listener
-            if(!option.isReadOnly()) {
-                item.setClickListener(event -> {
-                    UI.playSound(player, UI.CLICK_SOUND);
+            item.setClickListener(event -> {
+                UI.playSound(player, UI.CLICK_SOUND);
+                
+                option.getValueInput(player, value -> {
+                    option.setValue(config, value);
                     
-                    option.getValueInput(player, value -> {
-                        option.setValue(config, value);
-                        config.save();
-                        
-                        // Update menu and open it
-                        item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
-                        menu.open(player);
-                    });
+                    // Update menu and open it
+                    item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                    menu.open(player);
                 });
-            }
+            });
             
             menu.addPagedButton(item);
         }
@@ -69,7 +61,7 @@ public class MenuConfig implements PredefinedMenu {
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);
-            Menus.HOME.open(player);
+            Menus.GATEWAY_EDIT.open(player, gateway);
         });
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);

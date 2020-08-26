@@ -41,7 +41,7 @@ public class Product extends Element {
             return false;
         }
 
-        if (name == null || name.length() == 0) {
+        if (name.length() == 0) {
             addError("name", "Name is required");
             return false;
         }
@@ -51,7 +51,7 @@ public class Product extends Element {
             return false;
         }
 
-        if (description == null || description.length() == 0) {
+        if (description.length() == 0) {
             addError("description", "Description is required");
             return false;
         }
