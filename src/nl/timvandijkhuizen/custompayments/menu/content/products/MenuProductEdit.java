@@ -25,6 +25,7 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductEdit implements PredefinedMenu {
@@ -40,7 +41,6 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder iconButton = new MenuItemBuilder(product.getIcon());
 
         iconButton.setName(UI.color("Icon", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        iconButton.setLore(UI.color("Click to set the product price.", UI.TEXT_COLOR));
 
         // Add validation errors to lore
         if (product.hasErrors("icon")) {
@@ -51,6 +51,8 @@ public class MenuProductEdit implements PredefinedMenu {
                 iconButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
             }
         }
+        
+        iconButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Set click listener
         iconButton.setClickListener(event -> {
@@ -65,13 +67,14 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
 
         nameButton.setName(UI.color("Name", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        nameButton.setLore(UI.color("Click to set the product name.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (product.getName().length() > 0) {
             nameButton.addLore(UI.color(product.getName(), UI.SECONDARY_COLOR));
         } else {
             nameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        nameButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (product.hasErrors("name")) {
@@ -114,7 +117,6 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder descriptionButton = new MenuItemBuilder(Material.PAPER);
 
         descriptionButton.setName(UI.color("Description", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        descriptionButton.setLore(UI.color("Click to set the product description.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (product.getDescription().length() > 0) {
             String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
@@ -125,6 +127,8 @@ public class MenuProductEdit implements PredefinedMenu {
         } else {
             descriptionButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (product.hasErrors("description")) {
@@ -167,13 +171,14 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder categoryButton = new MenuItemBuilder(Material.CHEST_MINECART);
 
         categoryButton.setName(UI.color("Category", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        categoryButton.setLore(UI.color("Click to set the product category.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (product.getCategory() != null) {
             categoryButton.addLore(UI.color(product.getCategory().getName(), UI.SECONDARY_COLOR));
         } else {
             categoryButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        categoryButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (product.hasErrors("category")) {
@@ -212,8 +217,10 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder priceButton = new MenuItemBuilder(Material.SUNFLOWER);
 
         priceButton.setName(UI.color("Price", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        priceButton.setLore(UI.color("Click to set the product price.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR), UI.color("" + product.getPrice(), UI.SECONDARY_COLOR));
+        priceButton.setLore(UI.color("" + product.getPrice(), UI.SECONDARY_COLOR));
 
+        priceButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        
         // Add validation errors to lore
         if (product.hasErrors("price")) {
             priceButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
@@ -255,15 +262,16 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder commandsButton = new MenuItemBuilder(Material.COMMAND_BLOCK);
 
         commandsButton.setName(UI.color("Commands", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        commandsButton.setLore(UI.color("Click to set the product commands.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (product.getCommands().size() > 0) {
             for (Command command : product.getCommands()) {
-                commandsButton.addLore(UI.color(" - " + command.getCommand(), UI.SECONDARY_COLOR));
+                commandsButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.SECONDARY_COLOR));
             }
         } else {
             commandsButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        commandsButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         commandsButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);

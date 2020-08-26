@@ -36,7 +36,7 @@ public class MenuConfig implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
             
             if(option.isReadOnly()) {
                 item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));

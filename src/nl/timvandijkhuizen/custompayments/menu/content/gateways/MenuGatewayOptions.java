@@ -37,8 +37,9 @@ public class MenuGatewayOptions implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
-            item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            
+            item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             
             // Set click listener
             item.setClickListener(event -> {

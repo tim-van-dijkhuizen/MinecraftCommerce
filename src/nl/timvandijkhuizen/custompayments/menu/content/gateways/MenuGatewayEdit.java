@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.custompayments.menu.content.gateways;
 
+import java.util.Collection;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
@@ -16,6 +18,7 @@ import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenGatewayList;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -39,13 +42,14 @@ public class MenuGatewayEdit implements PredefinedMenu {
         MenuItemBuilder displayNameButton = new MenuItemBuilder(Material.NAME_TAG);
 
         displayNameButton.setName(UI.color("Display Name", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        displayNameButton.setLore(UI.color("Click to set the gateway display name.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (gateway.getDisplayName().length() > 0) {
             displayNameButton.addLore(UI.color(gateway.getDisplayName(), UI.SECONDARY_COLOR));
         } else {
             displayNameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        displayNameButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("displayName")) {
@@ -88,13 +92,14 @@ public class MenuGatewayEdit implements PredefinedMenu {
         MenuItemBuilder typeButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
 
         typeButton.setName(UI.color("Type", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        typeButton.setLore(UI.color("Click to set the gateway type.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (gateway.getType() != null) {
             typeButton.addLore(UI.color(gateway.getType().getName(), UI.SECONDARY_COLOR));
         } else {
             typeButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        typeButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("type")) {
@@ -119,21 +124,29 @@ public class MenuGatewayEdit implements PredefinedMenu {
         MenuItemBuilder optionButton = new MenuItemBuilder(Material.COMPARATOR);
 
         optionButton.setName(UI.color("Options", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        optionButton.setLore(UI.color("Click to set the gateway options.", UI.TEXT_COLOR), "");
 
         // Add configuration to lore
         if(gateway.getType() != null) {
-            optionButton.addLore(UI.color("Configuration:", UI.TEXT_COLOR));
+            Collection<ConfigOption<?>> options = gateway.getType().getOptions();
             
-            for(ConfigOption<?> option : gateway.getType().getOptions()) {
-                GatewayConfig config = gateway.getConfig();
-                String value = option.getValueLore(config);
-                
-                optionButton.addLore(UI.color(UI.TAB + option.getPath() + " " + Icon.ARROW_RIGHT + " ", UI.TEXT_COLOR) + UI.color(value, UI.SECONDARY_COLOR));
+            if(options.size() > 0) {
+                for(ConfigOption<?> option : options) {
+                    GatewayConfig config = gateway.getConfig();
+                    String value = option.getValueLore(config);
+                    ConfigIcon icon = option.getIcon();
+                    
+                    if(icon != null) {
+                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(value, UI.SECONDARY_COLOR));
+                    }
+                }
+            } else {
+                optionButton.addLore(UI.color(UI.TAB + "None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             }
         } else {
-            optionButton.addLore(UI.color("Select a gateway type first.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            optionButton.addLore(UI.color("Select a gateway type first.", UI.ERROR_COLOR, ChatColor.ITALIC));
         }
+        
+        optionButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("config")) {

@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.gateways;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -12,6 +13,7 @@ import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -33,6 +35,7 @@ public class MenuGatewayList implements PredefinedMenu {
 
         for (Gateway gateway : gateways) {
             MenuItemBuilder item = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+            Collection<ConfigOption<?>> options = gateway.getType().getOptions();
 
             // Set gateway name
             item.setName(UI.color(gateway.getDisplayName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
@@ -41,11 +44,18 @@ public class MenuGatewayList implements PredefinedMenu {
             // Add configuration to lore
             item.addLore(UI.color("Configuration:", UI.TEXT_COLOR));
             
-            for(ConfigOption<?> option : gateway.getType().getOptions()) {
-                GatewayConfig config = gateway.getConfig();
-                String value = option.getValueLore(config);
-                
-                item.addLore(UI.color(UI.TAB + option.getPath() + " " + Icon.ARROW_RIGHT + " ", UI.TEXT_COLOR) + UI.color(value, UI.SECONDARY_COLOR));
+            if(options.size() > 0) {
+                for(ConfigOption<?> option : options) {
+                    GatewayConfig config = gateway.getConfig();
+                    String value = option.getValueLore(config);
+                    ConfigIcon icon = option.getIcon();
+                    
+                    if(icon != null) {
+                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(value, UI.SECONDARY_COLOR));
+                    }
+                }
+            } else {
+                item.addLore(UI.color(UI.TAB + "None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             }
 
             item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));

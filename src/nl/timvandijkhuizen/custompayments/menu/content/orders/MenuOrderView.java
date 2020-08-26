@@ -24,8 +24,8 @@ public class MenuOrderView implements PredefinedMenu {
         // ===========================
         MenuItemBuilder uniqueIdButton = new MenuItemBuilder(Material.PLAYER_HEAD);
 
+        uniqueIdButton.setSkullOwner(order.getPlayerUniqueId());
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        uniqueIdButton.setLore(UI.color("Value:", UI.TEXT_COLOR));
         uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.SECONDARY_COLOR));
         
         menu.setButton(uniqueIdButton, 10);
@@ -35,7 +35,6 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder usernameButton = new MenuItemBuilder(Material.NAME_TAG);
 
         usernameButton.setName(UI.color("Player Username", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        usernameButton.setLore(UI.color("Value:", UI.TEXT_COLOR));
         usernameButton.addLore(UI.color(order.getPlayerName(), UI.SECONDARY_COLOR));
         
         menu.setButton(usernameButton, 12);
@@ -45,7 +44,6 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder currencyButton = new MenuItemBuilder(Material.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        currencyButton.setLore(UI.color("Value:", UI.TEXT_COLOR));
         currencyButton.addLore(UI.color(order.getCurrency().getDisplayName(), UI.SECONDARY_COLOR));
         
         menu.setButton(currencyButton, 14);
@@ -55,7 +53,6 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder completedButton = new MenuItemBuilder(Material.FIREWORK_ROCKET);
 
         completedButton.setName(UI.color("Completed", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        completedButton.setLore(UI.color("Value:", UI.TEXT_COLOR));
         completedButton.addLore(UI.color(order.isCompleted() ? "Yes" : "No", UI.SECONDARY_COLOR));
         
         menu.setButton(completedButton, 16);

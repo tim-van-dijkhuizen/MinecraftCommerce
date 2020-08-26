@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
@@ -17,6 +18,7 @@ import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductList implements PredefinedMenu {
@@ -40,6 +42,21 @@ public class MenuProductList implements PredefinedMenu {
 
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.TEXT_COLOR));
+            }
+            
+            // Category and price
+            item.addLore("", UI.color("Category: ", UI.TEXT_COLOR) + UI.color(product.getCategory().getName(), UI.SECONDARY_COLOR));
+            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color("" + product.getPrice(), UI.SECONDARY_COLOR), "");
+            
+            // Commands
+            item.addLore(UI.color("Commands:", UI.TEXT_COLOR));
+            
+            if(product.getCommands().size() > 0) {
+                for (Command command : product.getCommands()) {
+                    item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.SECONDARY_COLOR));
+                }
+            } else {
+                item.addLore(UI.color(UI.TAB + "None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             }
 
             item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));

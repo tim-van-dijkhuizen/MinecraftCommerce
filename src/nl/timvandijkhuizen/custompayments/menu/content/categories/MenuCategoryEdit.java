@@ -37,7 +37,6 @@ public class MenuCategoryEdit implements PredefinedMenu {
         MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
 
         nameButton.setName(UI.color("Name", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        nameButton.setLore(UI.color("Click to set the category name.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (category.getName().length() > 0) {
             nameButton.addLore(UI.color(category.getName(), UI.SECONDARY_COLOR));
@@ -45,6 +44,8 @@ public class MenuCategoryEdit implements PredefinedMenu {
             nameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
 
+        nameButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        
         // Add validation errors to lore
         if (category.hasErrors("name")) {
             nameButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
@@ -86,7 +87,6 @@ public class MenuCategoryEdit implements PredefinedMenu {
         MenuItemBuilder descriptionButton = new MenuItemBuilder(Material.PAPER);
 
         descriptionButton.setName(UI.color("Description", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        descriptionButton.setLore(UI.color("Click to set the category description.", UI.TEXT_COLOR), "", UI.color("Current value:", UI.TEXT_COLOR));
 
         if (category.getDescription().length() > 0) {
             String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
@@ -97,6 +97,8 @@ public class MenuCategoryEdit implements PredefinedMenu {
         } else {
             descriptionButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         }
+        
+        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (category.hasErrors("description")) {
