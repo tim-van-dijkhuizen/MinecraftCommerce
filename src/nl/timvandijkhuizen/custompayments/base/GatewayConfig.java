@@ -39,8 +39,9 @@ public class GatewayConfig extends MemoryConfiguration implements OptionConfig {
     }
     
     @Override
-    public ConfigOption<?> getOption(String path) {
-        return getOptions().stream().filter(i -> i.getPath().equals(path)).findFirst().orElse(null);
+    @SuppressWarnings("unchecked")
+    public <T> ConfigOption<T> getOption(String path) {
+        return getOptions().stream().filter(i -> i.getPath().equals(path)).map(i -> (ConfigOption<T>) i).findFirst().orElse(null);
     }
     
 }

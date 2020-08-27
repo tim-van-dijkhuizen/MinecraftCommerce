@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.ClickType;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.helpers.PriceHelper;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
@@ -46,7 +47,7 @@ public class MenuProductList implements PredefinedMenu {
             
             // Category and price
             item.addLore("", UI.color("Category: ", UI.TEXT_COLOR) + UI.color(product.getCategory().getName(), UI.SECONDARY_COLOR));
-            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color("" + product.getPrice(), UI.SECONDARY_COLOR), "");
+            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color(PriceHelper.format(product.getPrice()), UI.SECONDARY_COLOR), "");
             
             // Commands
             item.addLore(UI.color("Commands:", UI.TEXT_COLOR));

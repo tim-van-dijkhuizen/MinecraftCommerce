@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.custompayments;
 
+import java.util.Currency;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -36,7 +38,20 @@ public class CustomPayments extends PluginBase {
         // Setup config
         config = new PluginConfiguration(this);
         
-        config.addOption(new ConfigOption<>("storage.type", ConfigTypes.STRING).setIcon(new ConfigIcon(Material.CHEST, "Storage Type")).setReadOnly(true));
+        // Create options
+        ConfigOption<String> optionStorageType = new ConfigOption<>("storage.type", ConfigTypes.STRING)
+            .setIcon(new ConfigIcon(Material.ENDER_CHEST, "Storage Type"))
+            .setRequired(true)
+            .setReadOnly(true);
+        
+        ConfigOption<Currency> optionCurrency = new ConfigOption<>("general.currency", ConfigTypes.CURRENCY)
+            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currency"))
+            .setRequired(true)
+            .setDefaultValue(Currency.getInstance(Locale.US));
+        
+        // Add options
+        config.addOption(optionStorageType);
+        config.addOption(optionCurrency);
     }
 
     @Override
