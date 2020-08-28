@@ -51,8 +51,8 @@ public class MenuConfig implements PredefinedMenu {
             }
             
             // Set click listener
-            if(!option.isReadOnly()) {
-                item.setClickListener(event -> {
+            item.setClickListener(event -> {
+                if(!option.isReadOnly()) {
                     UI.playSound(player, UI.CLICK_SOUND);
                     
                     option.getValueInput(player, value -> {
@@ -68,8 +68,10 @@ public class MenuConfig implements PredefinedMenu {
                         
                         menu.open(player);
                     });
-                });
-            }
+                } else {
+                    UI.playSound(player, UI.ERROR_SOUND);
+                }
+            });
             
             menu.addPagedButton(item);
         }
