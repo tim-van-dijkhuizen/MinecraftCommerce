@@ -7,7 +7,7 @@ import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
@@ -20,7 +20,7 @@ public class MenuConfig implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        PluginConfiguration config = CustomPayments.getInstance().getConfig();
+        YamlConfig config = CustomPayments.getInstance().getConfig();
         PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
 
         // Add config options
@@ -36,7 +36,12 @@ public class MenuConfig implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            
+            if(!option.isValueEmpty(config)) {
+                item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            } else {
+                item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            }
             
             if(option.isReadOnly()) {
                 item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
@@ -55,7 +60,12 @@ public class MenuConfig implements PredefinedMenu {
                         config.save();
                         
                         // Update menu and open it
-                        item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                        if(!option.isValueEmpty(config)) {
+                            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                        } else {
+                            item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC), 0);
+                        }
+                        
                         menu.open(player);
                     });
                 });

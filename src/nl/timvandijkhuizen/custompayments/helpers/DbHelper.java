@@ -25,7 +25,7 @@ public class DbHelper {
     }
     
     public static String prepareGatewayConfig(GatewayConfig config) {
-        return GSON.toJson(config.getValues(false));
+        return GSON.toJson(config.getJson());
     }
 
     public static GatewayConfig parseGatewayConfig(String raw, GatewayType type) {

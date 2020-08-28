@@ -5,7 +5,7 @@ import java.util.Currency;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class PriceHelper {
 
@@ -18,9 +18,8 @@ public class PriceHelper {
     }
     
     public static String format(float price) {
-        PluginConfiguration config = CustomPayments.getInstance().getConfig();
+        YamlConfig config = CustomPayments.getInstance().getConfig();
         ConfigOption<Currency> option = config.getOption("general.currency");
-        
         return format(price, option.getValue(config));
     }
     

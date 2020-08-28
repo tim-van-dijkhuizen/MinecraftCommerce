@@ -20,15 +20,14 @@ import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
-import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
-import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class CustomPayments extends PluginBase {
     
     private static CustomPayments instance;
-    private PluginConfiguration config;
+    private YamlConfig config;
 
     @Override
     public void load() throws Exception {
@@ -36,7 +35,7 @@ public class CustomPayments extends PluginBase {
         MainThread.setPlugin(this);
         
         // Setup config
-        config = new PluginConfiguration(this);
+        config = new YamlConfig(this);
         
         // Create options
         ConfigOption<String> optionStorageType = new ConfigOption<>("storage.type", ConfigTypes.STRING)
@@ -84,14 +83,14 @@ public class CustomPayments extends PluginBase {
 
         // Register chosen storage type
         Map<String, Class<? extends Storage>> storageTypes = event.getStorageTypes();
-        ConfigOption<?> optionType = config.getOption("storage.type");
-        String storageTypeKey = optionType.getValueLore(config);
+        ConfigOption<String> optionType = config.getOption("storage.type");
+        String storageTypeKey = optionType.getValue(config);
 
         if (storageTypes.containsKey(storageTypeKey)) {
             Class<? extends Storage> storageClass = storageTypes.get(storageTypeKey);
             return storageClass.newInstance();
         } else {
-            throw new ConfigurationException("Unsupported database driver");
+            throw new RuntimeException("Unsupported database driver");
         }
     }
 
@@ -99,7 +98,7 @@ public class CustomPayments extends PluginBase {
         return instance;
     }
 
-    public PluginConfiguration getConfig() {
+    public YamlConfig getConfig() {
         return config;
     }
 

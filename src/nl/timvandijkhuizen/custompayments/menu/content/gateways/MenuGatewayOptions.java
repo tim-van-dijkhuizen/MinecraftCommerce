@@ -37,7 +37,12 @@ public class MenuGatewayOptions implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            
+            if(!option.isValueEmpty(config)) {
+                item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+            } else {
+                item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            }
             
             item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             
@@ -49,7 +54,12 @@ public class MenuGatewayOptions implements PredefinedMenu {
                     option.setValue(config, value);
                     
                     // Update menu and open it
-                    item.setLore(UI.color("Current value: ", UI.TEXT_COLOR) + UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                    if(!option.isValueEmpty(config)) {
+                        item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                    } else {
+                        item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC), 0);
+                    }
+                    
                     menu.open(player);
                 });
             });

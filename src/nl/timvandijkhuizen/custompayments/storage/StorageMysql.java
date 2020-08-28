@@ -30,8 +30,7 @@ import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
-import nl.timvandijkhuizen.spigotutils.config.ConfigurationException;
-import nl.timvandijkhuizen.spigotutils.config.PluginConfiguration;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class StorageMysql extends Storage {
@@ -41,7 +40,7 @@ public class StorageMysql extends Storage {
 
     @Override
     public void load() throws Exception {
-        PluginConfiguration config = CustomPayments.getInstance().getConfig();
+        YamlConfig config = CustomPayments.getInstance().getConfig();
 
         // Create configuration options
         ConfigOption<String> optionHost = new ConfigOption<>("storage.host", ConfigTypes.STRING)
@@ -85,7 +84,7 @@ public class StorageMysql extends Storage {
 
         // Validate option values
         if (host == null || port == null || database == null || username == null || password == null) {
-            throw new ConfigurationException("Missing required MySQL configuration");
+            throw new RuntimeException("Missing required MySQL configuration");
         }
         
         // Create MySQL configuration and datasource
