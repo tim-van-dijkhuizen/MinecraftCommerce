@@ -1,13 +1,15 @@
 package nl.timvandijkhuizen.custompayments;
 
-import java.util.Currency;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.base.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
+import nl.timvandijkhuizen.custompayments.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
@@ -21,6 +23,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
@@ -43,14 +46,20 @@ public class CustomPayments extends PluginBase {
             .setRequired(true)
             .setReadOnly(true);
         
-        ConfigOption<Currency> optionCurrency = new ConfigOption<>("general.currency", ConfigTypes.CURRENCY)
-            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currency"))
+        ConfigOption<List<StoreCurrency>> optionCurrencies = new ConfigOption<>("general.currencies", new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
+                .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currencies"))
+                .setRequired(true)
+                .setDefaultValue(Arrays.asList(new StoreCurrency("USD", 1)));
+        
+        ConfigOption<StoreCurrency> optionBaseCurrency = new ConfigOption<>("general.baseCurrency", new ConfigTypeStoreCurrency())
+            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Base Currency"))
             .setRequired(true)
-            .setDefaultValue(Currency.getInstance(Locale.US));
+            .setDefaultValue(new StoreCurrency("USD", 1));
         
         // Add options
         config.addOption(optionStorageType);
-        config.addOption(optionCurrency);
+        config.addOption(optionCurrencies);
+        config.addOption(optionBaseCurrency);
     }
 
     @Override

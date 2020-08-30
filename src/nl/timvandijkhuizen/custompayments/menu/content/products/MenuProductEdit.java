@@ -218,7 +218,7 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder priceButton = new MenuItemBuilder(Material.SUNFLOWER);
 
         priceButton.setName(UI.color("Price", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        priceButton.setLore(UI.color(PriceHelper.format(product.getPrice()), UI.SECONDARY_COLOR));
+        priceButton.setLore(UI.color(PriceHelper.localize(product.getPrice()), UI.SECONDARY_COLOR));
 
         priceButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         

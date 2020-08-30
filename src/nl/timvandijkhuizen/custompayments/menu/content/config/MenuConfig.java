@@ -38,9 +38,11 @@ public class MenuConfig implements PredefinedMenu {
             item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
-                item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR));
+                for(String line : option.getValueLore(config)) {
+                    item.addLore(UI.color(line, UI.SECONDARY_COLOR));
+                }
             } else {
-                item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             }
             
             if(option.isReadOnly()) {
@@ -55,17 +57,30 @@ public class MenuConfig implements PredefinedMenu {
                 if(!option.isReadOnly()) {
                     UI.playSound(player, UI.CLICK_SOUND);
                     
-                    option.getValueInput(player, value -> {
+                    option.getValueInput(player, option.getValue(config), value -> {
                         option.setValue(config, value);
                         config.save();
                         
-                        // Update menu and open it
+                        // Clear lore
+                        item.removeLore();
+                        
+                        // Set new lore
                         if(!option.isValueEmpty(config)) {
-                            item.setLore(UI.color(option.getValueLore(config), UI.SECONDARY_COLOR), 0);
+                            for(String line : option.getValueLore(config)) {
+                                item.addLore(UI.color(line, UI.SECONDARY_COLOR));
+                            }
                         } else {
-                            item.setLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC), 0);
+                            item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
                         }
                         
+                        if(option.isReadOnly()) {
+                            item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                        } else {
+                            item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                            item.addEnchantGlow();
+                        }
+                        
+                        // Open menu
                         menu.open(player);
                     });
                 } else {

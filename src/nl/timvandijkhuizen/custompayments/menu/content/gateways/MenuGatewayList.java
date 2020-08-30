@@ -49,14 +49,17 @@ public class MenuGatewayList implements PredefinedMenu {
                     GatewayConfig config = gateway.getConfig();
                     ConfigIcon icon = option.getIcon();
                     
-                    if(icon != null) {
-                        String valueLore = UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC);
-                        
-                        if(!option.isValueEmpty(config)) {
-                            valueLore = UI.color(option.getValueLore(config), UI.SECONDARY_COLOR);
+                    // Ignore options without an icon
+                    if(icon == null) {
+                        continue;
+                    }
+                    
+                    if(!option.isValueEmpty(config)) {
+                        for(String line : option.getValueLore(config)) {
+                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(line, UI.SECONDARY_COLOR));
                         }
-                        
-                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + valueLore);
+                    } else {
+                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
                     }
                 }
             } else {

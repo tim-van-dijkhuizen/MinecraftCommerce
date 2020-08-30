@@ -1,26 +1,23 @@
 package nl.timvandijkhuizen.custompayments.helpers;
 
-import java.text.NumberFormat;
-import java.util.Currency;
-
 import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.StoreCurrency;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class PriceHelper {
 
-    public static String format(float price, Currency currency) {
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        
-        format.setCurrency(currency);
-        
-        return format.format(price);
+    public static String localize(float price, StoreCurrency currency) {
+        float realPrice = price *= currency.getConversionRate();
+        return realPrice + " " + currency.getCode();
     }
     
-    public static String format(float price) {
+    public static String localize(float price) {
         YamlConfig config = CustomPayments.getInstance().getConfig();
-        ConfigOption<Currency> option = config.getOption("general.currency");
-        return format(price, option.getValue(config));
+        ConfigOption<StoreCurrency> option = config.getOption("general.baseCurrency");
+        StoreCurrency baseCurrency = option.getValue(config);
+        
+        return localize(price, baseCurrency);
     }
     
 }

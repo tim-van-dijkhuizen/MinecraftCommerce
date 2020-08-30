@@ -34,7 +34,7 @@ public class MenuProductList implements PredefinedMenu {
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
-
+            
             // Set product name
             item.setName(UI.color(product.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
 
@@ -47,7 +47,7 @@ public class MenuProductList implements PredefinedMenu {
             
             // Category and price
             item.addLore("", UI.color("Category: ", UI.TEXT_COLOR) + UI.color(product.getCategory().getName(), UI.SECONDARY_COLOR));
-            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color(PriceHelper.format(product.getPrice()), UI.SECONDARY_COLOR), "");
+            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color(PriceHelper.localize(product.getPrice()), UI.SECONDARY_COLOR), "");
             
             // Commands
             item.addLore(UI.color("Commands:", UI.TEXT_COLOR));
