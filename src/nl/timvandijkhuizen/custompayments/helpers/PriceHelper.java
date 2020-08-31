@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.custompayments.helpers;
 
+import java.text.DecimalFormat;
+
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.StoreCurrency;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -8,8 +10,8 @@ import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 public class PriceHelper {
 
     public static String localize(float price, StoreCurrency currency) {
-        float realPrice = price *= currency.getConversionRate();
-        return realPrice + " " + currency.getCode();
+        DecimalFormat format = currency.getFormat();
+        return format.format(price *= currency.getConversionRate());
     }
     
     public static String localize(float price) {

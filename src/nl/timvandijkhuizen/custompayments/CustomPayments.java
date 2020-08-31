@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.custompayments;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class CustomPayments extends PluginBase {
     
+    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
+    
     private static CustomPayments instance;
     private YamlConfig config;
 
@@ -49,12 +52,12 @@ public class CustomPayments extends PluginBase {
         ConfigOption<List<StoreCurrency>> optionCurrencies = new ConfigOption<>("general.currencies", new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
                 .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currencies"))
                 .setRequired(true)
-                .setDefaultValue(Arrays.asList(new StoreCurrency("USD", 1)));
+                .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
         
         ConfigOption<StoreCurrency> optionBaseCurrency = new ConfigOption<>("general.baseCurrency", new ConfigTypeStoreCurrency())
             .setIcon(new ConfigIcon(Material.SUNFLOWER, "Base Currency"))
             .setRequired(true)
-            .setDefaultValue(new StoreCurrency("USD", 1));
+            .setDefaultValue(DEFAULT_CURRENCY);
         
         // Add options
         config.addOption(optionStorageType);

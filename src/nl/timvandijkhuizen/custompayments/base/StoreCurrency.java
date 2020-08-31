@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.custompayments.base;
 
+import java.text.DecimalFormat;
+
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.NumericPrompt;
@@ -18,10 +20,12 @@ public class StoreCurrency implements ConfigObject {
 
     private String code;
     private float conversionRate;
+    private DecimalFormat format;
     
-    public StoreCurrency(String code, float conversionRate) {
+    public StoreCurrency(String code, float conversionRate, DecimalFormat format) {
         this.code = code;
         this.conversionRate = conversionRate;
+        this.format = format;
     }
     
     public StoreCurrency() { }
@@ -30,23 +34,52 @@ public class StoreCurrency implements ConfigObject {
     public void serialize(ByteArrayDataOutput output) {
         output.writeUTF(code);
         output.writeFloat(conversionRate);
+        output.writeUTF(format.toPattern());
     }
 
     @Override
     public void deserialize(ByteArrayDataInput input) {
         code = input.readUTF();
         conversionRate = input.readFloat();
+        format = new DecimalFormat(input.readUTF());
     }
 
     @Override
-    public String getInputName() {
+    public String getItemName() {
         return code;
     }
     
     @Override
-    public void createNew(Player player, Runnable callback) {
+    public String[] getItemLore() {
+        return new String[] {
+            UI.color("Conversion rate: ", UI.TEXT_COLOR) + UI.color("" + conversionRate, UI.SECONDARY_COLOR),
+            UI.color("Format: ", UI.TEXT_COLOR) + UI.color(format.toPattern(), UI.SECONDARY_COLOR)
+        };
+    }
+    
+    @Override
+    public void getInput(Player player, Runnable callback) {
         ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
+        StringPrompt formatPrompt = new StringPrompt() {
+            @Override
+            public String getPromptText(ConversationContext context) {
+                return UI.color("What should be the format?", UI.PRIMARY_COLOR);
+            }
+
+            @Override
+            public Prompt acceptInput(ConversationContext context, String input) {
+                try {
+                    format = new DecimalFormat(input);
+                    callback.run();
+                    return null;
+                } catch(IllegalArgumentException e) {
+                    context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.ERROR_COLOR));
+                    return this;
+                }
+            }
+        };
+        
         NumericPrompt conversionRatePrompt = new NumericPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -56,8 +89,7 @@ public class StoreCurrency implements ConfigObject {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
                 conversionRate = input.floatValue();
-                callback.run();
-                return null;
+                return formatPrompt;
             }
         };
         
@@ -87,10 +119,22 @@ public class StoreCurrency implements ConfigObject {
     public float getConversionRate() {
         return conversionRate;
     }
+    
+    public DecimalFormat getFormat() {
+        return format;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof StoreCurrency && ((StoreCurrency) obj).getCode().equals(code);
+        if(obj instanceof StoreCurrency) {
+            StoreCurrency currency = (StoreCurrency) obj;
+            
+            return currency.getCode().equals(code)
+                && currency.getConversionRate() == conversionRate
+                && currency.getFormat().equals(format);
+        } else {
+            return false;
+        }
     }
     
 }
