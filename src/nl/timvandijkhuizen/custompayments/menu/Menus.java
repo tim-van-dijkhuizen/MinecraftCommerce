@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.menu.content.MenuHome;
 import nl.timvandijkhuizen.custompayments.menu.content.categories.MenuCategoryEdit;
+import nl.timvandijkhuizen.custompayments.menu.content.categories.MenuCategoryIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.categories.MenuCategoryList;
 import nl.timvandijkhuizen.custompayments.menu.content.config.MenuConfig;
 import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayEdit;
@@ -32,6 +33,7 @@ public enum Menus {
 
     CATEGORY_LIST(new MenuCategoryList()),
     CATEGORY_EDIT(new MenuCategoryEdit()),
+    CATEGORY_ICON(new MenuCategoryIcon()),
 
     PRODUCT_LIST(new MenuProductList()),
     PRODUCT_EDIT(new MenuProductEdit()),

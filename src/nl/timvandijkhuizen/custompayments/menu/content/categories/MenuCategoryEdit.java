@@ -32,6 +32,32 @@ public class MenuCategoryEdit implements PredefinedMenu {
         Category category = args.length == 1 ? args[0].as(Category.class) : new Category();
         Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
 
+        // Icon button
+        // ===========================
+        MenuItemBuilder iconButton = new MenuItemBuilder(category.getIcon());
+
+        iconButton.setName(UI.color("Icon", UI.PRIMARY_COLOR, ChatColor.BOLD));
+
+        // Add validation errors to lore
+        if (category.hasErrors("icon")) {
+            iconButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            iconButton.addEnchantGlow();
+
+            for (String error : category.getErrors("icon")) {
+                iconButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+            }
+        }
+        
+        iconButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+
+        // Set click listener
+        iconButton.setClickListener(event -> {
+            UI.playSound(player, UI.CLICK_SOUND);
+            Menus.CATEGORY_ICON.open(player, category, category.getIcon());
+        });
+
+        menu.setButton(iconButton, 11);
+        
         // Name button
         // ===========================
         MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
@@ -80,7 +106,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(nameButton, 11);
+        menu.setButton(nameButton, 13);
 
         // Description button
         // ===========================

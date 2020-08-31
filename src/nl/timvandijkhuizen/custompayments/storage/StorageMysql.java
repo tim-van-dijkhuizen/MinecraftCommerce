@@ -128,6 +128,7 @@ public class StorageMysql extends Storage {
         // ===========================
         PreparedStatement createCategories = connection.prepareStatement("CREATE TABLE IF NOT EXISTS categories ("
             +"id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "icon VARCHAR(255) NOT NULL,"
             + "name VARCHAR(40) NOT NULL,"
             + "description TEXT NOT NULL"
         + ");");
@@ -206,11 +207,12 @@ public class StorageMysql extends Storage {
 
         while (result.next()) {
             int id = result.getInt(1);
-            String name = result.getString(2);
-            String description = result.getString(3);
+            Material icon = DbHelper.parseMaterial(result.getString(2));
+            String name = result.getString(3);
+            String description = result.getString(4);
             
 
-            categories.add(new Category(id, name, description));
+            categories.add(new Category(id, icon, name, description));
         }
 
         // Cleanup
@@ -224,12 +226,13 @@ public class StorageMysql extends Storage {
     @Override
     public void createCategory(Category category) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO categories (name, description) VALUES (?, ?);";
+        String sql = "INSERT INTO categories (icon, name, description) VALUES (?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Set arguments
-        statement.setString(1, category.getName());
-        statement.setString(2, category.getDescription());
+        statement.setString(1, DbHelper.prepareMaterial(category.getIcon()));
+        statement.setString(2, category.getName());
+        statement.setString(3, category.getDescription());
 
         // Execute query
         statement.executeUpdate();
@@ -250,13 +253,14 @@ public class StorageMysql extends Storage {
     @Override
     public void updateCategory(Category category) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE categories SET name=?, description=? WHERE id=?;";
+        String sql = "UPDATE categories SET icon=?, name=?, description=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set arguments
-        statement.setString(1, category.getName());
-        statement.setString(2, category.getDescription());
-        statement.setInt(3, category.getId());
+        statement.setString(1, DbHelper.prepareMaterial(category.getIcon()));
+        statement.setString(2, category.getName());
+        statement.setString(3, category.getDescription());
+        statement.setInt(4, category.getId());
 
         // Execute query
         statement.execute();
@@ -290,7 +294,7 @@ public class StorageMysql extends Storage {
     @Override
     public List<Product> getProducts() throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.name, categories.description FROM products"
+        String sql = "SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products"
                 + " LEFT JOIN categories ON products.categoryId = categories.id;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -307,9 +311,10 @@ public class StorageMysql extends Storage {
 
             // Get category data
             int categoryId = result.getInt(6);
-            String categoryName = result.getString(7);
-            String categoryDescription = result.getString(8);
-            Category category = new Category(categoryId, categoryName, categoryDescription);
+            Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
+            String categoryName = result.getString(8);
+            String categoryDescription = result.getString(9);
+            Category category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
 
             // Get commands
             List<Command> rawCommands = this.getCommandsByProductId(id);

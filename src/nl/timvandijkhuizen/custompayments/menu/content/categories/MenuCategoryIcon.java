@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.menu.content.products;
+package nl.timvandijkhuizen.custompayments.menu.content.categories;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.elements.Product;
+import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -15,13 +15,13 @@ import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuProductIcon implements PredefinedMenu {
-
+public class MenuCategoryIcon implements PredefinedMenu {
+    
     @Override
     public Menu create(Player player, DataValue... args) {
-        Product product = args[0].as(Product.class);
+        Category category = args[0].as(Category.class);
         Material selected = args[1].as(Material.class);
-        PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Category Icon", 3, 7, 1, 1, 1, 5, 7);
 
         for (Material icon : CustomPayments.MENU_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
@@ -34,9 +34,9 @@ public class MenuProductIcon implements PredefinedMenu {
             }
 
             item.setClickListener(event -> {
-                product.setIcon(icon);
+                category.setIcon(icon);
                 UI.playSound(player, UI.CLICK_SOUND);
-                Menus.PRODUCT_EDIT.open(player, product);
+                Menus.CATEGORY_EDIT.open(player, category);
             });
 
             menu.addPagedButton(item);
@@ -47,7 +47,7 @@ public class MenuProductIcon implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);
-            Menus.PRODUCT_EDIT.open(player, product);
+            Menus.CATEGORY_EDIT.open(player, category);
         });
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);

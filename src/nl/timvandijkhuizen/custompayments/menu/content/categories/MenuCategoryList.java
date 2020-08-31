@@ -30,7 +30,7 @@ public class MenuCategoryList implements PredefinedMenu {
         List<Category> categories = args[0].asList(Category.class);
 
         for (Category category : categories) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.CHEST_MINECART);
+            MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
             // Set category name
             item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));

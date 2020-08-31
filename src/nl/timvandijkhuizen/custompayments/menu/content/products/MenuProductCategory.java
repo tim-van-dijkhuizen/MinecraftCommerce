@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.custompayments.menu.content.products;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.elements.Category;
@@ -27,7 +26,7 @@ public class MenuProductCategory implements PredefinedMenu {
 
         // Add category buttons
         for (Category category : categories) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.CHEST_MINECART);
+            MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
             item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
 

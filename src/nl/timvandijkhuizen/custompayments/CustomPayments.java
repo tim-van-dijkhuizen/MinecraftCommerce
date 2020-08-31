@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 
@@ -30,6 +31,7 @@ import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class CustomPayments extends PluginBase {
     
+    public static final Material[] MENU_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
     public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
     
     private static CustomPayments instance;

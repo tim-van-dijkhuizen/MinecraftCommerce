@@ -1,25 +1,35 @@
 package nl.timvandijkhuizen.custompayments.elements;
 
+import org.bukkit.Material;
+
 import nl.timvandijkhuizen.custompayments.base.Element;
 
 public class Category extends Element {
 
+    private Material icon;
     private String name;
     private String description;
 
     public Category() {
+        this.icon = Material.CHEST_MINECART;
         this.name = "";
         this.description = "";
     }
 
-    public Category(int id, String name, String description) {
+    public Category(int id, Material icon, String name, String description) {
         this.setId(id);
+        this.icon = icon;
         this.name = name;
         this.description = description;
     }
 
     @Override
     public boolean validate() {
+        if (icon == null) {
+            addError("icon", "Icon is required");
+            return false;
+        }
+        
         if (name.length() == 0) {
             addError("name", "Name is required");
             return false;
@@ -43,6 +53,14 @@ public class Category extends Element {
         return true;
     }
 
+    public Material getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
+    
     public String getName() {
         return name;
     }
