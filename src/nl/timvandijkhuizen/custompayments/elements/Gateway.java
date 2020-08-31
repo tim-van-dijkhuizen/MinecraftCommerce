@@ -23,7 +23,7 @@ public class Gateway extends Element {
     }
     
     @Override
-    protected boolean validate() {
+    public boolean validate() {
         if (displayName.length() == 0) {
             addError("displayName", "Display name is required");
             return false;

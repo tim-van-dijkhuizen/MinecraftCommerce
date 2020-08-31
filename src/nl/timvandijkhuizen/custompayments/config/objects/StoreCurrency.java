@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.base;
+package nl.timvandijkhuizen.custompayments.config.objects;
 
 import java.text.DecimalFormat;
 

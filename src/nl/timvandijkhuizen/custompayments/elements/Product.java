@@ -35,7 +35,7 @@ public class Product extends Element {
     }
 
     @Override
-    protected boolean validate() {
+    public boolean validate() {
         if (icon == null) {
             addError("icon", "Icon is required");
             return false;

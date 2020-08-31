@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.base;
 
-public abstract class Element extends Model {
+public abstract class Element extends Model implements ElementInterface {
 
     private Integer id;
 

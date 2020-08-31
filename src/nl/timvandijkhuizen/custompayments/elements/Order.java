@@ -30,7 +30,7 @@ public class Order extends Element {
     }
     
     @Override
-    protected boolean validate() {
+    public boolean validate() {
         return false;
     }
     

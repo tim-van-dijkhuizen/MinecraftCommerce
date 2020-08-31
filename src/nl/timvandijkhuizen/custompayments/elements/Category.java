@@ -19,7 +19,7 @@ public class Category extends Element {
     }
 
     @Override
-    protected boolean validate() {
+    public boolean validate() {
         if (name.length() == 0) {
             addError("name", "Name is required");
             return false;

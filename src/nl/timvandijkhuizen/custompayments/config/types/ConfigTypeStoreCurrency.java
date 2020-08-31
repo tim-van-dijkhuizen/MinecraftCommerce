@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import com.google.gson.JsonObject;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.base.StoreCurrency;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;

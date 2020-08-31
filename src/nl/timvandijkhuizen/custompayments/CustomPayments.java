@@ -8,8 +8,8 @@ import java.util.Map;
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.custompayments.base.Storage;
-import nl.timvandijkhuizen.custompayments.base.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
