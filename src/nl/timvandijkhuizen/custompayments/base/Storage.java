@@ -1,7 +1,9 @@
 package nl.timvandijkhuizen.custompayments.base;
 
 import java.util.List;
+import java.util.UUID;
 
+import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
@@ -47,14 +49,15 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void deleteCategory(Category category) throws Exception;
-
+    
     /**
-     * Returns all products.
+     * Returns all products for the specified category.
+     * All products will be returned if the category is null.
      * 
      * @return
      * @throws Exception
      */
-    public abstract List<Product> getProducts() throws Exception;
+    public abstract List<Product> getProducts(Category category) throws Exception;
 
     /**
      * Creates a product.
@@ -192,5 +195,23 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void deleteGateway(Gateway gateway) throws Exception;
+    
+    /**
+     * Returns the UserPreferences of the specified user.
+     * 
+     * @param uuid
+     * @return
+     * @throws Exception
+     */
+    public abstract UserPreferences getUserPreferences(UUID uuid) throws Exception;
 
+    /**
+     * Saves the UserPreferences for the specified user.
+     * 
+     * @param uuid
+     * @param preferences
+     * @throws Exception
+     */
+    public abstract void saveUserPreferences(UUID uuid, UserPreferences preferences) throws Exception;
+    
 }

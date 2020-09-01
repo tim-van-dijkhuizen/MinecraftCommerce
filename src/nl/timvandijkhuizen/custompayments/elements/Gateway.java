@@ -1,8 +1,8 @@
 package nl.timvandijkhuizen.custompayments.elements;
 
 import nl.timvandijkhuizen.custompayments.base.Element;
-import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.base.GatewayType;
+import nl.timvandijkhuizen.custompayments.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
 public class Gateway extends Element {

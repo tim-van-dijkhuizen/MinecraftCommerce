@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.commands;
+package nl.timvandijkhuizen.custompayments.commands.admin;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class CommandCategories extends BaseCommand {
 
     @Override
     public String getUsage() {
-        return "/custompayments categories";
+        return "/custompayments admin categories";
     }
 
     @Override

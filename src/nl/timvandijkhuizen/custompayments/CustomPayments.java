@@ -17,6 +17,7 @@ import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
+import nl.timvandijkhuizen.custompayments.services.UserService;
 import nl.timvandijkhuizen.custompayments.storage.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
@@ -52,9 +53,9 @@ public class CustomPayments extends PluginBase {
             .setReadOnly(true);
         
         ConfigOption<List<StoreCurrency>> optionCurrencies = new ConfigOption<>("general.currencies", new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
-                .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currencies"))
-                .setRequired(true)
-                .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
+            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currencies"))
+            .setRequired(true)
+            .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
         
         ConfigOption<StoreCurrency> optionBaseCurrency = new ConfigOption<>("general.baseCurrency", new ConfigTypeStoreCurrency())
             .setIcon(new ConfigIcon(Material.SUNFLOWER, "Base Currency"))
@@ -84,6 +85,7 @@ public class CustomPayments extends PluginBase {
             new CategoryService(),
             new ProductService(),
             new GatewayService(),
+            new UserService(),
             new OrderService(),
             commandService
         };

@@ -11,8 +11,9 @@ import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -92,7 +93,7 @@ public class MenuConfig implements PredefinedMenu {
         }
 
         // Go back button
-        MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
+        MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);

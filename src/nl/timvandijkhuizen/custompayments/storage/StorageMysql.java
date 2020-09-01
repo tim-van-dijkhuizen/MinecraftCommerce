@@ -17,9 +17,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Field;
-import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.base.GatewayType;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.config.sources.GatewayConfig;
+import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
@@ -127,7 +128,7 @@ public class StorageMysql extends Storage {
         // Create statements
         // ===========================
         PreparedStatement createCategories = connection.prepareStatement("CREATE TABLE IF NOT EXISTS categories ("
-            +"id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
             + "name VARCHAR(40) NOT NULL,"
             + "description TEXT NOT NULL"
@@ -164,12 +165,17 @@ public class StorageMysql extends Storage {
         + ");");
         
         PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
-            +"id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "displayName VARCHAR(40) NOT NULL,"
             + "type VARCHAR(50) NOT NULL,"
             + "config JSON NOT NULL"
         + ");");
 
+        PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
+            + "uuid VARCHAR(36) PRIMARY KEY,"
+            + "preferences JSON NOT NULL"
+        + ");");
+        
         // Execute queries
         // ===========================
         createCategories.execute();
@@ -178,6 +184,7 @@ public class StorageMysql extends Storage {
         createFields.execute();
         createOrders.execute();
         createGateways.execute();
+        createUserPreferences.execute();
 
         // Cleanup
         // ===========================
@@ -187,6 +194,7 @@ public class StorageMysql extends Storage {
         createFields.close();
         createOrders.close();
         createGateways.close();
+        createUserPreferences.close();
 
         connection.close();
     }
@@ -290,14 +298,20 @@ public class StorageMysql extends Storage {
     /**
      * Products
      */
-
+    
     @Override
-    public List<Product> getProducts() throws Exception {
+    public List<Product> getProducts(Category category) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products"
-                + " LEFT JOIN categories ON products.categoryId = categories.id;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
+        PreparedStatement statement;
+        
+        // Get all products or products that belong to a category
+        if(category == null) {
+            statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products LEFT JOIN categories ON products.categoryId = categories.id;");
+        } else {
+            statement = connection.prepareStatement("SELECT * FROM products WHERE categoryId=?;");
+            statement.setInt(1, category.getId());
+        }
+        
         // Get result
         ResultSet result = statement.executeQuery();
         List<Product> products = new ArrayList<>();
@@ -310,11 +324,13 @@ public class StorageMysql extends Storage {
             float price = result.getFloat(5);
 
             // Get category data
-            int categoryId = result.getInt(6);
-            Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
-            String categoryName = result.getString(8);
-            String categoryDescription = result.getString(9);
-            Category category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
+            if(category == null) {
+                int categoryId = result.getInt(6);
+                Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
+                String categoryName = result.getString(8);
+                String categoryDescription = result.getString(9);
+                category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
+            }
 
             // Get commands
             List<Command> rawCommands = this.getCommandsByProductId(id);
@@ -642,7 +658,7 @@ public class StorageMysql extends Storage {
         // Set arguments
         statement.setString(1, gateway.getDisplayName());
         statement.setString(2, gateway.getType().getHandle());
-        statement.setString(3, DbHelper.prepareGatewayConfig(gateway.getConfig()));
+        statement.setString(3, DbHelper.prepareJsonConfig(gateway.getConfig()));
 
         // Execute query
         statement.executeUpdate();
@@ -669,7 +685,7 @@ public class StorageMysql extends Storage {
         // Set arguments
         statement.setString(1, gateway.getDisplayName());
         statement.setString(2, gateway.getType().getHandle());
-        statement.setString(3, DbHelper.prepareGatewayConfig(gateway.getConfig()));
+        statement.setString(3, DbHelper.prepareJsonConfig(gateway.getConfig()));
         statement.setInt(4, gateway.getId());
 
         // Execute query
@@ -688,6 +704,54 @@ public class StorageMysql extends Storage {
 
         // Set arguments
         statement.setInt(1, gateway.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public UserPreferences getUserPreferences(UUID uuid) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT preferences FROM user_preferences WHERE uuid=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uuid.toString());
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        UserPreferences preferences;
+
+        if (result.next()) {
+            String json = result.getString(1);
+            preferences = DbHelper.parseUserPreferences(json);
+        } else {
+            preferences = new UserPreferences();
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return preferences;
+    }
+
+    @Override
+    public void saveUserPreferences(UUID uuid, UserPreferences preferences) throws Exception {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO user_preferences VALUES (?, ?) ON DUPLICATE KEY UPDATE preferences=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        
+        // Set parameters
+        String json = DbHelper.prepareJsonConfig(preferences);
+        
+        statement.setString(1, uuid.toString());
+        statement.setString(2, json);
+        statement.setString(3, json);
 
         // Execute query
         statement.execute();

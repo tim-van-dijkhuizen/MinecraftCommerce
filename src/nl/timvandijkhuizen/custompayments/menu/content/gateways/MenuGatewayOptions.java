@@ -3,7 +3,7 @@ package nl.timvandijkhuizen.custompayments.menu.content.gateways;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import nl.timvandijkhuizen.custompayments.base.GatewayConfig;
+import nl.timvandijkhuizen.custompayments.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
@@ -11,8 +11,9 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -79,7 +80,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
         }
 
         // Go back button
-        MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
+        MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);

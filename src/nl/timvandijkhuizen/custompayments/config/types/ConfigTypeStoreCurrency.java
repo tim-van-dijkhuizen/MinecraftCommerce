@@ -17,15 +17,16 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
     @Override
     public StoreCurrency getValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
-        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+        YamlConfig pluginConfig = CustomPayments.getInstance().getConfig();
+        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
         
         // Get store currency
         String code = config.getString(option.getPath());

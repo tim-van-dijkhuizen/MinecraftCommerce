@@ -12,6 +12,7 @@ import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -85,17 +86,17 @@ public class MenuHome implements PredefinedMenu {
         menu.setButton(orderButton, 24);
 
         // Set bottom line
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 3);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 5);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 8);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
-        // Go back button
-        MenuItemBuilder closeButton = Menu.CLOSE_BUTTON.clone();
+        // Close button
+        MenuItemBuilder closeButton = MenuItems.CLOSE.clone();
 
         closeButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);

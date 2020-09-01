@@ -1,40 +1,40 @@
-package nl.timvandijkhuizen.custompayments.commands;
+package nl.timvandijkhuizen.custompayments.commands.admin;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
-import nl.timvandijkhuizen.custompayments.services.GatewayService;
+import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class CommandGateways extends BaseCommand {
+public class CommandOrders extends BaseCommand {
 
     @Override
     public String getCommand() {
-        return "gateways";
+        return "orders";
     }
 
     @Override
     public String getUsage() {
-        return "/custompayments gateways";
+        return "/custompayments admin orders";
     }
 
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
-        GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
+        OrderService orderService = CustomPayments.getInstance().getService("orders");
 
         player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
 
         // Create menu
-        gatewayService.getGateways(gateways -> {
-            if (gateways == null) {
-                player.sendMessage(UI.color("Failed to load gateways.", UI.ERROR_COLOR));
+        orderService.getOrders(orders -> {
+            if (orders == null) {
+                player.sendMessage(UI.color("Failed to load orders.", UI.ERROR_COLOR));
                 return;
             }
 
-            Menus.GATEWAY_LIST.open(player, gateways);
+            Menus.ORDER_LIST.open(player, orders);
         });
     }
 

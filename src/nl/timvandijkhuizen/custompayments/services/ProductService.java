@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.CommandVariable;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
@@ -57,7 +58,7 @@ public class ProductService implements Service {
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
             try {
-                List<Product> products = storage.getProducts();
+                List<Product> products = storage.getProducts(null);
                 MainThread.execute(() -> callback.accept(products));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));
@@ -66,6 +67,25 @@ public class ProductService implements Service {
         });
     }
 
+    /**
+     * Returns all products that belong to a category.
+     * 
+     * @param callback
+     */
+    public void getProducts(Category category, Consumer<List<Product>> callback) {
+        Storage storage = CustomPayments.getInstance().getStorage();
+
+        Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+            try {
+                List<Product> products = storage.getProducts(category);
+                MainThread.execute(() -> callback.accept(products));
+            } catch (Exception e) {
+                MainThread.execute(() -> callback.accept(null));
+                ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
+            }
+        });
+    }
+    
     /**
      * Saves a product.
      * 

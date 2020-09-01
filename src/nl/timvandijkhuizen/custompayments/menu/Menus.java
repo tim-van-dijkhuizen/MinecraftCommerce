@@ -20,13 +20,17 @@ import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductComma
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
+import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCategories;
+import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCurrency;
+import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopProducts;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 
 public enum Menus {
 
+    // Administrator
     HOME(new MenuHome()),
 
     CONFIG(new MenuConfig()),
@@ -50,7 +54,12 @@ public enum Menus {
     GATEWAY_OPTIONS(new MenuGatewayOptions()),
     
     ORDER_LIST(new MenuOrderList()),
-    ORDER_VIEW(new MenuOrderView());
+    ORDER_VIEW(new MenuOrderView()),
+    
+    // User
+    SHOP_CURRENCY(new MenuShopCurrency()),
+    SHOP_CATEGORIES(new MenuShopCategories()),
+    SHOP_PRODUCTS(new MenuShopProducts());
 
     private PredefinedMenu predefinedMenu;
 

@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.ClickType;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
-import nl.timvandijkhuizen.custompayments.helpers.PriceHelper;
+import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
@@ -24,6 +24,7 @@ import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
@@ -218,7 +219,7 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder priceButton = new MenuItemBuilder(Material.SUNFLOWER);
 
         priceButton.setName(UI.color("Price", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        priceButton.setLore(UI.color(PriceHelper.localize(product.getPrice()), UI.SECONDARY_COLOR));
+        priceButton.setLore(UI.color(ShopHelper.localize(product.getPrice()), UI.SECONDARY_COLOR));
 
         priceButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
         
@@ -283,17 +284,17 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set bottom line
         // ===========================
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(Menu.BACKGROUND_BUTTON, menu.getSize().getSlots() - 9 + 8);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
-        MenuItemBuilder cancelButton = Menu.CANCEL_BUTTON.clone();
+        MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
         cancelButton.setClickListener(new OpenProductList());
 
@@ -301,7 +302,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Save button
         // ===========================
-        MenuItemBuilder saveButton = Menu.SAVE_BUTTON.clone();
+        MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
         if (product.hasErrors()) {
             saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.ERROR_COLOR));

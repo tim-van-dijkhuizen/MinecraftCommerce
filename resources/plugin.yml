@@ -8,5 +8,5 @@ main: nl.timvandijkhuizen.custompayments.CustomPayments
 commands:
    custompayments:
       description: Manage custom payments
-      aliases: [cp]
+      aliases: [cp, shop]
       usage: /custompayments

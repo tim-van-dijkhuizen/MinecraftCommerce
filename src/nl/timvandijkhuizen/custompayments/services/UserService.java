@@ -1,0 +1,107 @@
+package nl.timvandijkhuizen.custompayments.services;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
+import nl.timvandijkhuizen.custompayments.config.types.ConfigTypeStoreCurrency;
+import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.services.Service;
+
+public class UserService implements Service, Listener {
+
+    private Map<UUID, UserPreferences> userPreferences = new HashMap<>();
+    private Set<ConfigOption<?>> userOptions = new HashSet<>();
+    
+    @Override
+    public String getHandle() {
+        return "users";
+    }
+
+    @Override
+    public void load() throws Exception {
+        YamlConfig config = CustomPayments.getInstance().getConfig();
+        ConfigOption<StoreCurrency> optionBaseCurrency = config.getOption("general.baseCurrency");
+        StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
+        
+        // Create user options
+        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", new ConfigTypeStoreCurrency())
+            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currency"))
+            .setRequired(true)
+            .setDefaultValue(baseCurrency);
+        
+        // Register user options
+        userOptions.add(optionCurrency);
+    }
+
+    @Override
+    public void unload() throws Exception {
+
+    }
+    
+    @EventHandler(ignoreCancelled=true, priority=EventPriority.MONITOR)
+    public void onLogin(AsyncPlayerPreLoginEvent event) {
+        Storage storage = CustomPayments.getInstance().getStorage();
+        UUID uuid = event.getUniqueId();
+        
+        // Load preferences
+        UserPreferences preferences;
+        
+        try {
+            preferences = storage.getUserPreferences(uuid);
+        } catch (Exception e) {
+            preferences = new UserPreferences();
+            ConsoleHelper.printError("Failed to load user preferences for " + uuid, e);
+        }
+        
+        // Add options
+        preferences.addOptions(userOptions);
+        
+        // Cache preferences
+        userPreferences.put(uuid, preferences);
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        userPreferences.remove(event.getPlayer().getUniqueId());
+    }
+    
+    public UserPreferences getPreferences(Player player) {
+        return userPreferences.get(player.getUniqueId());
+    }
+    
+    public void savePreferences(Player player, UserPreferences preferences, Consumer<Boolean> callback) {
+        Storage storage = CustomPayments.getInstance().getStorage();
+
+        Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+            try {
+                storage.saveUserPreferences(player.getUniqueId(), preferences);
+                MainThread.execute(() -> callback.accept(true));
+            } catch (Exception e) {
+                MainThread.execute(() -> callback.accept(false));
+                ConsoleHelper.printError("Failed to save user preferences: " + e.getMessage(), e);
+            }
+        });
+    }
+
+}

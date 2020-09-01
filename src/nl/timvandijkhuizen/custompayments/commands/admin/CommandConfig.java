@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.commands;
+package nl.timvandijkhuizen.custompayments.commands.admin;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class CommandConfig extends BaseCommand {
 
     @Override
     public String getUsage() {
-        return "/custompayments config";
+        return "/custompayments admin config";
     }
 
     @Override

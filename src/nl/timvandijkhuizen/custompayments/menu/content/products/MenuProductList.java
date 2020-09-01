@@ -11,14 +11,15 @@ import org.bukkit.event.inventory.ClickType;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
-import nl.timvandijkhuizen.custompayments.helpers.PriceHelper;
+import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -47,7 +48,7 @@ public class MenuProductList implements PredefinedMenu {
             
             // Category and price
             item.addLore("", UI.color("Category: ", UI.TEXT_COLOR) + UI.color(product.getCategory().getName(), UI.SECONDARY_COLOR));
-            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color(PriceHelper.localize(product.getPrice()), UI.SECONDARY_COLOR), "");
+            item.addLore(UI.color("Price: ", UI.TEXT_COLOR) + UI.color(ShopHelper.localize(product.getPrice()), UI.SECONDARY_COLOR), "");
             
             // Commands
             item.addLore(UI.color("Commands:", UI.TEXT_COLOR));
@@ -93,7 +94,7 @@ public class MenuProductList implements PredefinedMenu {
         }
 
         // Go back button
-        MenuItemBuilder backButton = Menu.BACK_BUTTON.clone();
+        MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.CLICK_SOUND);
