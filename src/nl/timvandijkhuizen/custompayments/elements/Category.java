@@ -30,7 +30,7 @@ public class Category extends Element {
             return false;
         }
         
-        if (name.length() == 0) {
+        if (name == null || name.length() == 0) {
             addError("name", "Name is required");
             return false;
         }
@@ -40,7 +40,7 @@ public class Category extends Element {
             return false;
         }
 
-        if (description.length() == 0) {
+        if (description == null || description.length() == 0) {
             addError("description", "Description is required");
             return false;
         }

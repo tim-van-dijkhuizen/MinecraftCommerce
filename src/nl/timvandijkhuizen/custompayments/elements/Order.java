@@ -36,7 +36,32 @@ public class Order extends Element {
     
     @Override
     public boolean validate() {
-        return false;
+        if (number == null || number.length() == 0) {
+            addError("number", "Number is required");
+            return false;
+        }
+
+        if (number.length() > 40) {
+            addError("number", "Number cannot be longer than 20 characters");
+            return false;
+        }
+        
+        if (playerUniqueId == null) {
+            addError("playerUniqueId", "Player unique id is required");
+            return false;
+        }
+        
+        if (playerName == null || playerName.length() == 0) {
+            addError("playerName", "Player name is required");
+            return false;
+        }
+        
+        if (currency == null) {
+            addError("currency", "Currency is required");
+            return false;
+        }
+        
+        return true;
     }
     
     public String getNumber() {

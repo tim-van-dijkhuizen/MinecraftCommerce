@@ -134,6 +134,14 @@ public abstract class Storage implements Service {
     public abstract void deleteField(Field<?> field) throws Exception;
     
     /**
+     * Returns the cart of the specified user.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract Order getCart(UUID uuid) throws Exception;
+    
+    /**
      * Returns all orders.
      * 
      * @return

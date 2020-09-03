@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.custompayments.services;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,25 @@ public class OrderService implements Service {
     @Override
     public void unload() throws Exception {
 
+    }
+    
+    /**
+     * Returns the cart of the specified user.
+     * 
+     * @param callback
+     */
+    public void getCart(UUID uuid, Consumer<Order> callback) {
+        Storage storage = CustomPayments.getInstance().getStorage();
+
+        Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+            try {
+                Order order = storage.getCart(uuid);
+                MainThread.execute(() -> callback.accept(order));
+            } catch (Exception e) {
+                MainThread.execute(() -> callback.accept(null));
+                ConsoleHelper.printError("Failed to load cart: " + e.getMessage(), e);
+            }
+        });
     }
     
     /**

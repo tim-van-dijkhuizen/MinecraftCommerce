@@ -529,6 +529,54 @@ public class StorageMysql extends Storage {
      */
 
     @Override
+    public Order getCart(UUID uuid) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM orders WHERE playerUniqueId=? AND completed=0 LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Get currencies
+        YamlConfig config = CustomPayments.getInstance().getConfig();
+        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Order order = null;
+
+        if (result.next()) {
+            int id = result.getInt(1);
+            String number = result.getString(2);
+            UUID playerUniqueId = UUID.fromString(result.getString(3));
+            String playerName = result.getString(4);
+            String currencyCode = result.getString(5);
+            boolean completed = result.getBoolean(6);
+
+            // Get currency
+            StoreCurrency currency = currencies.stream()
+                .filter(i -> i.getCode().equals(currencyCode))
+                .findFirst()
+                .orElse(null);
+            
+            if(currency != null) {
+                List<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
+                DataList<LineItem> lineItems = new DataList<>(rawLineItems);
+                
+                // Add order to list
+                order = new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems);
+            } else {
+                ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return order;
+    }
+    
+    @Override
     public List<Order> getOrders() throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM orders";
