@@ -1,29 +1,34 @@
 package nl.timvandijkhuizen.custompayments.elements;
 
-import java.util.Currency;
 import java.util.UUID;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import nl.timvandijkhuizen.custompayments.base.Element;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class Order extends Element {
 
-    private String reference;
+    private String number;
     private UUID playerUniqueId;
     private String playerName;
-    private Currency currency;
+    private StoreCurrency currency;
     private boolean completed;
+    private DataList<LineItem> lineItems;
 
-    public Order(int id, String reference, UUID playerUniqueId, String playerName, Currency currency, boolean completed) {
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems) {
         this.setId(id);
-        this.reference = reference;
+        this.number = number;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
         this.completed = completed;
+        this.lineItems = lineItems;
     }
     
-    public Order(String reference, UUID playerUniqueId, String playerName, Currency currency) {
-        this.reference = reference;
+    public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
+        this.number = number;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
@@ -34,8 +39,8 @@ public class Order extends Element {
         return false;
     }
     
-    public String getReference() {
-        return reference;
+    public String getNumber() {
+        return number;
     }
 
     public UUID getPlayerUniqueId() {
@@ -46,12 +51,36 @@ public class Order extends Element {
         return playerName;
     }
 
-    public Currency getCurrency() {
+    public StoreCurrency getCurrency() {
         return currency;
     }
 
     public boolean isCompleted() {
         return completed;
+    }
+    
+    public void addLineItem(LineItem lineItem) {
+        Stream<LineItem> stream = StreamSupport.stream(lineItems.spliterator(), false);
+        
+        // Merge with existing or create new
+        LineItem existing = stream
+            .filter(i -> i.getProduct().getId() == lineItem.getProduct().getId())
+            .findFirst()
+            .orElse(null);
+        
+        if(existing != null) {
+            existing.setQuantity(existing.getQuantity() + lineItem.getQuantity());
+        } else {
+            lineItems.add(lineItem);
+        }
+    }
+    
+    public void removeLineItem(LineItem lineItem) {
+        lineItems.remove(lineItem);
+    }
+    
+    public DataList<LineItem> getLineItems() {
+        return lineItems;
     }
     
 }

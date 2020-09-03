@@ -33,10 +33,10 @@ public class MenuOrderList implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);
 
             // Set order name
-            item.setName(UI.color(order.getReference(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(order.getNumber(), UI.PRIMARY_COLOR, ChatColor.BOLD));
             item.setLore(UI.color("UUID: ", UI.TEXT_COLOR) + UI.color(order.getPlayerUniqueId().toString(), UI.SECONDARY_COLOR));
             item.addLore(UI.color("Username: ", UI.TEXT_COLOR) + UI.color(order.getPlayerName(), UI.SECONDARY_COLOR));
-            item.addLore(UI.color("Currency: ", UI.TEXT_COLOR) + UI.color(order.getCurrency().getDisplayName(), UI.SECONDARY_COLOR));
+            item.addLore(UI.color("Currency: ", UI.TEXT_COLOR) + UI.color(order.getCurrency().getCode(), UI.SECONDARY_COLOR));
 
             item.addLore("", UI.color("Use left-click to view.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
             item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));

@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.elements.Order;
+import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenOrderList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -45,7 +46,7 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder currencyButton = new MenuItemBuilder(Material.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        currencyButton.addLore(UI.color(order.getCurrency().getDisplayName(), UI.SECONDARY_COLOR));
+        currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.SECONDARY_COLOR));
         
         menu.setButton(currencyButton, 14);
         
@@ -64,6 +65,11 @@ public class MenuOrderView implements PredefinedMenu {
 
         productsButton.setName(UI.color("Products", UI.PRIMARY_COLOR, ChatColor.BOLD));
         productsButton.setLore(UI.color("Click to view the products", UI.TEXT_COLOR));
+        
+        productsButton.setClickListener(event -> {
+           UI.playSound(player, UI.CLICK_SOUND);
+           Menus.ORDER_ITEMS.open(player, order);
+        });
         
         menu.setButton(productsButton, 30);
         

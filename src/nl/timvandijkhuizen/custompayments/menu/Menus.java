@@ -13,6 +13,7 @@ import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayList;
 import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayOptions;
 import nl.timvandijkhuizen.custompayments.menu.content.gateways.MenuGatewayType;
+import nl.timvandijkhuizen.custompayments.menu.content.orders.MenuOrderItems;
 import nl.timvandijkhuizen.custompayments.menu.content.orders.MenuOrderList;
 import nl.timvandijkhuizen.custompayments.menu.content.orders.MenuOrderView;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductCategory;
@@ -55,6 +56,7 @@ public enum Menus {
     
     ORDER_LIST(new MenuOrderList()),
     ORDER_VIEW(new MenuOrderView()),
+    ORDER_ITEMS(new MenuOrderItems()),
     
     // User
     SHOP_CURRENCY(new MenuShopCurrency()),

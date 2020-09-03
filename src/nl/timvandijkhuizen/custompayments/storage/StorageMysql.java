@@ -6,24 +6,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Material;
 
+import com.google.gson.JsonObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Field;
 import nl.timvandijkhuizen.custompayments.base.GatewayType;
+import nl.timvandijkhuizen.custompayments.base.ProductSnapshot;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
+import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
@@ -33,6 +36,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class StorageMysql extends Storage {
 
@@ -146,7 +150,8 @@ public class StorageMysql extends Storage {
 
         PreparedStatement createCommands = connection.prepareStatement("CREATE TABLE IF NOT EXISTS commands ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "productId INTEGER NOT NULL," + "command VARCHAR(255) NOT NULL,"
+            + "productId INTEGER NOT NULL,"
+            + "command VARCHAR(255) NOT NULL,"
             + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE"
         + ");");
 
@@ -157,11 +162,19 @@ public class StorageMysql extends Storage {
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "reference VARCHAR(20) NOT NULL,"
+            + "number VARCHAR(20) NOT NULL,"
             + "playerUniqueId VARCHAR(36) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"
             + "completed BOOLEAN NOT NULL"
+        + ");");
+        
+        PreparedStatement createLineItems = connection.prepareStatement("CREATE TABLE IF NOT EXISTS lineItems ("
+            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "orderId INTEGER NOT NULL,"
+            + "product JSON NOT NULL,"
+            + "quantity INTEGER NOT NULL,"
+            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
         + ");");
         
         PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
@@ -183,6 +196,7 @@ public class StorageMysql extends Storage {
         createCommands.execute();
         createFields.execute();
         createOrders.execute();
+        createLineItems.execute();
         createGateways.execute();
         createUserPreferences.execute();
 
@@ -193,6 +207,7 @@ public class StorageMysql extends Storage {
         createCommands.close();
         createFields.close();
         createOrders.close();
+        createLineItems.close();
         createGateways.close();
         createUserPreferences.close();
 
@@ -334,7 +349,7 @@ public class StorageMysql extends Storage {
 
             // Get commands
             List<Command> rawCommands = this.getCommandsByProductId(id);
-            DataList<Command> commands = new DataList<Command>(rawCommands);
+            DataList<Command> commands = new DataList<>(rawCommands);
 
             // Add product to list
             products.add(new Product(id, icon, name, description, category, price, commands));
@@ -519,20 +534,40 @@ public class StorageMysql extends Storage {
         String sql = "SELECT * FROM orders";
         PreparedStatement statement = connection.prepareStatement(sql);
 
+        // Get currencies
+        YamlConfig config = CustomPayments.getInstance().getConfig();
+        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+        
         // Get result
         ResultSet result = statement.executeQuery();
         List<Order> orders = new ArrayList<>();
 
         while (result.next()) {
             int id = result.getInt(1);
-            String reference = result.getString(2);
+            String number = result.getString(2);
             UUID playerUniqueId = UUID.fromString(result.getString(3));
             String playerName = result.getString(4);
-            Currency currency = Currency.getInstance(result.getString(5));
+            String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
 
+            // Get currency
+            StoreCurrency currency = currencies.stream()
+                .filter(i -> i.getCode().equals(currencyCode))
+                .findFirst()
+                .orElse(null);
+            
+            if(currency == null) {
+                ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
+                continue;
+            }
+            
+            // Get LineItems's
+            List<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
+            DataList<LineItem> lineItems = new DataList<>(rawLineItems);
+            
             // Add order to list
-            orders.add(new Order(id, reference, playerUniqueId, playerName, currency, completed));
+            orders.add(new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems));
         }
 
         // Cleanup
@@ -546,14 +581,14 @@ public class StorageMysql extends Storage {
     @Override
     public void createOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (reference, playerUniqueId, playerName, currency, completed) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed) VALUES (?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Set arguments
-        statement.setString(1, order.getReference());
+        statement.setString(1, order.getNumber());
         statement.setString(2, order.getPlayerUniqueId().toString());
         statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCurrencyCode());
+        statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
 
         // Execute query
@@ -575,14 +610,14 @@ public class StorageMysql extends Storage {
     @Override
     public void updateOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET reference=?, playerUniqueId=?, playerName=?, currency=?, completed=? WHERE id=?;";
+        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set arguments
-        statement.setString(1, order.getReference());
+        statement.setString(1, order.getNumber());
         statement.setString(2, order.getPlayerUniqueId().toString());
         statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCurrencyCode());
+        statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
         statement.setInt(6, order.getId());
 
@@ -602,6 +637,112 @@ public class StorageMysql extends Storage {
 
         // Set arguments
         statement.setInt(1, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+    
+    /**
+     * LineItems
+     */
+    
+    @Override
+    public List<LineItem> getLineItemsByOrderId(int orderId) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM lineItems WHERE orderId=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setInt(1, orderId);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        List<LineItem> lineItems = new ArrayList<>();
+
+        while (result.next()) {
+            int id = result.getInt(1);
+            int quantity = result.getInt(4);
+            
+            // Parse product snapshot
+            String rawJson = result.getString(3);
+            JsonObject json = DbHelper.parseJson(rawJson);
+            ProductSnapshot product = new ProductSnapshot(json);
+
+            lineItems.add(new LineItem(id, orderId, product, quantity));
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return lineItems;
+    }
+
+    @Override
+    public void createLineItem(LineItem lineItem) throws Exception {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO lineItems (orderId, product, quantity) VALUES (?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // Prepare product snapshot
+        JsonObject json = lineItem.getProduct().toJson();
+        
+        // Set arguments
+        statement.setInt(1, lineItem.getOrderId());
+        statement.setString(2, DbHelper.prepareJson(json));
+        statement.setInt(3, lineItem.getQuantity());
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            lineItem.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void updateLineItem(LineItem lineItem) throws Exception {
+        Connection connection = getConnection();
+        String sql = "UPDATE lineItems SET orderId=?, product=?, quantity=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Prepare product snapshot
+        JsonObject json = lineItem.getProduct().toJson();
+        
+        // Set arguments
+        statement.setInt(1, lineItem.getOrderId());
+        statement.setString(2, DbHelper.prepareJson(json));
+        statement.setInt(3, lineItem.getQuantity());
+        statement.setInt(4, lineItem.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+    
+    @Override
+    public void deleteLineItem(LineItem lineItem) throws Exception {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM lineItems WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setInt(1, lineItem.getId());
 
         // Execute query
         statement.execute();

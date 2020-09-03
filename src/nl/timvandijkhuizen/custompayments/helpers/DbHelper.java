@@ -26,18 +26,24 @@ public class DbHelper {
         }
     }
     
-    public static String prepareJsonConfig(JsonConfig config) {
-        return GSON.toJson(config.getJson());
+    public static String prepareJson(JsonObject json) {
+        return GSON.toJson(json);
     }
 
-    public static UserPreferences parseUserPreferences(String raw) {
-        JsonObject json = GSON.fromJson(raw, JsonObject.class);
-        return new UserPreferences(json);
+    public static JsonObject parseJson(String json) {
+        return GSON.fromJson(json, JsonObject.class);
     }
     
-    public static GatewayConfig parseGatewayConfig(String raw, GatewayType type) {
-        JsonObject json = GSON.fromJson(raw, JsonObject.class);
-        return new GatewayConfig(type, json);
+    public static String prepareJsonConfig(JsonConfig config) {
+        return prepareJson(config.getJson());
+    }
+
+    public static UserPreferences parseUserPreferences(String json) {
+        return new UserPreferences(parseJson(json));
+    }
+    
+    public static GatewayConfig parseGatewayConfig(String json, GatewayType type) {
+        return new GatewayConfig(type, parseJson(json));
     }
 
 }

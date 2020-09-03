@@ -31,8 +31,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         // Get store currency
         String code = config.getString(option.getPath());
         
-        Optional<StoreCurrency> currency = currencies
-            .stream()
+        Optional<StoreCurrency> currency = currencies.stream()
             .filter(i -> i.getCode().equals(code))
             .findFirst();
 

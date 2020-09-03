@@ -7,6 +7,7 @@ import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
+import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.spigotutils.services.Service;
@@ -163,6 +164,39 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void deleteOrder(Order order) throws Exception;
+    
+    /**
+     * Returns all LineItems belonging to the specified order.
+     * 
+     * @param orderId
+     * @return
+     * @throws Exception
+     */
+    public abstract List<LineItem> getLineItemsByOrderId(int orderId) throws Exception;
+
+    /**
+     * Creates a LineItem.
+     * 
+     * @param lineItem
+     * @throws Exception
+     */
+    public abstract void createLineItem(LineItem lineItem) throws Exception;
+
+    /**
+     * Updates a LineItem.
+     * 
+     * @param lineItem
+     * @throws Exception
+     */
+    public abstract void updateLineItem(LineItem lineItem) throws Exception;
+    
+    /**
+     * Deletes a LineItem.
+     * 
+     * @param lineItem
+     * @throws Exception
+     */
+    public abstract void deleteLineItem(LineItem lineItem) throws Exception;
     
     /**
      * Returns all gateways.

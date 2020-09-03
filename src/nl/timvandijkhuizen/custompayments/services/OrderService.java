@@ -7,8 +7,10 @@ import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
@@ -66,11 +68,31 @@ public class OrderService implements Service {
 
         // Create or edit order
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
+            DataList<LineItem> lineItems = order.getLineItems();
+            
             try {
                 if (isNew) {
                     storage.createOrder(order);
                 } else {
                     storage.updateOrder(order);
+                }
+                
+                // Set order id on LineItems
+                for (LineItem lineItem : lineItems) {
+                    lineItem.setOrderId(order.getId());
+                }
+
+                // Update commands
+                for (LineItem lineItem : lineItems.getToAdd()) {
+                    storage.createLineItem(lineItem);
+                }
+                
+                for (LineItem lineItem : lineItems.getToUpdate()) {
+                    storage.updateLineItem(lineItem);
+                }
+
+                for (LineItem lineItem : lineItems.getToRemove()) {
+                    storage.deleteLineItem(lineItem);
                 }
 
                 MainThread.execute(() -> callback.accept(true));
