@@ -52,8 +52,8 @@ public class StoreCurrency implements ConfigObject {
     @Override
     public String[] getItemLore() {
         return new String[] {
-            UI.color("Conversion rate: ", UI.TEXT_COLOR) + UI.color("" + conversionRate, UI.SECONDARY_COLOR),
-            UI.color("Format: ", UI.TEXT_COLOR) + UI.color(format.toPattern(), UI.SECONDARY_COLOR)
+            UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + conversionRate, UI.COLOR_SECONDARY),
+            UI.color("Format: ", UI.COLOR_TEXT) + UI.color(format.toPattern(), UI.COLOR_SECONDARY)
         };
     }
     
@@ -64,7 +64,7 @@ public class StoreCurrency implements ConfigObject {
         StringPrompt formatPrompt = new StringPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
-                return UI.color("What should be the format?", UI.PRIMARY_COLOR);
+                return UI.color("What should be the format?", UI.COLOR_PRIMARY);
             }
 
             @Override
@@ -74,7 +74,7 @@ public class StoreCurrency implements ConfigObject {
                     callback.run();
                     return null;
                 } catch(IllegalArgumentException e) {
-                    context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.ERROR_COLOR));
+                    context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.COLOR_ERROR));
                     return this;
                 }
             }
@@ -83,7 +83,7 @@ public class StoreCurrency implements ConfigObject {
         NumericPrompt conversionRatePrompt = new NumericPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
-                return UI.color("What should be the conversion rate?", UI.PRIMARY_COLOR);
+                return UI.color("What should be the conversion rate?", UI.COLOR_PRIMARY);
             }
 
             @Override
@@ -96,14 +96,14 @@ public class StoreCurrency implements ConfigObject {
         StringPrompt namePrompt = new StringPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
-                return UI.color("What should be the code?", UI.PRIMARY_COLOR);
+                return UI.color("What should be the code?", UI.COLOR_PRIMARY);
             }
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
                 if(input.length() > 255) {
-                    player.sendMessage(UI.color("The currency code cannot be longer than 255 characters", UI.ERROR_COLOR));
-                    UI.playSound(player, UI.ERROR_SOUND);
+                    player.sendMessage(UI.color("The currency code cannot be longer than 255 characters", UI.COLOR_ERROR));
+                    UI.playSound(player, UI.SOUND_ERROR);
                     return this;
                 }
                 

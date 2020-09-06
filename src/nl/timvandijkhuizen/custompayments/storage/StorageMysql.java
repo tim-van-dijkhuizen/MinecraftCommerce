@@ -534,6 +534,8 @@ public class StorageMysql extends Storage {
         String sql = "SELECT * FROM orders WHERE playerUniqueId=? AND completed=0 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
+        statement.setString(1, uuid.toString());
+        
         // Get currencies
         YamlConfig config = CustomPayments.getInstance().getConfig();
         ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");

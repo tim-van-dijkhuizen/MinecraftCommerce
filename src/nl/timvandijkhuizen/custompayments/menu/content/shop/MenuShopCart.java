@@ -1,31 +1,33 @@
-package nl.timvandijkhuizen.custompayments.menu.content.orders;
+package nl.timvandijkhuizen.custompayments.menu.content.shop;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.ProductSnapshot;
 import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
-import nl.timvandijkhuizen.custompayments.menu.Menus;
+import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenShopCategories;
+import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
-import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuOrderItems implements PredefinedMenu {
+public class MenuShopCart implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        PagedMenu menu = new PagedMenu("Order Items", 3, 7, 1, 1, 1, 5, 7);
-        Order order = args[0].as(Order.class);
+        OrderService orderService = CustomPayments.getInstance().getService("orders");
+        PagedMenu menu = new PagedMenu("Cart Items", 3, 7, 1, 1, 2, 5, 6);
+        Order cart = orderService.getCart(player);
 
-        for (LineItem lineItem : order.getLineItems()) {
+        for (LineItem lineItem : cart.getLineItems()) {
             ProductSnapshot product = lineItem.getProduct();
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon(), lineItem.getQuantity());
             
@@ -42,31 +44,21 @@ public class MenuOrderItems implements PredefinedMenu {
             // Category and price
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
-            
-            // Commands
-            item.addLore(UI.color("Commands:", UI.COLOR_TEXT));
-            
-            if(product.getCommands().size() > 0) {
-                for (String command : product.getCommands()) {
-                    item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command, UI.COLOR_SECONDARY));
-                }
-            } else {
-                item.addLore(UI.color(UI.TAB + "None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            }
 
             menu.addPagedButton(item);
         }
 
-        // Go back button
-        MenuItemBuilder backButton = MenuItems.BACK.clone();
+        // Cart button
+        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 3);
 
-        backButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-            Menus.ORDER_VIEW.open(player, order);
-        });
+        // Home button
+        MenuItemBuilder homeButton = MenuItems.BACK.clone();
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        homeButton.setName(UI.color("Shop Home", UI.COLOR_SECONDARY, ChatColor.BOLD));
+        homeButton.setClickListener(new OpenShopCategories());
 
+        menu.setButton(homeButton, menu.getSize().getSlots() - 9 + 4);
+        
         return menu;
     }
 

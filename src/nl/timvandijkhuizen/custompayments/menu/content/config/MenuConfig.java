@@ -36,27 +36,27 @@ public class MenuConfig implements PredefinedMenu {
             // Create and add option
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
-            item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
                 for(String line : option.getValueLore(config)) {
-                    item.addLore(UI.color(line, UI.SECONDARY_COLOR));
+                    item.addLore(UI.color(line, UI.COLOR_SECONDARY));
                 }
             } else {
-                item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
             
             if(option.isReadOnly()) {
-                item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             } else {
-                item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 item.addEnchantGlow();
             }
             
             // Set click listener
             item.setClickListener(event -> {
                 if(!option.isReadOnly()) {
-                    UI.playSound(player, UI.CLICK_SOUND);
+                    UI.playSound(player, UI.SOUND_CLICK);
                     
                     option.getValueInput(player, option.getValue(config), value -> {
                         option.setValue(config, value);
@@ -68,16 +68,16 @@ public class MenuConfig implements PredefinedMenu {
                         // Set new lore
                         if(!option.isValueEmpty(config)) {
                             for(String line : option.getValueLore(config)) {
-                                item.addLore(UI.color(line, UI.SECONDARY_COLOR));
+                                item.addLore(UI.color(line, UI.COLOR_SECONDARY));
                             }
                         } else {
-                            item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                            item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                         }
                         
                         if(option.isReadOnly()) {
-                            item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                            item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                         } else {
-                            item.addLore("", UI.color("Left-click to edit this setting.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                            item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                             item.addEnchantGlow();
                         }
                         
@@ -85,7 +85,7 @@ public class MenuConfig implements PredefinedMenu {
                         menu.open(player);
                     });
                 } else {
-                    UI.playSound(player, UI.ERROR_SOUND);
+                    UI.playSound(player, UI.SOUND_ERROR);
                 }
             });
             
@@ -96,7 +96,7 @@ public class MenuConfig implements PredefinedMenu {
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.HOME.open(player);
         });
 

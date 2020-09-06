@@ -31,7 +31,7 @@ public class CommandAdmin extends BaseCommand {
 
     @Override
     public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-        console.sendMessage(UI.color("You must be a player to use this command.", UI.ERROR_COLOR));
+        console.sendMessage(UI.color("You must be a player to use this command.", UI.COLOR_ERROR));
     }
     
     public BaseCommand[] getSubCommands() {

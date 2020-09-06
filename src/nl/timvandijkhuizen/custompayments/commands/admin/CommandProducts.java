@@ -25,12 +25,12 @@ public class CommandProducts extends BaseCommand {
     public void onPlayerUse(Player player, String[] args) throws Exception {
         ProductService productService = CustomPayments.getInstance().getService("products");
 
-        player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
+        player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
 
         // Create menu
         productService.getProducts(products -> {
             if (products == null) {
-                player.sendMessage(UI.color("Failed to load products.", UI.ERROR_COLOR));
+                player.sendMessage(UI.color("Failed to load products.", UI.COLOR_ERROR));
                 return;
             }
 
@@ -40,7 +40,7 @@ public class CommandProducts extends BaseCommand {
 
     @Override
     public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-        console.sendMessage(UI.color("You must be a player to use this command.", UI.ERROR_COLOR));
+        console.sendMessage(UI.color("You must be a player to use this command.", UI.COLOR_ERROR));
     }
 
 }

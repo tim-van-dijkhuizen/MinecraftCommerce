@@ -26,11 +26,11 @@ public class MenuHome implements PredefinedMenu {
         // Configuration button
         MenuItemBuilder configButton = new MenuItemBuilder(Material.COMPARATOR);
 
-        configButton.setName(UI.color("Configuration", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        configButton.setLore(UI.color("Modify your configuration", UI.TEXT_COLOR));
+        configButton.setName(UI.color("Configuration", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        configButton.setLore(UI.color("Modify your configuration", UI.COLOR_TEXT));
 
         configButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.CONFIG.open(player);
         });
 
@@ -39,8 +39,8 @@ public class MenuHome implements PredefinedMenu {
         // Categories button
         MenuItemBuilder categoriesButton = new MenuItemBuilder(Material.CHEST_MINECART);
 
-        categoriesButton.setName(UI.color("Product Categories", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        categoriesButton.setLore(UI.color("Manage product categories", UI.TEXT_COLOR));
+        categoriesButton.setName(UI.color("Product Categories", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        categoriesButton.setLore(UI.color("Manage product categories", UI.COLOR_TEXT));
         categoriesButton.setClickListener(new OpenCategoryList());
 
         menu.setButton(categoriesButton, 13);
@@ -48,8 +48,8 @@ public class MenuHome implements PredefinedMenu {
         // Products button
         MenuItemBuilder productsButton = new MenuItemBuilder(Material.CHEST);
 
-        productsButton.setName(UI.color("Products", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        productsButton.setLore(UI.color("Manage products", UI.TEXT_COLOR));
+        productsButton.setName(UI.color("Products", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        productsButton.setLore(UI.color("Manage products", UI.COLOR_TEXT));
         productsButton.setClickListener(new OpenProductList());
 
         menu.setButton(productsButton, 15);
@@ -57,11 +57,11 @@ public class MenuHome implements PredefinedMenu {
         // Order fields button
         MenuItemBuilder fieldsButton = new MenuItemBuilder(Material.OAK_SIGN);
 
-        fieldsButton.setName(UI.color("Order fields", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        fieldsButton.setLore(UI.color("Manage order fields", UI.TEXT_COLOR));
+        fieldsButton.setName(UI.color("Order fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        fieldsButton.setLore(UI.color("Manage order fields", UI.COLOR_TEXT));
 
         fieldsButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.FIELD_LIST.open(player);
         });
 
@@ -70,8 +70,8 @@ public class MenuHome implements PredefinedMenu {
         // Gateways button
         MenuItemBuilder gatewayButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
 
-        gatewayButton.setName(UI.color("Gateways", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        gatewayButton.setLore(UI.color("Manage gateways", UI.TEXT_COLOR));
+        gatewayButton.setName(UI.color("Gateways", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        gatewayButton.setLore(UI.color("Manage gateways", UI.COLOR_TEXT));
         gatewayButton.setClickListener(new OpenGatewayList());
 
         menu.setButton(gatewayButton, 22);
@@ -79,8 +79,8 @@ public class MenuHome implements PredefinedMenu {
         // Orders button
         MenuItemBuilder orderButton = new MenuItemBuilder(Material.WRITABLE_BOOK);
 
-        orderButton.setName(UI.color("Orders", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        orderButton.setLore(UI.color("Manage orders", UI.TEXT_COLOR));
+        orderButton.setName(UI.color("Orders", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        orderButton.setLore(UI.color("Manage orders", UI.COLOR_TEXT));
         orderButton.setClickListener(new OpenOrderList());
 
         menu.setButton(orderButton, 24);
@@ -99,7 +99,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder closeButton = MenuItems.CLOSE.clone();
 
         closeButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             player.closeInventory();
         });
 

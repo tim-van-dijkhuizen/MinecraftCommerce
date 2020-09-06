@@ -42,23 +42,23 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder displayNameButton = new MenuItemBuilder(Material.NAME_TAG);
 
-        displayNameButton.setName(UI.color("Display Name", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        displayNameButton.setName(UI.color("Display Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (gateway.getDisplayName().length() > 0) {
-            displayNameButton.addLore(UI.color(gateway.getDisplayName(), UI.SECONDARY_COLOR));
+            displayNameButton.addLore(UI.color(gateway.getDisplayName(), UI.COLOR_SECONDARY));
         } else {
-            displayNameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            displayNameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        displayNameButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        displayNameButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("displayName")) {
-            displayNameButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            displayNameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             displayNameButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("displayName")) {
-                displayNameButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                displayNameButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -66,12 +66,12 @@ public class MenuGatewayEdit implements PredefinedMenu {
         displayNameButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
                 public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the display name of the gateway?", UI.PRIMARY_COLOR);
+                    return UI.color("What should be the display name of the gateway?", UI.COLOR_PRIMARY);
                 }
 
                 @Override
@@ -92,29 +92,29 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder typeButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
 
-        typeButton.setName(UI.color("Type", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (gateway.getType() != null) {
-            typeButton.addLore(UI.color(gateway.getType().getName(), UI.SECONDARY_COLOR));
+            typeButton.addLore(UI.color(gateway.getType().getName(), UI.COLOR_SECONDARY));
         } else {
-            typeButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        typeButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        typeButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("type")) {
-            typeButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            typeButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             typeButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("type")) {
-                typeButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                typeButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
 
         // Set click listener
         typeButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.GATEWAY_TYPE.open(player, gateway, gateway.getType());
         });
 
@@ -124,7 +124,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder optionButton = new MenuItemBuilder(Material.COMPARATOR);
 
-        optionButton.setName(UI.color("Options", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        optionButton.setName(UI.color("Options", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         // Add configuration to lore
         if(gateway.getType() != null) {
@@ -142,38 +142,38 @@ public class MenuGatewayEdit implements PredefinedMenu {
                     
                     if(!option.isValueEmpty(config)) {
                         for(String line : option.getValueLore(config)) {
-                            optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(line, UI.SECONDARY_COLOR));
+                            optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
                         }
                     } else {
-                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }
                 }
             } else {
-                optionButton.addLore(UI.color(UI.TAB + "None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                optionButton.addLore(UI.color(UI.TAB + "None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
         } else {
-            optionButton.addLore(UI.color("Select a gateway type first.", UI.ERROR_COLOR, ChatColor.ITALIC));
+            optionButton.addLore(UI.color("Select a gateway type first.", UI.COLOR_ERROR, ChatColor.ITALIC));
         }
         
-        optionButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        optionButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("config")) {
-            optionButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            optionButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             optionButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("config")) {
-                optionButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                optionButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
 
         // Set click listener
         optionButton.setClickListener(event -> {
             if(gateway.getType() != null) {
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 Menus.GATEWAY_OPTIONS.open(player, gateway);
             } else {
-                UI.playSound(player, UI.ERROR_SOUND);
+                UI.playSound(player, UI.SOUND_ERROR);
             }
         });
 
@@ -202,25 +202,28 @@ public class MenuGatewayEdit implements PredefinedMenu {
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
         if (gateway.hasErrors()) {
-            saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.ERROR_COLOR));
+            saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.COLOR_ERROR));
         }
 
         saveButton.setClickListener(event -> {
             ClickType clickType = event.getClickType();
 
-            UI.playSound(player, UI.CLICK_SOUND);
-            saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
+            UI.playSound(player, UI.SOUND_CLICK);
+            saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+            menu.disableButtons();
             menu.refresh();
 
             // Save gateway
             gatewayService.saveGateway(gateway, success -> {
+                menu.enableButtons();
+                
                 if (success) {
                     OpenGatewayList action = new OpenGatewayList(false);
                     
-                    UI.playSound(player, UI.SUCCESS_SOUND);
+                    UI.playSound(player, UI.SOUND_SUCCESS);
                     action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
-                    UI.playSound(player, UI.ERROR_SOUND);
+                    UI.playSound(player, UI.SOUND_ERROR);
                     Menus.GATEWAY_EDIT.open(player, gateway);
                 }
             });

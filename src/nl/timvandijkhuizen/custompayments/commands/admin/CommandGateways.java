@@ -25,12 +25,12 @@ public class CommandGateways extends BaseCommand {
     public void onPlayerUse(Player player, String[] args) throws Exception {
         GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
 
-        player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
+        player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
 
         // Create menu
         gatewayService.getGateways(gateways -> {
             if (gateways == null) {
-                player.sendMessage(UI.color("Failed to load gateways.", UI.ERROR_COLOR));
+                player.sendMessage(UI.color("Failed to load gateways.", UI.COLOR_ERROR));
                 return;
             }
 
@@ -40,7 +40,7 @@ public class CommandGateways extends BaseCommand {
 
     @Override
     public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-        console.sendMessage(UI.color("You must be a player to use this command.", UI.ERROR_COLOR));
+        console.sendMessage(UI.color("You must be a player to use this command.", UI.COLOR_ERROR));
     }
 
 }

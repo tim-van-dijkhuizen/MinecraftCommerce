@@ -29,18 +29,22 @@ public class OpenGatewayList implements MenuAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         if(clickSound) {
-            UI.playSound(whoClicked, UI.CLICK_SOUND);
+            UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
         
-        clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
+        clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
+        activeMenu.disableButtons();
         activeMenu.refresh();
 
         // Create menu
         gatewayService.getGateways(gateways -> {
+            activeMenu.enableButtons();
+            
             if (gateways == null) {
-                UI.playSound(whoClicked, UI.ERROR_SOUND);
-                clickedItem.setLore(UI.color("Error: Failed to load gateways.", UI.ERROR_COLOR));
+                UI.playSound(whoClicked, UI.SOUND_ERROR);
+                clickedItem.setLore(UI.color("Error: Failed to load gateways.", UI.COLOR_ERROR));
                 activeMenu.refresh();
+                return;
             }
 
             Menus.GATEWAY_LIST.open(whoClicked, gateways);

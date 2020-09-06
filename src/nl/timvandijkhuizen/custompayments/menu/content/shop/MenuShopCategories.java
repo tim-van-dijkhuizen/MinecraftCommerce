@@ -33,13 +33,13 @@ public class MenuShopCategories implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
             // Set category name
-            item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(category.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Split lore into smaller lines
             String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 
             for (String line : lines) {
-                item.addLore(UI.color(line, UI.TEXT_COLOR));
+                item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
 
             // Set click listener
@@ -52,14 +52,14 @@ public class MenuShopCategories implements PredefinedMenu {
         MenuItemBuilder closeButton = MenuItems.CLOSE.clone();
 
         closeButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             menu.close(player);
         });
 
         menu.setButton(closeButton, menu.getSize().getSlots() - 9 + 3);
         
         // Currency button
-        menu.setButton(ShopHelper.createCartItem(player, menu), menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

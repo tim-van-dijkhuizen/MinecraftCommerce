@@ -16,7 +16,7 @@ public class Order extends Element {
     private StoreCurrency currency;
     private boolean completed;
     private DataList<LineItem> lineItems;
-
+    
     public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems) {
         this.setId(id);
         this.number = number;
@@ -32,6 +32,7 @@ public class Order extends Element {
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
+        this.lineItems = new DataList<>();
     }
     
     @Override
@@ -79,9 +80,23 @@ public class Order extends Element {
     public StoreCurrency getCurrency() {
         return currency;
     }
+    
+    public void setCurrency(StoreCurrency currency) {
+        this.currency = currency;
+    }
 
     public boolean isCompleted() {
         return completed;
+    }
+    
+    public float getTotal() {
+        float total = 0;
+        
+        for(LineItem item : getLineItems()) {
+            total += item.getPrice();
+        }
+        
+        return total;
     }
     
     public void addLineItem(LineItem lineItem) {

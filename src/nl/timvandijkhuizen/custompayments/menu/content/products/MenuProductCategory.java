@@ -29,7 +29,7 @@ public class MenuProductCategory implements PredefinedMenu {
         for (Category category : categories) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
-            item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(category.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
             if (selected != null && category.getId() == selected.getId()) {
@@ -38,7 +38,7 @@ public class MenuProductCategory implements PredefinedMenu {
 
             item.setClickListener(event -> {
                 product.setCategory(category);
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 Menus.PRODUCT_EDIT.open(player, product);
             });
 
@@ -49,7 +49,7 @@ public class MenuProductCategory implements PredefinedMenu {
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
         cancelButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.PRODUCT_EDIT.open(player, product);
         });
 

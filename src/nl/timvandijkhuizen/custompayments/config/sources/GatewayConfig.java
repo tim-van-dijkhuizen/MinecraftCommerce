@@ -36,10 +36,4 @@ public class GatewayConfig extends JsonConfig {
         return gatewayType.getOptions();
     }
     
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> ConfigOption<T> getOption(String path) {
-        return getOptions().stream().filter(i -> i.getPath().equals(path)).map(i -> (ConfigOption<T>) i).findFirst().orElse(null);
-    }
-    
 }

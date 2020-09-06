@@ -49,5 +49,9 @@ public class LineItem extends Element {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+    
+    public float getPrice() {
+        return product.getPrice() * quantity;
+    }
 
 }

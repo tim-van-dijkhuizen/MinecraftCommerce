@@ -73,12 +73,12 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(Material.SUNFLOWER);
 
-            item.setName(UI.color(currency.getCode(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color("Conversion rate: ", UI.TEXT_COLOR) + UI.color("" + currency.getConversionRate(), UI.SECONDARY_COLOR));
-            item.addLore(UI.color("Format: ", UI.TEXT_COLOR) + UI.color(currency.getFormat().toPattern(), UI.SECONDARY_COLOR));
+            item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + currency.getConversionRate(), UI.COLOR_SECONDARY));
+            item.addLore(UI.color("Format: ", UI.COLOR_TEXT) + UI.color(currency.getFormat().toPattern(), UI.COLOR_SECONDARY));
 
             item.setClickListener(event -> {
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(currency);
             });
 

@@ -127,6 +127,9 @@ public class ProductService implements Service {
                     storage.deleteCommand(command);
                 }
 
+                // Remove pending from data list
+                commands.clearPending();
+                
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));

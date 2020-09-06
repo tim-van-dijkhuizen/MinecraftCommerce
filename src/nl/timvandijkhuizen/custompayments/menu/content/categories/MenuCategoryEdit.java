@@ -37,23 +37,23 @@ public class MenuCategoryEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder iconButton = new MenuItemBuilder(category.getIcon());
 
-        iconButton.setName(UI.color("Icon", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        iconButton.setName(UI.color("Icon", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         // Add validation errors to lore
         if (category.hasErrors("icon")) {
-            iconButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            iconButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             iconButton.addEnchantGlow();
 
             for (String error : category.getErrors("icon")) {
-                iconButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                iconButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
         
-        iconButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        iconButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
         iconButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.CATEGORY_ICON.open(player, category, category.getIcon());
         });
 
@@ -63,23 +63,23 @@ public class MenuCategoryEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
 
-        nameButton.setName(UI.color("Name", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        nameButton.setName(UI.color("Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (category.getName().length() > 0) {
-            nameButton.addLore(UI.color(category.getName(), UI.SECONDARY_COLOR));
+            nameButton.addLore(UI.color(category.getName(), UI.COLOR_SECONDARY));
         } else {
-            nameButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
 
-        nameButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        nameButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         
         // Add validation errors to lore
         if (category.hasErrors("name")) {
-            nameButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            nameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             nameButton.addEnchantGlow();
 
             for (String error : category.getErrors("name")) {
-                nameButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                nameButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -87,12 +87,12 @@ public class MenuCategoryEdit implements PredefinedMenu {
         nameButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
                 public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the name of the category?", UI.PRIMARY_COLOR);
+                    return UI.color("What should be the name of the category?", UI.COLOR_PRIMARY);
                 }
 
                 @Override
@@ -113,27 +113,27 @@ public class MenuCategoryEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder descriptionButton = new MenuItemBuilder(Material.PAPER);
 
-        descriptionButton.setName(UI.color("Description", UI.PRIMARY_COLOR, ChatColor.BOLD));
+        descriptionButton.setName(UI.color("Description", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (category.getDescription().length() > 0) {
             String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 
             for (String line : lines) {
-                descriptionButton.addLore(UI.color(line, UI.SECONDARY_COLOR));
+                descriptionButton.addLore(UI.color(line, UI.COLOR_SECONDARY));
             }
         } else {
-            descriptionButton.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (category.hasErrors("description")) {
-            descriptionButton.addLore("", UI.color("Errors:", UI.ERROR_COLOR, ChatColor.BOLD));
+            descriptionButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
             descriptionButton.addEnchantGlow();
 
             for (String error : category.getErrors("description")) {
-                descriptionButton.addLore(UI.color(" - " + error, UI.ERROR_COLOR));
+                descriptionButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -141,12 +141,12 @@ public class MenuCategoryEdit implements PredefinedMenu {
         descriptionButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
                 public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the description of the category?", UI.PRIMARY_COLOR);
+                    return UI.color("What should be the description of the category?", UI.COLOR_PRIMARY);
                 }
 
                 @Override
@@ -186,25 +186,28 @@ public class MenuCategoryEdit implements PredefinedMenu {
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
         if (category.hasErrors()) {
-            saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.ERROR_COLOR));
+            saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.COLOR_ERROR));
         }
 
         saveButton.setClickListener(event -> {
             ClickType clickType = event.getClickType();
 
-            UI.playSound(player, UI.CLICK_SOUND);
-            saveButton.setLore(UI.color("Saving...", UI.TEXT_COLOR));
+            UI.playSound(player, UI.SOUND_CLICK);
+            saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+            menu.disableButtons();
             menu.refresh();
 
             // Save category
             categoryService.saveCategory(category, success -> {
+                menu.enableButtons();
+                
                 if (success) {
                     OpenCategoryList action = new OpenCategoryList(false);
                     
-                    UI.playSound(player, UI.SUCCESS_SOUND);
+                    UI.playSound(player, UI.SOUND_SUCCESS);
                     action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
                 } else {
-                    UI.playSound(player, UI.ERROR_SOUND);
+                    UI.playSound(player, UI.SOUND_ERROR);
                     Menus.CATEGORY_EDIT.open(player, category);
                 }
             });

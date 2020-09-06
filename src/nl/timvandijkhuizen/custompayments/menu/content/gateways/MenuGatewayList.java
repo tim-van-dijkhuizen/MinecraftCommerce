@@ -39,11 +39,11 @@ public class MenuGatewayList implements PredefinedMenu {
             Collection<ConfigOption<?>> options = gateway.getType().getOptions();
 
             // Set gateway name
-            item.setName(UI.color(gateway.getDisplayName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore(UI.color("Type: ", UI.TEXT_COLOR) + UI.color(gateway.getType().getName(), UI.SECONDARY_COLOR), "");
+            item.setName(UI.color(gateway.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setLore(UI.color("Type: ", UI.COLOR_TEXT) + UI.color(gateway.getType().getName(), UI.COLOR_SECONDARY), "");
             
             // Add configuration to lore
-            item.addLore(UI.color("Configuration:", UI.TEXT_COLOR));
+            item.addLore(UI.color("Configuration:", UI.COLOR_TEXT));
             
             if(options.size() > 0) {
                 for(ConfigOption<?> option : options) {
@@ -57,39 +57,39 @@ public class MenuGatewayList implements PredefinedMenu {
                     
                     if(!option.isValueEmpty(config)) {
                         for(String line : option.getValueLore(config)) {
-                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(line, UI.SECONDARY_COLOR));
+                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
                         }
                     } else {
-                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }
                 }
             } else {
-                item.addLore(UI.color(UI.TAB + "None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore(UI.color(UI.TAB + "None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
 
-            item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
-            item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore(UI.color("Use right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             // Set click listener
             item.setClickListener(event -> {
                 ClickType clickType = event.getClickType();
 
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 
                 if (clickType == ClickType.LEFT) {
                     Menus.GATEWAY_EDIT.open(player, gateway);
                 } else if (clickType == ClickType.RIGHT) {
-                    item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
+                    item.setLore(UI.color("Deleting...", UI.COLOR_TEXT));
                     menu.refresh();
 
                     gatewayService.deleteGateway(gateway, success -> {
                         if (success) {
-                            UI.playSound(player, UI.DELETE_SOUND);
+                            UI.playSound(player, UI.SOUND_DELETE);
                             menu.removePagedButton(item);
                             menu.refresh();
                         } else {
-                            UI.playSound(player, UI.ERROR_SOUND);
-                            item.setLore(UI.color("Error: Failed to delete gateway.", UI.ERROR_COLOR));
+                            UI.playSound(player, UI.SOUND_ERROR);
+                            item.setLore(UI.color("Error: Failed to delete gateway.", UI.COLOR_ERROR));
                             menu.refresh();
                         }
                     });
@@ -103,7 +103,7 @@ public class MenuGatewayList implements PredefinedMenu {
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.HOME.open(player);
         });
 
@@ -112,10 +112,10 @@ public class MenuGatewayList implements PredefinedMenu {
         // Create new gateway button
         MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
 
-        createButton.setName(UI.color("Create Gateway", UI.SECONDARY_COLOR, ChatColor.BOLD));
+        createButton.setName(UI.color("Create Gateway", UI.COLOR_SECONDARY, ChatColor.BOLD));
 
         createButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.GATEWAY_EDIT.open(player);
         });
 

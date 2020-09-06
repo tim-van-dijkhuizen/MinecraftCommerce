@@ -29,17 +29,20 @@ public class OpenOrderList implements MenuAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         if(clickSound) {
-            UI.playSound(whoClicked, UI.CLICK_SOUND);
+            UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
         
-        clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
+        clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
+        activeMenu.disableButtons();
         activeMenu.refresh();
 
         // Create menu
         orderService.getOrders(orders -> {
+            activeMenu.enableButtons();
+            
             if (orders == null) {
-                UI.playSound(whoClicked, UI.ERROR_SOUND);
-                clickedItem.setLore(UI.color("Error: Failed to load orders.", UI.ERROR_COLOR));
+                UI.playSound(whoClicked, UI.SOUND_ERROR);
+                clickedItem.setLore(UI.color("Error: Failed to load orders.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }

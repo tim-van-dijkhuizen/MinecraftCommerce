@@ -13,6 +13,7 @@ import nl.timvandijkhuizen.custompayments.commands.CommandCustomPayments;
 import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
+import nl.timvandijkhuizen.custompayments.services.CacheService;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
@@ -81,6 +82,7 @@ public class CustomPayments extends PluginBase {
 
         return new Service[] {
             getDatabase(),
+            new CacheService(),
             new MenuService(),
             new CategoryService(),
             new ProductService(),

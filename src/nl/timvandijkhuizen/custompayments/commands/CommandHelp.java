@@ -35,7 +35,7 @@ public class CommandHelp extends BaseCommand {
     private void showAvailableCommands(CommandSender sender) {
         CommandService commandService = CustomPayments.getInstance().getService("commands");
         
-        sender.sendMessage(UI.color("Available commands:", UI.PRIMARY_COLOR));
+        sender.sendMessage(UI.color("Available commands:", UI.COLOR_PRIMARY));
         
         for(BaseCommand command : commandService.getCommands()) {
             showCommandUsage(sender, command, 1);
@@ -44,8 +44,8 @@ public class CommandHelp extends BaseCommand {
     
     private void showCommandUsage(CommandSender sender, BaseCommand command, int indentLevel) {
         if(command.getPermission() == null || sender.hasPermission(command.getPermission())) {
-            String prefix = StringUtils.repeat(UI.TAB, indentLevel) + UI.color(Icon.SQUARE, UI.TEXT_COLOR) + " ";
-            sender.sendMessage(prefix + UI.color(command.getUsage(), UI.SECONDARY_COLOR));
+            String prefix = StringUtils.repeat(UI.TAB, indentLevel) + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " ";
+            sender.sendMessage(prefix + UI.color(command.getUsage(), UI.COLOR_SECONDARY));
             
             // Increase indentation level
             indentLevel++;

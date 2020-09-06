@@ -21,6 +21,7 @@ import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductComma
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
+import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCart;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCategories;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCurrency;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopProducts;
@@ -59,9 +60,10 @@ public enum Menus {
     ORDER_ITEMS(new MenuOrderItems()),
     
     // User
-    SHOP_CURRENCY(new MenuShopCurrency()),
     SHOP_CATEGORIES(new MenuShopCategories()),
-    SHOP_PRODUCTS(new MenuShopProducts());
+    SHOP_PRODUCTS(new MenuShopProducts()),
+    SHOP_CURRENCY(new MenuShopCurrency()),
+    SHOP_CART(new MenuShopCart());
 
     private PredefinedMenu predefinedMenu;
 

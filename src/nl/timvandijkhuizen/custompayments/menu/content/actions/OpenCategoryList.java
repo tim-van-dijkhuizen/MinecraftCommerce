@@ -29,18 +29,22 @@ public class OpenCategoryList implements MenuAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         if(clickSound) {
-            UI.playSound(whoClicked, UI.CLICK_SOUND);
+            UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
         
-        clickedItem.setLore(UI.color("Loading...", UI.TEXT_COLOR));
+        clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
+        activeMenu.disableButtons();
         activeMenu.refresh();
 
         // Create menu
         categoryService.getCategories(categories -> {
+            activeMenu.enableButtons();
+            
             if (categories == null) {
-                UI.playSound(whoClicked, UI.ERROR_SOUND);
-                clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.ERROR_COLOR));
+                UI.playSound(whoClicked, UI.SOUND_ERROR);
+                clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));
                 activeMenu.refresh();
+                return;
             }
 
             Menus.CATEGORY_LIST.open(whoClicked, categories);

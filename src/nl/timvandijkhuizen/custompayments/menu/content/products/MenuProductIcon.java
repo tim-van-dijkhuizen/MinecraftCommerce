@@ -27,7 +27,7 @@ public class MenuProductIcon implements PredefinedMenu {
         for (Material icon : CustomPayments.MENU_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
 
-            item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
             if (icon == selected) {
@@ -36,7 +36,7 @@ public class MenuProductIcon implements PredefinedMenu {
 
             item.setClickListener(event -> {
                 product.setIcon(icon);
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 Menus.PRODUCT_EDIT.open(player, product);
             });
 
@@ -47,7 +47,7 @@ public class MenuProductIcon implements PredefinedMenu {
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
         cancelButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.PRODUCT_EDIT.open(player, product);
         });
 

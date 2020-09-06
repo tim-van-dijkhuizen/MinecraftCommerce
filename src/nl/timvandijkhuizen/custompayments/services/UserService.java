@@ -1,20 +1,12 @@
 package nl.timvandijkhuizen.custompayments.services;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Storage;
@@ -28,9 +20,8 @@ import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class UserService implements Service, Listener {
+public class UserService implements Service {
 
-    private Map<UUID, UserPreferences> userPreferences = new HashMap<>();
     private Set<ConfigOption<?>> userOptions = new HashSet<>();
     
     @Override
@@ -59,35 +50,22 @@ public class UserService implements Service, Listener {
 
     }
     
-    @EventHandler(ignoreCancelled=true, priority=EventPriority.MONITOR)
-    public void onLogin(AsyncPlayerPreLoginEvent event) {
-        Storage storage = CustomPayments.getInstance().getStorage();
-        UUID uuid = event.getUniqueId();
-        
-        // Load preferences
-        UserPreferences preferences;
-        
-        try {
-            preferences = storage.getUserPreferences(uuid);
-        } catch (Exception e) {
-            preferences = new UserPreferences();
-            ConsoleHelper.printError("Failed to load user preferences for " + uuid, e);
-        }
-        
-        // Add options
-        preferences.addOptions(userOptions);
-        
-        // Cache preferences
-        userPreferences.put(uuid, preferences);
-    }
-    
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        userPreferences.remove(event.getPlayer().getUniqueId());
+    public Set<ConfigOption<?>> getUserOptions() {
+        return userOptions;
     }
     
     public UserPreferences getPreferences(Player player) {
-        return userPreferences.get(player.getUniqueId());
+        CacheService cacheService = CustomPayments.getInstance().getService("cache");
+        UserPreferences preferences = cacheService.getPreferences(player);
+        
+        // Set default if null
+        if(preferences == null) {
+            preferences = new UserPreferences();
+            cacheService.updatePreferences(player, preferences);
+            return preferences;
+        }
+        
+        return preferences;
     }
     
     public void savePreferences(Player player, UserPreferences preferences, Consumer<Boolean> callback) {

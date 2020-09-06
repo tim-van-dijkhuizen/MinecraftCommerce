@@ -34,38 +34,38 @@ public class MenuCategoryList implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
             // Set category name
-            item.setName(UI.color(category.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(category.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Split lore into smaller lines
             String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 
             for (String line : lines) {
-                item.addLore(UI.color(line, UI.TEXT_COLOR));
+                item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
 
-            item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
-            item.addLore(UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore(UI.color("Use right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             // Set click listener
             item.setClickListener(event -> {
                 ClickType clickType = event.getClickType();
 
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 
                 if (clickType == ClickType.LEFT) {
                     Menus.CATEGORY_EDIT.open(player, category);
                 } else if (clickType == ClickType.RIGHT) {
-                    item.setLore(UI.color("Deleting...", UI.TEXT_COLOR));
+                    item.setLore(UI.color("Deleting...", UI.COLOR_TEXT));
                     menu.refresh();
 
                     categoryService.deleteCategory(category, success -> {
                         if (success) {
-                            UI.playSound(player, UI.DELETE_SOUND);
+                            UI.playSound(player, UI.SOUND_DELETE);
                             menu.removePagedButton(item);
                             menu.refresh();
                         } else {
-                            UI.playSound(player, UI.ERROR_SOUND);
-                            item.setLore(UI.color("Error: Failed to delete category.", UI.ERROR_COLOR));
+                            UI.playSound(player, UI.SOUND_ERROR);
+                            item.setLore(UI.color("Error: Failed to delete category.", UI.COLOR_ERROR));
                             menu.refresh();
                         }
                     });
@@ -79,7 +79,7 @@ public class MenuCategoryList implements PredefinedMenu {
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.HOME.open(player);
         });
 
@@ -88,10 +88,10 @@ public class MenuCategoryList implements PredefinedMenu {
         // Create new category button
         MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
 
-        createButton.setName(UI.color("Create Category", UI.SECONDARY_COLOR, ChatColor.BOLD));
+        createButton.setName(UI.color("Create Category", UI.COLOR_SECONDARY, ChatColor.BOLD));
 
         createButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.CATEGORY_EDIT.open(player);
         });
 

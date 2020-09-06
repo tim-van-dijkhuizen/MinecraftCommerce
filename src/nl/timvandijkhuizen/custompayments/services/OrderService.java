@@ -1,22 +1,28 @@
 package nl.timvandijkhuizen.custompayments.services;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.base.Storage;
+import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public class OrderService implements Service {
 
+    
+    
     @Override
     public String getHandle() {
         return "orders";
@@ -35,20 +41,39 @@ public class OrderService implements Service {
     /**
      * Returns the cart of the specified user.
      * 
-     * @param callback
+     * @param player
+     * @return
      */
-    public void getCart(UUID uuid, Consumer<Order> callback) {
-        Storage storage = CustomPayments.getInstance().getStorage();
-
-        Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
-            try {
-                Order order = storage.getCart(uuid);
-                MainThread.execute(() -> callback.accept(order));
-            } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load cart: " + e.getMessage(), e);
-            }
-        });
+    public Order getCart(Player player) {
+        CacheService cacheService = CustomPayments.getInstance().getService("cache");
+        Order cart = cacheService.getCart(player);
+        
+        // Set default if null
+        if(cart == null) {
+            cart = createCart(player);
+            cacheService.updateCart(player, cart);
+            return cart;
+        }
+        
+        return cart;
+    }
+    
+    /**
+     * Creates a new cart for the specified player.
+     * 
+     * @param player
+     * @return
+     */
+    public Order createCart(Player player) {
+        UserService userService = CustomPayments.getInstance().getService("users");
+        UserPreferences preferences = userService.getPreferences(player);
+        ConfigOption<StoreCurrency> optionCurrency = preferences.getOption("currency");
+        StoreCurrency currency = optionCurrency.getValue(preferences);
+        
+        // Create order number
+        String number = RandomStringUtils.random(20, true, true);
+        
+        return new Order(number, player.getUniqueId(), player.getName(), currency);
     }
     
     /**
@@ -114,6 +139,9 @@ public class OrderService implements Service {
                 for (LineItem lineItem : lineItems.getToRemove()) {
                     storage.deleteLineItem(lineItem);
                 }
+                
+                // Remove pending from data list
+                lineItems.clearPending();
 
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {

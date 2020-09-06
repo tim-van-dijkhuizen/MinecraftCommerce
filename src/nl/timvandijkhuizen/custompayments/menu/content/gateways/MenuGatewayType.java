@@ -28,7 +28,7 @@ public class MenuGatewayType implements PredefinedMenu {
         for (GatewayType type : gatewayService.getTypes()) {
             MenuItemBuilder item = new MenuItemBuilder(type.getIcon());
 
-            item.setName(UI.color(type.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
             if (selected != null && type.getHandle().equals(selected.getHandle())) {
@@ -37,7 +37,7 @@ public class MenuGatewayType implements PredefinedMenu {
 
             item.setClickListener(event -> {
                 gateway.setType(type);
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 Menus.GATEWAY_EDIT.open(player, gateway);
             });
 
@@ -48,7 +48,7 @@ public class MenuGatewayType implements PredefinedMenu {
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
         cancelButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.GATEWAY_EDIT.open(player, gateway);
         });
 

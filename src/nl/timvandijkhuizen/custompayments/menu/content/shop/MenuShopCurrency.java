@@ -8,8 +8,9 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
-import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
-import nl.timvandijkhuizen.custompayments.services.UserService;
+import nl.timvandijkhuizen.custompayments.elements.Order;
+import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
+import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
@@ -26,9 +27,9 @@ public class MenuShopCurrency implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        UserService userService = CustomPayments.getInstance().getService("users");
-        YamlConfig config = CustomPayments.getInstance().getConfig();
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Currency", 3, 7, 1, 1, 1, 5, 7);
+        OrderService orderService = CustomPayments.getInstance().getService("orders");
+        Order cart = orderService.getCart(player);
 
         // Get return menu and currency item
         MenuItemClick clickEvent = args[0].as(MenuItemClick.class);
@@ -36,46 +37,45 @@ public class MenuShopCurrency implements PredefinedMenu {
         MenuItemBuilder cartItem = clickEvent.getItem();
         
         // Get available currencies
+        YamlConfig config = CustomPayments.getInstance().getConfig();
         ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
         List<StoreCurrency> currencies = currenciesOption.getValue(config);
 
-        // Get selected currency
-        UserPreferences preferences = userService.getPreferences(player);
-        ConfigOption<StoreCurrency> optionCurrency = preferences.getOption("currency");
-        StoreCurrency selected = optionCurrency.getValue(preferences);
-        
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(Material.SUNFLOWER);
 
             // Set category name
-            item.setName(UI.color(currency.getCode(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.addLore("", UI.color("Use left-click to select.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.addLore("", UI.color("Use left-click to select.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
-            // Add glow if selected
-            if(currency.equals(selected)) {
+            // Add glow if selected 
+            if(currency.equals(cart.getCurrency())) {
                 item.addEnchantGlow();
             }
             
             // Set click listener
             item.setClickListener(event -> {
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 
-                // Set option
-                optionCurrency.setValue(preferences, currency);
+                // Update order
+                cart.setCurrency(currency);
                 
                 // Update UI
-                item.setLore(UI.color("Saving...", UI.TEXT_COLOR));
+                item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+                menu.disableButtons();
                 menu.refresh();
 
-                // Save product
-                userService.savePreferences(player, preferences, success -> {
+                // Save cart
+                orderService.saveOrder(cart, success -> {
+                    menu.enableButtons();
+                    
                     if (success) {
-                        UI.playSound(player, UI.SUCCESS_SOUND);
-                        cartItem.setLore(UI.color("Currency: ", UI.TEXT_COLOR) + UI.color(currency.getCode(), UI.SECONDARY_COLOR), 0);
+                        UI.playSound(player, UI.SOUND_SUCCESS);
+                        ShopHelper.updateCartItem(cartItem, player);
                         returnMenu.open(player);
                     } else {
-                        UI.playSound(player, UI.ERROR_SOUND);
-                        item.setLore(UI.color("Failed to save preferences.", UI.ERROR_COLOR));
+                        UI.playSound(player, UI.SOUND_ERROR);
+                        item.setLore(UI.color("Failed to save cart.", UI.COLOR_ERROR));
                         menu.refresh();
                     }
                 });
@@ -88,7 +88,7 @@ public class MenuShopCurrency implements PredefinedMenu {
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
         cancelButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             returnMenu.open(player);
         });
 

@@ -38,21 +38,21 @@ public class MenuGatewayOptions implements PredefinedMenu {
             // Create and add option
             MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
             
-            item.setName(UI.color(icon.getName(), UI.PRIMARY_COLOR, ChatColor.BOLD));
+            item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
                 for(String line : option.getValueLore(config)) {
-                    item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(line, UI.SECONDARY_COLOR));
+                    item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
                 }
             } else {
-                item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
             
-            item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             // Set click listener
             item.setClickListener(event -> {
-                UI.playSound(player, UI.CLICK_SOUND);
+                UI.playSound(player, UI.SOUND_CLICK);
                 
                 option.getValueInput(player, option.getValue(config), value -> {
                     option.setValue(config, value);
@@ -63,13 +63,13 @@ public class MenuGatewayOptions implements PredefinedMenu {
                     // Set new lore
                     if(!option.isValueEmpty(config)) {
                         for(String line : option.getValueLore(config)) {
-                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.TEXT_COLOR) + UI.color(line, UI.SECONDARY_COLOR));
+                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
                         }
                     } else {
-                        item.addLore(UI.color("None", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                        item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }
                     
-                    item.addLore("", UI.color("Use left-click to edit.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+                    item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     
                     // Open menu
                     menu.open(player);
@@ -83,7 +83,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.GATEWAY_EDIT.open(player, gateway);
         });
 

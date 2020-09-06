@@ -25,12 +25,12 @@ public class CommandCategories extends BaseCommand {
     public void onPlayerUse(Player player, String[] args) throws Exception {
         CategoryService categoryService = CustomPayments.getInstance().getService("categories");
 
-        player.sendMessage(UI.color("Loading...", UI.TEXT_COLOR));
+        player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
 
         // Create menu
         categoryService.getCategories(categories -> {
             if (categories == null) {
-                player.sendMessage(UI.color("Failed to load categories.", UI.ERROR_COLOR));
+                player.sendMessage(UI.color("Failed to load categories.", UI.COLOR_ERROR));
                 return;
             }
 
@@ -40,7 +40,7 @@ public class CommandCategories extends BaseCommand {
 
     @Override
     public void onConsoleUse(CommandSender console, String[] args) throws Exception {
-        console.sendMessage(UI.color("You must be a player to use this command.", UI.ERROR_COLOR));
+        console.sendMessage(UI.color("You must be a player to use this command.", UI.COLOR_ERROR));
     }
 
 }

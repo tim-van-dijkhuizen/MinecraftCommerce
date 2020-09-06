@@ -27,8 +27,8 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder uniqueIdButton = new MenuItemBuilder(Material.PLAYER_HEAD);
 
         uniqueIdButton.setSkullOwner(order.getPlayerUniqueId());
-        uniqueIdButton.setName(UI.color("Player UniqueId", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.SECONDARY_COLOR));
+        uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_SECONDARY));
         
         menu.setButton(uniqueIdButton, 10);
         
@@ -36,8 +36,8 @@ public class MenuOrderView implements PredefinedMenu {
         // ===========================
         MenuItemBuilder usernameButton = new MenuItemBuilder(Material.NAME_TAG);
 
-        usernameButton.setName(UI.color("Player Username", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        usernameButton.addLore(UI.color(order.getPlayerName(), UI.SECONDARY_COLOR));
+        usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
         
         menu.setButton(usernameButton, 12);
         
@@ -45,8 +45,8 @@ public class MenuOrderView implements PredefinedMenu {
         // ===========================
         MenuItemBuilder currencyButton = new MenuItemBuilder(Material.SUNFLOWER);
 
-        currencyButton.setName(UI.color("Currency", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.SECONDARY_COLOR));
+        currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
         
         menu.setButton(currencyButton, 14);
         
@@ -54,31 +54,31 @@ public class MenuOrderView implements PredefinedMenu {
         // ===========================
         MenuItemBuilder completedButton = new MenuItemBuilder(Material.FIREWORK_ROCKET);
 
-        completedButton.setName(UI.color("Completed", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        completedButton.addLore(UI.color(order.isCompleted() ? "Yes" : "No", UI.SECONDARY_COLOR));
+        completedButton.setName(UI.color("Completed", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        completedButton.addLore(UI.color(order.isCompleted() ? "Yes" : "No", UI.COLOR_SECONDARY));
         
         menu.setButton(completedButton, 16);
         
         // Products button
         // ===========================
-        MenuItemBuilder productsButton = new MenuItemBuilder(Material.CHEST);
+        MenuItemBuilder itemsButton = new MenuItemBuilder(Material.CHEST);
 
-        productsButton.setName(UI.color("Products", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        productsButton.setLore(UI.color("Click to view the products", UI.TEXT_COLOR));
+        itemsButton.setName(UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        itemsButton.setLore(UI.color("Click to view the items", UI.COLOR_TEXT));
         
-        productsButton.setClickListener(event -> {
-           UI.playSound(player, UI.CLICK_SOUND);
+        itemsButton.setClickListener(event -> {
+           UI.playSound(player, UI.SOUND_CLICK);
            Menus.ORDER_ITEMS.open(player, order);
         });
         
-        menu.setButton(productsButton, 30);
+        menu.setButton(itemsButton, 30);
         
         // Fields button
         // ===========================
         MenuItemBuilder fieldsButton = new MenuItemBuilder(Material.OAK_SIGN);
 
-        fieldsButton.setName(UI.color("Fields", UI.PRIMARY_COLOR, ChatColor.BOLD));
-        fieldsButton.setLore(UI.color("Click to view the fields", UI.TEXT_COLOR));
+        fieldsButton.setName(UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        fieldsButton.setLore(UI.color("Click to view the fields", UI.COLOR_TEXT));
         
         menu.setButton(fieldsButton, 32);
 

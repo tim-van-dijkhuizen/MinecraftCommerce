@@ -36,14 +36,14 @@ public class MenuProductCommands implements PredefinedMenu {
         for (Command command : product.getCommands()) {
             MenuItemBuilder item = new MenuItemBuilder(Material.COMMAND_BLOCK);
 
-            item.setName(UI.color(command.getCommand(), UI.PRIMARY_COLOR, ChatColor.BOLD));
-            item.setLore("", UI.color("Use right-click to delete.", UI.SECONDARY_COLOR, ChatColor.ITALIC));
+            item.setName(UI.color(command.getCommand(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setLore("", UI.color("Use right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             item.setClickListener(event -> {
                 ClickType clickType = event.getClickType();
 
                 if (clickType == ClickType.RIGHT) {
-                    UI.playSound(player, UI.DELETE_SOUND);
+                    UI.playSound(player, UI.SOUND_DELETE);
                     product.removeCommand(command);
                     menu.removePagedButton(item);
                     menu.refresh();
@@ -57,7 +57,7 @@ public class MenuProductCommands implements PredefinedMenu {
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(event -> {
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
@@ -66,34 +66,34 @@ public class MenuProductCommands implements PredefinedMenu {
         // Create new command button
         MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
 
-        createButton.setName(UI.color("Create Command", UI.SECONDARY_COLOR, ChatColor.BOLD));
-        createButton.setLore(UI.color("Add a command to be executed when this product", UI.TEXT_COLOR));
-        createButton.addLore(UI.color("is purchased. You can add variables to the", UI.TEXT_COLOR));
-        createButton.addLore(UI.color("command using the following format: ", UI.TEXT_COLOR) + UI.color("{variableKey}", UI.SECONDARY_COLOR));
+        createButton.setName(UI.color("Create Command", UI.COLOR_SECONDARY, ChatColor.BOLD));
+        createButton.setLore(UI.color("Add a command to be executed when this product", UI.COLOR_TEXT));
+        createButton.addLore(UI.color("is purchased. You can add variables to the", UI.COLOR_TEXT));
+        createButton.addLore(UI.color("command using the following format: ", UI.COLOR_TEXT) + UI.color("{variableKey}", UI.COLOR_SECONDARY));
 
         // Add variables to lore
-        createButton.addLore("", UI.color("Available variables:", UI.TEXT_COLOR));
+        createButton.addLore("", UI.color("Available variables:", UI.COLOR_TEXT));
 
         for (CommandVariable variable : productService.getCommandVariables()) {
-            createButton.addLore(UI.color(" - {" + variable.getKey() + "}", UI.SECONDARY_COLOR));
+            createButton.addLore(UI.color(" - {" + variable.getKey() + "}", UI.COLOR_SECONDARY));
         }
 
         createButton.setClickListener(event -> {
             ConversationFactory factory = new ConversationFactory(CustomPayments.getInstance());
 
-            UI.playSound(player, UI.CLICK_SOUND);
+            UI.playSound(player, UI.SOUND_CLICK);
 
             Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
                 @Override
                 public String getPromptText(ConversationContext context) {
-                    return UI.color("Type the command you want to add:", UI.PRIMARY_COLOR);
+                    return UI.color("Type the command you want to add:", UI.COLOR_PRIMARY);
                 }
 
                 @Override
                 public Prompt acceptInput(ConversationContext context, String input) {
                     Command newCommand = new Command(input);
 
-                    UI.playSound(player, UI.SUCCESS_SOUND);
+                    UI.playSound(player, UI.SOUND_SUCCESS);
                     product.addCommand(newCommand);
                     Menus.PRODUCT_COMMANDS.open(player, product);
 
