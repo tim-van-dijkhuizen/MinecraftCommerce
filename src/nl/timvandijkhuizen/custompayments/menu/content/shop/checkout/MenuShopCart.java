@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.custompayments.menu.content.shop;
+package nl.timvandijkhuizen.custompayments.menu.content.shop.checkout;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -44,7 +44,7 @@ public class MenuShopCart implements PredefinedMenu {
             
             // Category and price
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
-            item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
+            item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY), "");
 
             menu.addPagedButton(item);
         }

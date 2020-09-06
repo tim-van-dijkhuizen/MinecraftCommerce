@@ -21,10 +21,10 @@ import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductComma
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductEdit;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.custompayments.menu.content.products.MenuProductList;
-import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCart;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCategories;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopCurrency;
 import nl.timvandijkhuizen.custompayments.menu.content.shop.MenuShopProducts;
+import nl.timvandijkhuizen.custompayments.menu.content.shop.checkout.MenuShopCart;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;

@@ -29,7 +29,9 @@ public class MenuShopProducts implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataValue... args) {
         Category category = args[0].as(Category.class);
+        OrderService orderService = CustomPayments.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
+        Order cart = orderService.getCart(player);
 
         // Create cart item
         MenuItemBuilder cartItem = ShopHelper.createCartItem(player);
@@ -50,12 +52,10 @@ public class MenuShopProducts implements PredefinedMenu {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
             
-            item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
+            item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY), "");
 
             // Set click listener
             item.setClickListener(event -> {
-                OrderService orderService = CustomPayments.getInstance().getService("orders");
-                Order cart = orderService.getCart(player);
                 List<String> lore = new ArrayList<>(item.getLore());
                 
                 UI.playSound(player, UI.SOUND_CLICK);

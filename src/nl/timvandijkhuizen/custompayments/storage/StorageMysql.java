@@ -323,7 +323,7 @@ public class StorageMysql extends Storage {
         if(category == null) {
             statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products LEFT JOIN categories ON products.categoryId = categories.id;");
         } else {
-            statement = connection.prepareStatement("SELECT * FROM products WHERE categoryId=?;");
+            statement = connection.prepareStatement("SELECT id, icon, name, description, price FROM products WHERE categoryId=?;");
             statement.setInt(1, category.getId());
         }
         
