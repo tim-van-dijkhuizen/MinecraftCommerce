@@ -581,7 +581,7 @@ public class StorageMysql extends Storage {
     @Override
     public List<Order> getOrders() throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT * FROM orders";
+        String sql = "SELECT * FROM orders WHERE completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Get currencies
