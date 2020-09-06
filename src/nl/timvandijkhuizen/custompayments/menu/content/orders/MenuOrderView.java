@@ -4,15 +4,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.custompayments.base.ProductSnapshot;
+import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
+import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenOrderList;
+import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuOrderView implements PredefinedMenu {
@@ -30,7 +35,7 @@ public class MenuOrderView implements PredefinedMenu {
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
         uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_SECONDARY));
         
-        menu.setButton(uniqueIdButton, 10);
+        menu.setButton(uniqueIdButton, 11);
         
         // Username button
         // ===========================
@@ -39,7 +44,7 @@ public class MenuOrderView implements PredefinedMenu {
         usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
         usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
         
-        menu.setButton(usernameButton, 12);
+        menu.setButton(usernameButton, 13);
         
         // Currency button
         // ===========================
@@ -48,23 +53,30 @@ public class MenuOrderView implements PredefinedMenu {
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
         currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
         
-        menu.setButton(currencyButton, 14);
-        
-        // Completed button
-        // ===========================
-        MenuItemBuilder completedButton = new MenuItemBuilder(Material.FIREWORK_ROCKET);
-
-        completedButton.setName(UI.color("Completed", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        completedButton.addLore(UI.color(order.isCompleted() ? "Yes" : "No", UI.COLOR_SECONDARY));
-        
-        menu.setButton(completedButton, 16);
+        menu.setButton(currencyButton, 15);
         
         // Products button
         // ===========================
         MenuItemBuilder itemsButton = new MenuItemBuilder(Material.CHEST);
 
         itemsButton.setName(UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        itemsButton.setLore(UI.color("Click to view the items", UI.COLOR_TEXT));
+        
+        // Add items to lore
+        DataList<LineItem> lineItems = order.getLineItems();
+
+        if (lineItems.size() > 0) {
+            for(LineItem lineItem : lineItems) {
+                ProductSnapshot product = lineItem.getProduct();
+                String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
+                String price = ShopHelper.formatPrice(product.getPrice(), order.getCurrency());
+                
+                itemsButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+            }
+        } else {
+            itemsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        }
+        
+        itemsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         
         itemsButton.setClickListener(event -> {
            UI.playSound(player, UI.SOUND_CLICK);
