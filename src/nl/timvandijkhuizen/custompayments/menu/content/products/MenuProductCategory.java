@@ -32,7 +32,7 @@ public class MenuProductCategory implements PredefinedMenu {
             item.setName(UI.color(category.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
-            if (selected != null && category.getId() == selected.getId()) {
+            if (selected != null && category.getId().equals(selected.getId())) {
                 item.addEnchantGlow();
             }
 
