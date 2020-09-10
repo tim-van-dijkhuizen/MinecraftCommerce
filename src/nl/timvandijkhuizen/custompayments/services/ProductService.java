@@ -19,6 +19,7 @@ import nl.timvandijkhuizen.custompayments.events.RegisterCommandVariablesEvent;
 import nl.timvandijkhuizen.custompayments.variables.VariableUniqueId;
 import nl.timvandijkhuizen.custompayments.variables.VariableUsername;
 import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
@@ -119,11 +120,11 @@ public class ProductService implements Service {
                 }
 
                 // Update commands
-                for (Command command : commands.getToAdd()) {
+                for (Command command : commands.getByAction(DataAction.CREATE)) {
                     storage.createCommand(command);
                 }
 
-                for (Command command : commands.getToRemove()) {
+                for (Command command : commands.getByAction(DataAction.DELETE)) {
                     storage.deleteCommand(command);
                 }
 

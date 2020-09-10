@@ -15,6 +15,7 @@ import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.Service;
@@ -122,21 +123,25 @@ public class OrderService implements Service {
                     storage.updateOrder(order);
                 }
                 
-                // Set order id on LineItems
+                // Set order id and remove if quantity <= 0
                 for (LineItem lineItem : lineItems) {
                     lineItem.setOrderId(order.getId());
+                    
+                    if(lineItem.getQuantity() <= 0) {
+                        order.getLineItems().remove(lineItem);
+                    }
                 }
 
-                // Update commands
-                for (LineItem lineItem : lineItems.getToAdd()) {
+                // Update line items
+                for (LineItem lineItem : lineItems.getByAction(DataAction.CREATE)) {
                     storage.createLineItem(lineItem);
                 }
                 
-                for (LineItem lineItem : lineItems.getToUpdate()) {
+                for (LineItem lineItem : lineItems.getByAction(DataAction.UPDATE)) {
                     storage.updateLineItem(lineItem);
                 }
 
-                for (LineItem lineItem : lineItems.getToRemove()) {
+                for (LineItem lineItem : lineItems.getByAction(DataAction.DELETE)) {
                     storage.deleteLineItem(lineItem);
                 }
                 
