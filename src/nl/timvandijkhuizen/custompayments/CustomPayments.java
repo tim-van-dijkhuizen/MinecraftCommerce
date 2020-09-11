@@ -83,6 +83,10 @@ public class CustomPayments extends PluginBase {
         config.addOption(configStorageType);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
+        
+        // Make sure all options exist
+        config.setDefaultOptions();
+        config.save();
     }
     
     @Override
