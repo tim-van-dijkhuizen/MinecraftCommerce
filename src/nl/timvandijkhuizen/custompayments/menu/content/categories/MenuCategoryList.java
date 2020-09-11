@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.categories;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -28,7 +28,7 @@ public class MenuCategoryList implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Product Categories", 3, 7, 1, 1);
 
         // Add category buttons
-        List<Category> categories = args[0].asList(Category.class);
+        Set<Category> categories = args[0].asSet(Category.class);
 
         for (Category category : categories) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());

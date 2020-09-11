@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.services;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -18,25 +18,15 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.Service;
+import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
-public class OrderService implements Service {
+public class OrderService extends BaseService {
 
     
     
     @Override
     public String getHandle() {
         return "orders";
-    }
-
-    @Override
-    public void load() throws Exception {
-
-    }
-
-    @Override
-    public void unload() throws Exception {
-
     }
     
     /**
@@ -82,12 +72,12 @@ public class OrderService implements Service {
      * 
      * @param callback
      */
-    public void getOrders(Consumer<List<Order>> callback) {
+    public void getOrders(Consumer<Set<Order>> callback) {
         Storage storage = CustomPayments.getInstance().getStorage();
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
             try {
-                List<Order> orders = storage.getOrders();
+                Set<Order> orders = storage.getOrders();
                 MainThread.execute(() -> callback.accept(orders));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));

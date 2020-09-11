@@ -1,6 +1,5 @@
 package nl.timvandijkhuizen.custompayments.services;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -14,9 +13,9 @@ import nl.timvandijkhuizen.custompayments.events.RegisterGatewayTypesEvent;
 import nl.timvandijkhuizen.custompayments.gateways.GatewayMollie;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.Service;
+import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
-public class GatewayService implements Service {
+public class GatewayService extends BaseService {
 
     private Set<GatewayType> types;
     
@@ -37,7 +36,7 @@ public class GatewayService implements Service {
 
     @Override
     public void unload() throws Exception {
-
+        types = null;
     }
     
     /**
@@ -45,12 +44,12 @@ public class GatewayService implements Service {
      * 
      * @param callback
      */
-    public void getGateways(Consumer<List<Gateway>> callback) {
+    public void getGateways(Consumer<Set<Gateway>> callback) {
         Storage storage = CustomPayments.getInstance().getStorage();
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
             try {
-                List<Gateway> gateways = storage.getGateways();
+                Set<Gateway> gateways = storage.getGateways();
                 MainThread.execute(() -> callback.accept(gateways));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));

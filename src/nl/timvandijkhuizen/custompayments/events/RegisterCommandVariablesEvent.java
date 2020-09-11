@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import nl.timvandijkhuizen.custompayments.base.CommandVariable;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class RegisterCommandVariablesEvent extends Event {
 
@@ -28,7 +29,7 @@ public class RegisterCommandVariablesEvent extends Event {
             CommandVariable instance = variable.newInstance();
             variables.add(instance);
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            ConsoleHelper.printError("Failed to register command variable.", e);
         }
     }
 

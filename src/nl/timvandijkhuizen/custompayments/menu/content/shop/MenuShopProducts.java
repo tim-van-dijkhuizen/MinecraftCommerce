@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.custompayments.menu.content.shop;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -37,7 +38,7 @@ public class MenuShopProducts implements PredefinedMenu {
         MenuItemBuilder cartItem = ShopHelper.createCartItem(player);
         
         // Add product buttons
-        List<Product> products = args[1].asList(Product.class);
+        Set<Product> products = args[1].asSet(Product.class);
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());

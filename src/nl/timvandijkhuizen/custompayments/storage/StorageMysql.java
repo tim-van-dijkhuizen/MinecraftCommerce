@@ -5,8 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -16,7 +17,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
-import nl.timvandijkhuizen.custompayments.base.Field;
 import nl.timvandijkhuizen.custompayments.base.GatewayType;
 import nl.timvandijkhuizen.custompayments.base.ProductSnapshot;
 import nl.timvandijkhuizen.custompayments.base.Storage;
@@ -25,6 +25,7 @@ import nl.timvandijkhuizen.custompayments.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
+import nl.timvandijkhuizen.custompayments.elements.Field;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
@@ -40,59 +41,61 @@ import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class StorageMysql extends Storage {
 
-    private HikariConfig dbConfig = new HikariConfig();
+    // MySQL source
     private HikariDataSource dbSource;
+    
+    // Configuration options
+    ConfigOption<String> configHost;
+    ConfigOption<Integer> configPort;
+    ConfigOption<String> configDatabase;
+    ConfigOption<String> configUsername;
+    ConfigOption<String> configPassword;
 
     @Override
-    public void load() throws Exception {
+    public void init() throws Exception {
         YamlConfig config = CustomPayments.getInstance().getConfig();
 
         // Create configuration options
-        ConfigOption<String> optionHost = new ConfigOption<>("storage.host", ConfigTypes.STRING)
+        configHost = new ConfigOption<>("storage.host", ConfigTypes.STRING)
             .setIcon(new ConfigIcon(Material.CHEST, "Storage Host"))
-            .setRequired(true)
-            .setReadOnly(true);
+            .setRequired(true);
         
-        ConfigOption<Integer> optionPort = new ConfigOption<>("storage.port", ConfigTypes.INTEGER)
+        configPort = new ConfigOption<>("storage.port", ConfigTypes.INTEGER)
             .setIcon(new ConfigIcon(Material.CHEST, "Storage Port"))
-            .setRequired(true)
-            .setReadOnly(true);
+            .setRequired(true);
         
-        ConfigOption<String> optionDatabase = new ConfigOption<>("storage.database", ConfigTypes.STRING)
+        configDatabase = new ConfigOption<>("storage.database", ConfigTypes.STRING)
             .setIcon(new ConfigIcon(Material.CHEST, "Storage Database"))
-            .setRequired(true)
-            .setReadOnly(true);
+            .setRequired(true);
         
-        ConfigOption<String> optionUsername = new ConfigOption<>("storage.username", ConfigTypes.STRING)
+        configUsername = new ConfigOption<>("storage.username", ConfigTypes.STRING)
             .setIcon(new ConfigIcon(Material.CHEST, "Storage Username"))
-            .setRequired(true)
-            .setReadOnly(true);
+            .setRequired(true);
         
-        ConfigOption<String> optionPassword = new ConfigOption<>("storage.password", ConfigTypes.PASSWORD)
+        configPassword = new ConfigOption<>("storage.password", ConfigTypes.PASSWORD)
             .setIcon(new ConfigIcon(Material.CHEST, "Storage Password"))
-            .setRequired(true)
-            .setReadOnly(true);
+            .setRequired(true);
         
         // Add configuration options
-        config.addOption(optionHost);
-        config.addOption(optionPort);
-        config.addOption(optionDatabase);
-        config.addOption(optionUsername);
-        config.addOption(optionPassword);
+        config.addOption(configHost);
+        config.addOption(configPort);
+        config.addOption(configDatabase);
+        config.addOption(configUsername);
+        config.addOption(configPassword);
+    }
+    
+    @Override
+    public void load() throws Exception {
+        YamlConfig config = CustomPayments.getInstance().getConfig();
+        String host = configHost.getValue(config);
+        Integer port = configPort.getValue(config);
+        String database = configDatabase.getValue(config);
+        String username = configUsername.getValue(config);
+        String password = configPassword.getValue(config);
         
-        // Get MySQL option values
-        String host = optionHost.getValue(config);
-        Integer port = optionPort.getValue(config);
-        String database = optionDatabase.getValue(config);
-        String username = optionUsername.getValue(config);
-        String password = optionPassword.getValue(config);
-
-        // Validate option values
-        if (host == null || port == null || database == null || username == null || password == null) {
-            throw new RuntimeException("Missing required MySQL configuration");
-        }
+        // Create data pool
+        HikariConfig dbConfig = new HikariConfig();
         
-        // Create MySQL configuration and datasource
         dbConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         dbConfig.setUsername(username);
         dbConfig.setPassword(password);
@@ -101,36 +104,24 @@ public class StorageMysql extends Storage {
         dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
         dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
+        // Create source
         dbSource = new HikariDataSource(dbConfig);
-
-        // Setup database
-        this.setup();
+        
+        // Create tables
+        this.createTables();
     }
 
     @Override
     public void unload() throws Exception {
-        dbSource.close();
-    }
-
-    public Connection getConnection() {
-        try {
-            return dbSource.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if(dbSource != null) {
+            dbSource.close();
+            dbSource = null;
         }
     }
-
-    public void setup() throws Exception {
+    
+    private void createTables() throws SQLException {
         Connection connection = getConnection();
-
-        // Make sure we've got a connection
-        if (connection == null) {
-            throw new Exception("Failed to connect to MySQL database");
-        }
-
-        // Create statements
-        // ===========================
+        
         PreparedStatement createCategories = connection.prepareStatement("CREATE TABLE IF NOT EXISTS categories ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
@@ -214,19 +205,23 @@ public class StorageMysql extends Storage {
         connection.close();
     }
 
+    public Connection getConnection() throws SQLException {
+        return dbSource != null ? dbSource.getConnection() : null;
+    }
+
     /**
      * Categories
      */
 
     @Override
-    public List<Category> getCategories() throws Exception {
+    public Set<Category> getCategories() throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM categories";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Get result
         ResultSet result = statement.executeQuery();
-        List<Category> categories = new ArrayList<>();
+        Set<Category> categories = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -315,7 +310,7 @@ public class StorageMysql extends Storage {
      */
     
     @Override
-    public List<Product> getProducts(Category category) throws Exception {
+    public Set<Product> getProducts(Category category) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement;
         
@@ -329,7 +324,7 @@ public class StorageMysql extends Storage {
         
         // Get result
         ResultSet result = statement.executeQuery();
-        List<Product> products = new ArrayList<>();
+        Set<Product> products = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -348,7 +343,7 @@ public class StorageMysql extends Storage {
             }
 
             // Get commands
-            List<Command> rawCommands = this.getCommandsByProductId(id);
+            Set<Command> rawCommands = this.getCommandsByProductId(id);
             DataList<Command> commands = new DataList<>(rawCommands);
 
             // Add product to list
@@ -436,7 +431,7 @@ public class StorageMysql extends Storage {
      */
 
     @Override
-    public List<Command> getCommandsByProductId(int productId) throws Exception {
+    public Set<Command> getCommandsByProductId(int productId) throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM commands WHERE productId=?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -445,7 +440,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        List<Command> commands = new ArrayList<>();
+        Set<Command> commands = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -510,17 +505,22 @@ public class StorageMysql extends Storage {
      */
 
     @Override
-    public void createField(Field<?> field) throws Exception {
+    public Set<Field> getFields() throws Exception {
+        return null;
+    }
+    
+    @Override
+    public void createField(Field field) throws Exception {
 
     }
 
     @Override
-    public void updateField(Field<?> field) throws Exception {
+    public void updateField(Field field) throws Exception {
 
     }
 
     @Override
-    public void deleteField(Field<?> field) throws Exception {
+    public void deleteField(Field field) throws Exception {
 
     }
     
@@ -560,7 +560,7 @@ public class StorageMysql extends Storage {
                 .orElse(null);
             
             if(currency != null) {
-                List<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
+                Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
                 DataList<LineItem> lineItems = new DataList<>(rawLineItems);
                 
                 // Add order to list
@@ -579,7 +579,7 @@ public class StorageMysql extends Storage {
     }
     
     @Override
-    public List<Order> getOrders() throws Exception {
+    public Set<Order> getOrders() throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM orders WHERE completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -591,7 +591,7 @@ public class StorageMysql extends Storage {
         
         // Get result
         ResultSet result = statement.executeQuery();
-        List<Order> orders = new ArrayList<>();
+        Set<Order> orders = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -613,7 +613,7 @@ public class StorageMysql extends Storage {
             }
             
             // Get LineItems's
-            List<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
+            Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
             DataList<LineItem> lineItems = new DataList<>(rawLineItems);
             
             // Add order to list
@@ -701,7 +701,7 @@ public class StorageMysql extends Storage {
      */
     
     @Override
-    public List<LineItem> getLineItemsByOrderId(int orderId) throws Exception {
+    public Set<LineItem> getLineItemsByOrderId(int orderId) throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM lineItems WHERE orderId=?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -710,7 +710,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        List<LineItem> lineItems = new ArrayList<>();
+        Set<LineItem> lineItems = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -807,7 +807,7 @@ public class StorageMysql extends Storage {
      */
 
     @Override
-    public List<Gateway> getGateways() throws Exception {
+    public Set<Gateway> getGateways() throws Exception {
         Connection connection = getConnection();
         String sql = "SELECT * FROM gateways";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -815,7 +815,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        List<Gateway> gateways = new ArrayList<>();
+        Set<Gateway> gateways = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);

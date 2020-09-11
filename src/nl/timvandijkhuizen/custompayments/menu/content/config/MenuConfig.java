@@ -1,10 +1,15 @@
 package nl.timvandijkhuizen.custompayments.menu.content.config;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
+import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -14,6 +19,7 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -21,8 +27,9 @@ public class MenuConfig implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataValue... args) {
-        YamlConfig config = CustomPayments.getInstance().getConfig();
+        CustomPayments plugin = CustomPayments.getInstance();
         PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
+        YamlConfig config = plugin.getConfig();
 
         // Add config options
         for (ConfigOption option : config.getOptions()) {
@@ -50,7 +57,6 @@ public class MenuConfig implements PredefinedMenu {
                 item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             } else {
                 item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                item.addEnchantGlow();
             }
             
             // Set click listener
@@ -60,7 +66,6 @@ public class MenuConfig implements PredefinedMenu {
                     
                     option.getValueInput(player, option.getValue(config), value -> {
                         option.setValue(config, value);
-                        config.save();
                         
                         // Clear lore
                         item.removeLore();
@@ -78,7 +83,6 @@ public class MenuConfig implements PredefinedMenu {
                             item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                         } else {
                             item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                            item.addEnchantGlow();
                         }
                         
                         // Open menu
@@ -102,6 +106,47 @@ public class MenuConfig implements PredefinedMenu {
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
+        // Save button
+        // ===========================
+        MenuItemBuilder saveButton = MenuItems.SAVE.clone();
+
+        saveButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+            menu.disableButtons();
+            menu.refresh();
+
+            // Save product
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                config.save();
+                
+                MainThread.execute(() -> {
+                    plugin.reload();
+                    
+                    // Check for errors
+                    Map<String, String> errors = plugin.getServiceErrors();
+                    
+                    if(errors.isEmpty()) {
+                        UI.playSound(player, UI.SOUND_SUCCESS);
+                        saveButton.setLore(UI.color("Successfully saved config.", UI.COLOR_SUCCESS));
+                    } else {
+                        UI.playSound(player, UI.SOUND_ERROR);
+                        saveButton.setLore(UI.color("Failed to save config.", UI.COLOR_ERROR));
+                        saveButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR));
+                        
+                        for(Entry<String, String> error : errors.entrySet()) {
+                            saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue(), UI.COLOR_ERROR));
+                        }
+                    }
+                    
+                    menu.enableButtons();
+                    menu.refresh();
+                });
+            });
+        });
+
+        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 4);
+        
         return menu;
     }
 

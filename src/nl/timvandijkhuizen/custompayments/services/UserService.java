@@ -18,9 +18,9 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.Service;
+import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
-public class UserService implements Service {
+public class UserService extends BaseService {
 
     private Set<ConfigOption<?>> userOptions = new HashSet<>();
     
@@ -47,7 +47,7 @@ public class UserService implements Service {
 
     @Override
     public void unload() throws Exception {
-
+        userOptions.clear();
     }
     
     public Set<ConfigOption<?>> getUserOptions() {

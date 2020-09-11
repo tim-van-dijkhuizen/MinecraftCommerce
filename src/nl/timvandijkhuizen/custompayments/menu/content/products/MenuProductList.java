@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.products;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -31,7 +31,7 @@ public class MenuProductList implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1);
 
         // Add product buttons
-        List<Product> products = args[0].asList(Product.class);
+        Set<Product> products = args[0].asSet(Product.class);
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());

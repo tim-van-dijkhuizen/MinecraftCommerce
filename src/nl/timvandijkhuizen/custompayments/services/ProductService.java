@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.custompayments.services;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -22,9 +21,9 @@ import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.Service;
+import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
-public class ProductService implements Service {
+public class ProductService extends BaseService {
 
     private Set<CommandVariable> commandVariables;
 
@@ -46,7 +45,7 @@ public class ProductService implements Service {
 
     @Override
     public void unload() throws Exception {
-
+        commandVariables = null;
     }
 
     /**
@@ -54,12 +53,12 @@ public class ProductService implements Service {
      * 
      * @param callback
      */
-    public void getProducts(Consumer<List<Product>> callback) {
+    public void getProducts(Consumer<Set<Product>> callback) {
         Storage storage = CustomPayments.getInstance().getStorage();
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
             try {
-                List<Product> products = storage.getProducts(null);
+                Set<Product> products = storage.getProducts(null);
                 MainThread.execute(() -> callback.accept(products));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));
@@ -73,12 +72,12 @@ public class ProductService implements Service {
      * 
      * @param callback
      */
-    public void getProducts(Category category, Consumer<List<Product>> callback) {
+    public void getProducts(Category category, Consumer<Set<Product>> callback) {
         Storage storage = CustomPayments.getInstance().getStorage();
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomPayments.getInstance(), () -> {
             try {
-                List<Product> products = storage.getProducts(category);
+                Set<Product> products = storage.getProducts(category);
                 MainThread.execute(() -> callback.accept(products));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));

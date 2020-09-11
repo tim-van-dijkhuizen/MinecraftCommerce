@@ -1,11 +1,12 @@
 package nl.timvandijkhuizen.custompayments.base;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.elements.Command;
+import nl.timvandijkhuizen.custompayments.elements.Field;
 import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
@@ -18,14 +19,14 @@ public abstract class Storage implements Service {
     public String getHandle() {
         return "storage";
     }
-
+    
     /**
      * Returns all categories.
      * 
      * @return
      * @throws Exception
      */
-    public abstract List<Category> getCategories() throws Exception;
+    public abstract Set<Category> getCategories() throws Exception;
 
     /**
      * Creates a category.
@@ -58,7 +59,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract List<Product> getProducts(Category category) throws Exception;
+    public abstract Set<Product> getProducts(Category category) throws Exception;
 
     /**
      * Creates a product.
@@ -91,7 +92,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract List<Command> getCommandsByProductId(int productId) throws Exception;
+    public abstract Set<Command> getCommandsByProductId(int productId) throws Exception;
 
     /**
      * Creates a command.
@@ -110,12 +111,20 @@ public abstract class Storage implements Service {
     public abstract void deleteCommand(Command command) throws Exception;
 
     /**
+     * Returns all fields.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract Set<Field> getFields() throws Exception;
+    
+    /**
      * Creates a field
      * 
      * @param field
      * @throws Exception
      */
-    public abstract void createField(Field<?> field) throws Exception;
+    public abstract void createField(Field field) throws Exception;
 
     /**
      * Updates a field
@@ -123,7 +132,7 @@ public abstract class Storage implements Service {
      * @param field
      * @throws Exception
      */
-    public abstract void updateField(Field<?> field) throws Exception;
+    public abstract void updateField(Field field) throws Exception;
 
     /**
      * Deletes a field.
@@ -131,7 +140,7 @@ public abstract class Storage implements Service {
      * @param field
      * @throws Exception
      */
-    public abstract void deleteField(Field<?> field) throws Exception;
+    public abstract void deleteField(Field field) throws Exception;
     
     /**
      * Returns the cart of the specified user.
@@ -147,7 +156,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract List<Order> getOrders() throws Exception;
+    public abstract Set<Order> getOrders() throws Exception;
 
     /**
      * Creates an order.
@@ -180,7 +189,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract List<LineItem> getLineItemsByOrderId(int orderId) throws Exception;
+    public abstract Set<LineItem> getLineItemsByOrderId(int orderId) throws Exception;
 
     /**
      * Creates a LineItem.
@@ -212,7 +221,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract List<Gateway> getGateways() throws Exception;
+    public abstract Set<Gateway> getGateways() throws Exception;
 
     /**
      * Creates a gateway.

@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.shop;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -27,7 +27,7 @@ public class MenuShopCategories implements PredefinedMenu {
         StructuredMenu menu = new StructuredMenu("Shop " + Icon.ARROW_RIGHT + " Categories", MenuSize.XXL, buttonSlots, 1, 5, 7);
 
         // Add category buttons
-        List<Category> categories = args[0].asList(Category.class);
+        Set<Category> categories = args[0].asSet(Category.class);
 
         for (Category category : categories) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());

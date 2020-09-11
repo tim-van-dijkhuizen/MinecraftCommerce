@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.custompayments.menu.content.orders;
 
-import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ public class MenuOrderList implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Orders", 3, 7, 1, 1, 1, 5, 7);
 
         // Add order buttons
-        List<Order> orders = args[0].asList(Order.class);
+        Set<Order> orders = args[0].asSet(Order.class);
 
         for (Order order : orders) {
             MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);

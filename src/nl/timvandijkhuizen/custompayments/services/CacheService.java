@@ -16,9 +16,9 @@ import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.config.sources.UserPreferences;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.Service;
+import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
-public class CacheService implements Service, Listener {
+public class CacheService extends BaseService implements Listener {
 
     private Map<UUID, UserPreferences> userPreferences = new HashMap<>();
     private Map<UUID, Order> userCarts = new HashMap<>();
@@ -26,16 +26,6 @@ public class CacheService implements Service, Listener {
     @Override
     public String getHandle() {
         return "cache";
-    }
-
-    @Override
-    public void load() throws Exception {
-
-    }
-
-    @Override
-    public void unload() throws Exception {
-
     }
     
     @EventHandler(ignoreCancelled=true, priority=EventPriority.MONITOR)
