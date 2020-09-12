@@ -3,15 +3,15 @@ package nl.timvandijkhuizen.custompayments.elements;
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.custompayments.base.Element;
+import nl.timvandijkhuizen.custompayments.base.FieldType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 
 public class Field extends Element {
 
     private Material icon;
     private String name;
     private String description;
-    private ConfigType<?> type;
+    private FieldType<?> type;
     private boolean required;
     
     public Field() {
@@ -20,7 +20,7 @@ public class Field extends Element {
         this.description = "";
     }
     
-    public Field(int id, Material icon, String name, String description, ConfigType<?> type, boolean required) {
+    public Field(int id, Material icon, String name, String description, FieldType<?> type, boolean required) {
         this.setId(id);
         this.icon = icon;
         this.name = name;
@@ -31,6 +31,36 @@ public class Field extends Element {
     
     @Override
     public boolean validate() {
+        if (icon == null) {
+            addError("icon", "Icon is required");
+            return false;
+        }
+
+        if (name.length() == 0) {
+            addError("name", "Name is required");
+            return false;
+        }
+
+        if (name.length() > 40) {
+            addError("name", "Name cannot be longer than 40 characters");
+            return false;
+        }
+
+        if (description.length() == 0) {
+            addError("description", "Description is required");
+            return false;
+        }
+
+        if (description.length() > 500) {
+            addError("description", "Description cannot be longer than 500 characters");
+            return false;
+        }
+        
+        if (type == null) {
+            addError("type", "Type is required");
+            return false;
+        }
+        
         return true;
     }
     
@@ -38,20 +68,40 @@ public class Field extends Element {
         return icon;
     }
     
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
+    
     public String getName() {
         return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
     
     public String getDescription() {
         return description;
     }
     
-    public ConfigType<?> getType() {
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public FieldType<?> getType() {
         return type;
+    }
+    
+    public void setType(FieldType<?> type) {
+        this.type = type;
     }
     
     public boolean isRequired() {
         return required;
+    }
+    
+    public void setRequired(boolean required) {
+        this.required = required;
     }
     
     public ConfigOption<?> getOption() {

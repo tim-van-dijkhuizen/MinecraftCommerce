@@ -13,11 +13,11 @@ import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -26,7 +26,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuConfig implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         CustomPayments plugin = CustomPayments.getInstance();
         PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
         YamlConfig config = plugin.getConfig();

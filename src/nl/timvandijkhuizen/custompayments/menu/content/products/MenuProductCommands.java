@@ -16,21 +16,21 @@ import nl.timvandijkhuizen.custompayments.elements.Command;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductCommands implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         ProductService productService = CustomPayments.getInstance().getService("products");
         PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1);
-        Product product = args[0].as(Product.class);
+        Product product = args.get(0);
 
         // Add command buttons
         for (Command command : product.getCommands()) {

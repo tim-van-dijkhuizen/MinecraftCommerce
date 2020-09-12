@@ -20,22 +20,22 @@ import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductEdit implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         ProductService productService = CustomPayments.getInstance().getService("products");
-        Product product = args.length == 1 ? args[0].as(Product.class) : new Product();
+        Product product = args.get(0, new Product());
         Menu menu = new Menu((product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);
 
         // Icon button
@@ -59,7 +59,7 @@ public class MenuProductEdit implements PredefinedMenu {
         // Set click listener
         iconButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_ICON.open(player, product, product.getIcon());
+            Menus.PRODUCT_ICON.open(player, product);
         });
 
         menu.setButton(iconButton, 11);
@@ -212,7 +212,7 @@ public class MenuProductEdit implements PredefinedMenu {
                     return;
                 }
 
-                Menus.PRODUCT_CATEGORY.open(player, product, categories, product.getCategory());
+                Menus.PRODUCT_CATEGORY.open(player, product, categories);
             });
         });
 

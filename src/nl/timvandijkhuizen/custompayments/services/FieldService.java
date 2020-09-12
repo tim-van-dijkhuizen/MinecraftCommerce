@@ -7,14 +7,20 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.FieldType;
 import nl.timvandijkhuizen.custompayments.base.Storage;
 import nl.timvandijkhuizen.custompayments.elements.Field;
+import nl.timvandijkhuizen.custompayments.events.RegisterFieldTypesEvent;
+import nl.timvandijkhuizen.custompayments.fieldtypes.FieldTypeBoolean;
+import nl.timvandijkhuizen.custompayments.fieldtypes.FieldTypeInteger;
+import nl.timvandijkhuizen.custompayments.fieldtypes.FieldTypeString;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class FieldService extends BaseService {
 
+    private Set<FieldType<?>> fieldTypes;
     private Set<Field> fields = new HashSet<>();
     
     @Override
@@ -23,16 +29,20 @@ public class FieldService extends BaseService {
     }
 
     @Override
-    public void load() throws Exception {
+    public void init() throws Exception {
         Storage storage = CustomPayments.getInstance().getStorage();
-        
-        // Load fields into memory
-        fields = storage.getFields();
-    }
+        RegisterFieldTypesEvent event = new RegisterFieldTypesEvent();
 
-    @Override
-    public void unload() throws Exception {
-        fields = null;
+        // Register field types
+        event.addType(new FieldTypeString());
+        event.addType(new FieldTypeInteger());
+        event.addType(new FieldTypeBoolean());
+        
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        this.fieldTypes = event.getTypes();
+        
+        // Load fields from storage
+        fields = storage.getFields();
     }
     
     public Set<Field> getFields() {
@@ -93,6 +103,28 @@ public class FieldService extends BaseService {
                 ConsoleHelper.printError("Failed to delete field: " + e.getMessage(), e);
             }
         });
+    }
+    
+    /**
+     * Returns all registered field types.
+     * 
+     * @return
+     */
+    public Set<FieldType<?>> getFieldTypes() {
+        return fieldTypes;
+    }
+    
+    /**
+     * Returns a field type by its handle or null.
+     * 
+     * @param handle
+     * @return
+     */
+    public FieldType<?> getFieldTypeByHandle(String handle) {
+        return fieldTypes.stream()
+            .filter(i -> i.getHandle().equals(handle))
+            .findFirst()
+            .orElse(null);
     }
     
 }

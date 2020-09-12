@@ -14,11 +14,11 @@ import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenShopCategories;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -26,7 +26,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopCart implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         OrderService orderService = CustomPayments.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Cart", 3, 7, 1, 1, 2, 5, 6);
         Order cart = orderService.getCart(player);
@@ -60,6 +60,9 @@ public class MenuShopCart implements PredefinedMenu {
                List<String> oldLore = item.getLore();
                
                UI.playSound(player, UI.SOUND_CLICK);
+               item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+               menu.refresh();
+               menu.disableButtons();
                
                // Update LineItem
                if(type == ClickType.LEFT) {
@@ -68,11 +71,7 @@ public class MenuShopCart implements PredefinedMenu {
                    lineItem.setQuantity(lineItem.getQuantity() - 1);
                }
                
-               // Set saving lore
-               item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-               menu.refresh();
-               menu.disableButtons();
-               
+               // Save cart
                orderService.saveOrder(cart, success -> {
                    menu.enableButtons();
                    
@@ -86,7 +85,6 @@ public class MenuShopCart implements PredefinedMenu {
                            menu.removePagedButton(item);
                        }
                        
-                       ShopHelper.updateCartItem(cartItem, player);
                        menu.refresh();
                    } else {
                        UI.playSound(player, UI.SOUND_ERROR);

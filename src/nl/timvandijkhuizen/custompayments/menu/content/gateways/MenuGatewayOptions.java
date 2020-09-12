@@ -8,11 +8,11 @@ import nl.timvandijkhuizen.custompayments.elements.Gateway;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -21,10 +21,10 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuGatewayOptions implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
-        Gateway gateway = args[0].as(Gateway.class);
-        GatewayConfig config = gateway.getConfig();
+    public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Gateway Options", 3, 7, 1, 1, 1, 5, 7);
+        Gateway gateway = args.get(0);
+        GatewayConfig config = gateway.getConfig();
 
         // Add configuration options
         for (ConfigOption option : config.getOptions()) {

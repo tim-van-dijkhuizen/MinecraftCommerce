@@ -22,8 +22,6 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class OrderService extends BaseService {
 
-    
-    
     @Override
     public String getHandle() {
         return "orders";

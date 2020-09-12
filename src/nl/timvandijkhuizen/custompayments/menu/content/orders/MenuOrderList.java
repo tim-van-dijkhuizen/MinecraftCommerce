@@ -11,23 +11,23 @@ import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuOrderList implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         OrderService orderService = CustomPayments.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Orders", 3, 7, 1, 1, 1, 5, 7);
 
         // Add order buttons
-        Set<Order> orders = args[0].asSet(Order.class);
+        Set<Order> orders = args.getSet(0);
 
         for (Order order : orders) {
             MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);

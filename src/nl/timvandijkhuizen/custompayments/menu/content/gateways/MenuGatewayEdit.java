@@ -20,22 +20,22 @@ import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenGatewayList;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuGatewayEdit implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
-        Gateway gateway = args.length == 1 ? args[0].as(Gateway.class) : new Gateway();
+        Gateway gateway = args.get(0, new Gateway());
         Menu menu = new Menu((gateway.getId() != null ? "Edit" : "Create") + " Gateway", MenuSize.LG);
 
         // Display name button
@@ -115,7 +115,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // Set click listener
         typeButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.GATEWAY_TYPE.open(player, gateway, gateway.getType());
+            Menus.GATEWAY_TYPE.open(player, gateway);
         });
 
         menu.setButton(typeButton, 13);

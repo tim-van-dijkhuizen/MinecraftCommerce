@@ -33,7 +33,7 @@ public class ProductService extends BaseService {
     }
 
     @Override
-    public void load() throws Exception {
+    public void init() throws Exception {
         RegisterCommandVariablesEvent event = new RegisterCommandVariablesEvent();
 
         event.addVariable(VariableUsername.class);
@@ -41,11 +41,6 @@ public class ProductService extends BaseService {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         commandVariables = event.getVariables();
-    }
-
-    @Override
-    public void unload() throws Exception {
-        commandVariables = null;
     }
 
     /**

@@ -1,6 +1,8 @@
 package nl.timvandijkhuizen.custompayments.helpers;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,7 +19,7 @@ import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -37,45 +39,47 @@ public class ShopHelper {
     }
     
     public static MenuItemBuilder createCartItem(Player player) {
-        MenuItemBuilder item = new MenuItemBuilder(Material.MINECART);
-        
-        item.setName(UI.color("Cart", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        updateCartItem(item, player);
-        
-        return item;
-    }
-    
-    public static void updateCartItem(MenuItemBuilder item, Player player) {
         OrderService orderService = CustomPayments.getInstance().getService("orders");
         Order cart = orderService.getCart(player);
         StoreCurrency currency = cart.getCurrency();
-        
-        // Add items to lore
         DataList<LineItem> lineItems = cart.getLineItems();
         
-        item.setLore(UI.color("Items:", UI.COLOR_TEXT));
+        // Create cart item
+        MenuItemBuilder item = new MenuItemBuilder(Material.MINECART);
         
-        if (lineItems.size() > 0) {
-            for(LineItem lineItem : lineItems) {
-                ProductSnapshot product = lineItem.getProduct();
-                String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
-                String price = ShopHelper.formatPrice(lineItem.getPrice(), currency);
-                
-                item.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+        item.setName(UI.color("Cart", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        
+        item.setLore(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            lore.add(UI.color("Items:", UI.COLOR_TEXT));
+            
+            if (lineItems.size() > 0) {
+                for(LineItem lineItem : lineItems) {
+                    ProductSnapshot product = lineItem.getProduct();
+                    String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
+                    String price = ShopHelper.formatPrice(lineItem.getPrice(), currency);
+                    
+                    lore.add(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+                }
+            } else {
+                lore.add(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        } else {
-            item.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
+            
+            // Add total to lore
+            String total = ShopHelper.formatPrice(cart.getTotal(), currency);
+            
+            lore.add("");
+            lore.add(UI.color("Total: ", UI.COLOR_TEXT) + UI.color(total, UI.COLOR_SECONDARY));
+            lore.add("");
+            
+            // Add instructions
+            lore.add(UI.color("Use left-click to view your cart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Use right-click to set your currency.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
         
-        // Add total to lore
-        String total = ShopHelper.formatPrice(cart.getTotal(), currency);
-        item.addLore("", UI.color("Total: ", UI.COLOR_TEXT) + UI.color(total, UI.COLOR_SECONDARY), "");
-        
-        // Add instructions
-        item.addLore(UI.color("Use left-click to view your cart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        item.addLore(UI.color("Use right-click to set your currency.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
-        // Set click listener
         item.setClickListener(event -> {
             ClickType type = event.getClickType();
             
@@ -87,6 +91,8 @@ public class ShopHelper {
                 Menus.SHOP_CURRENCY.open(player, event);
             }
         });
+        
+        return item;
     }
     
 }

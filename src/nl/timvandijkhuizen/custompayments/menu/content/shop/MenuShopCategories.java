@@ -9,12 +9,12 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.custompayments.elements.Category;
 import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenShopProducts;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.StructuredMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -22,12 +22,12 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopCategories implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         int[] buttonSlots = new int[] { 10, 12, 14, 16, 28, 30, 32, 34 };
         StructuredMenu menu = new StructuredMenu("Shop " + Icon.ARROW_RIGHT + " Categories", MenuSize.XXL, buttonSlots, 1, 5, 7);
 
         // Add category buttons
-        Set<Category> categories = args[0].asSet(Category.class);
+        Set<Category> categories = args.getSet(0);
 
         for (Category category : categories) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());

@@ -9,16 +9,15 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.custompayments.elements.Order;
-import nl.timvandijkhuizen.custompayments.helpers.ShopHelper;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemClick;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -26,15 +25,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopCurrency implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Currency", 3, 7, 1, 1, 1, 5, 7);
         OrderService orderService = CustomPayments.getInstance().getService("orders");
         Order cart = orderService.getCart(player);
 
         // Get return menu and currency item
-        MenuItemClick clickEvent = args[0].as(MenuItemClick.class);
+        MenuItemClick clickEvent = args.get(0);
         Menu returnMenu = clickEvent.getMenu();
-        MenuItemBuilder cartItem = clickEvent.getItem();
         
         // Get available currencies
         YamlConfig config = CustomPayments.getInstance().getConfig();
@@ -71,7 +69,6 @@ public class MenuShopCurrency implements PredefinedMenu {
                     
                     if (success) {
                         UI.playSound(player, UI.SOUND_SUCCESS);
-                        ShopHelper.updateCartItem(cartItem, player);
                         returnMenu.open(player);
                     } else {
                         UI.playSound(player, UI.SOUND_ERROR);

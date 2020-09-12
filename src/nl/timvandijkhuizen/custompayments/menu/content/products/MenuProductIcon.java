@@ -8,21 +8,21 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.custompayments.CustomPayments;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.menu.Menus;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductIcon implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
-        Product product = args[0].as(Product.class);
-        Material selected = args[1].as(Material.class);
+    public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1, 1, 5, 7);
+        Product product = args.get(0);
+        Material selected = product.getIcon();
 
         for (Material icon : CustomPayments.MENU_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);

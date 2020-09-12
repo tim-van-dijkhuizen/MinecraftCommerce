@@ -16,6 +16,7 @@ import nl.timvandijkhuizen.custompayments.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.custompayments.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.custompayments.services.CacheService;
 import nl.timvandijkhuizen.custompayments.services.CategoryService;
+import nl.timvandijkhuizen.custompayments.services.FieldService;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.custompayments.services.OrderService;
 import nl.timvandijkhuizen.custompayments.services.ProductService;
@@ -66,6 +67,7 @@ public class CustomPayments extends PluginBase {
         configStorageType = new ConfigOption<>("storage.type", ConfigTypes.STRING)
             .setIcon(new ConfigIcon(Material.ENDER_CHEST, "Storage Type"))
             .setRequired(true)
+            .setDefaultValue("mysql")
             .setReadOnly(true);
         
         configCurrencies = new ConfigOption<>("general.currencies", new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
@@ -134,6 +136,7 @@ public class CustomPayments extends PluginBase {
             new GatewayService(),
             new UserService(),
             new OrderService(),
+            new FieldService(),
             commandService
         };
     }

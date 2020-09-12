@@ -9,18 +9,18 @@ import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenCategoryList;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenGatewayList;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenOrderList;
 import nl.timvandijkhuizen.custompayments.menu.content.actions.OpenProductList;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuHome implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         Menu menu = new Menu("Custom payments", MenuSize.XL);
 
         // Configuration button

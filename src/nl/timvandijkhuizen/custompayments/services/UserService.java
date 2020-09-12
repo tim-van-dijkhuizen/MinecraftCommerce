@@ -30,7 +30,7 @@ public class UserService extends BaseService {
     }
 
     @Override
-    public void load() throws Exception {
+    public void init() throws Exception {
         YamlConfig config = CustomPayments.getInstance().getConfig();
         ConfigOption<StoreCurrency> optionBaseCurrency = config.getOption("general.baseCurrency");
         StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
@@ -43,11 +43,6 @@ public class UserService extends BaseService {
         
         // Register user options
         userOptions.add(optionCurrency);
-    }
-
-    @Override
-    public void unload() throws Exception {
-        userOptions.clear();
     }
     
     public Set<ConfigOption<?>> getUserOptions() {

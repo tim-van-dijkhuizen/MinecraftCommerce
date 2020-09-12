@@ -25,18 +25,13 @@ public class GatewayService extends BaseService {
     }
 
     @Override
-    public void load() throws Exception {
+    public void init() throws Exception {
         RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
 
         event.addType(GatewayMollie.class);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         types = event.getTypes();
-    }
-
-    @Override
-    public void unload() throws Exception {
-        types = null;
     }
     
     /**

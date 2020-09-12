@@ -17,6 +17,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import nl.timvandijkhuizen.custompayments.CustomPayments;
+import nl.timvandijkhuizen.custompayments.base.FieldType;
 import nl.timvandijkhuizen.custompayments.base.GatewayType;
 import nl.timvandijkhuizen.custompayments.base.ProductSnapshot;
 import nl.timvandijkhuizen.custompayments.base.Storage;
@@ -31,6 +32,7 @@ import nl.timvandijkhuizen.custompayments.elements.LineItem;
 import nl.timvandijkhuizen.custompayments.elements.Order;
 import nl.timvandijkhuizen.custompayments.elements.Product;
 import nl.timvandijkhuizen.custompayments.helpers.DbHelper;
+import nl.timvandijkhuizen.custompayments.services.FieldService;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -148,7 +150,11 @@ public class StorageMysql extends Storage {
 
         PreparedStatement createFields = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "name VARCHAR(50) NOT NULL"
+            + "icon VARCHAR(255) NOT NULL,"
+            + "name VARCHAR(40) NOT NULL,"
+            + "description TEXT NOT NULL,"
+            + "type VARCHAR(255) NOT NULL,"
+            + "required BOOLEAN NOT NULL"
         + ");");
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
@@ -506,22 +512,105 @@ public class StorageMysql extends Storage {
 
     @Override
     public Set<Field> getFields() throws Exception {
-        return null;
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM fields";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        FieldService fieldService = CustomPayments.getInstance().getService("fields");
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<Field> fields = new HashSet<>();
+
+        while (result.next()) {
+            int id = result.getInt(1);
+            Material icon = DbHelper.parseMaterial(result.getString(2));
+            String name = result.getString(3);
+            String description = result.getString(4);
+            String typeHandle = result.getString(5);
+            Boolean required = result.getBoolean(6);
+
+            // Parse field type
+            FieldType<?> type = fieldService.getFieldTypeByHandle(typeHandle);
+            
+            if(type != null) {
+                fields.add(new Field(id, icon, name, description, type, required));
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return fields;
     }
     
     @Override
     public void createField(Field field) throws Exception {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO fields (icon, name, description, type, required) VALUES (?, ?, ?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
+        // Set arguments
+        statement.setString(1, DbHelper.prepareMaterial(field.getIcon()));
+        statement.setString(2, field.getName());
+        statement.setString(3, field.getDescription());
+        statement.setString(4, field.getType().getHandle());
+        statement.setBoolean(5, field.isRequired());
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            field.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
     }
 
     @Override
     public void updateField(Field field) throws Exception {
+        Connection connection = getConnection();
+        String sql = "UPDATE fields SET icon=?, name=?, description=?, type=?, required=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
 
+        // Set arguments
+        statement.setString(1, DbHelper.prepareMaterial(field.getIcon()));
+        statement.setString(2, field.getName());
+        statement.setString(3, field.getDescription());
+        statement.setString(4, field.getType().getHandle());
+        statement.setBoolean(5, field.isRequired());
+        statement.setInt(6, field.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
     }
 
     @Override
     public void deleteField(Field field) throws Exception {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM fields WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
 
+        // Set arguments
+        statement.setInt(1, field.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
     }
     
     /**

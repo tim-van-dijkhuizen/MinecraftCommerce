@@ -15,11 +15,11 @@ import nl.timvandijkhuizen.custompayments.menu.Menus;
 import nl.timvandijkhuizen.custompayments.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.data.DataValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.MenuItems;
+import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -27,12 +27,12 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuGatewayList implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, DataValue... args) {
+    public Menu create(Player player, MenuArguments args) {
         GatewayService gatewayService = CustomPayments.getInstance().getService("gateways");
         PagedMenu menu = new PagedMenu("Gateways", 3, 7, 1, 1);
 
         // Add gateway buttons
-        Set<Gateway> gateways = args[0].asSet(Gateway.class);
+        Set<Gateway> gateways = args.getSet(0);
 
         for (Gateway gateway : gateways) {
             MenuItemBuilder item = new MenuItemBuilder(Material.OAK_FENCE_GATE);
