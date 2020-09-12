@@ -1,12 +1,12 @@
-name: CustomPayments
-description: Custom payments - An in-game shop plugin
+name: Commerce
+description: Commerce - An in-game shop plugin
 author: Tim van Dijkhuizen
 version: "1.0.0"
 api-version: 1.13
-main: nl.timvandijkhuizen.custompayments.CustomPayments
+main: nl.timvandijkhuizen.commerce.Commerce
 
 commands:
-   custompayments:
-      description: Manage custom payments
-      aliases: [cp, shop]
-      usage: /custompayments
+   commerce:
+      description: Manage Commerce
+      aliases: [shop]
+      usage: /commerce
