@@ -4,7 +4,7 @@ import java.util.Set;
 
 public interface ModelInterface {
 
-    boolean validate();
+    boolean validate(String scenario);
 
     /**
      * Returns whether the model is valid. All previous errors will be cleared

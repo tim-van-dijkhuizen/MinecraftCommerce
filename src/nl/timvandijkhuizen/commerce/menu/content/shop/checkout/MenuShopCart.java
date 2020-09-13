@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -12,6 +13,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
+import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.content.actions.OpenShopCategories;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -107,6 +109,19 @@ public class MenuShopCart implements PredefinedMenu {
         homeButton.setClickListener(new OpenShopCategories());
 
         menu.setButton(homeButton, menu.getSize().getSlots() - 9 + 4);
+        
+        // Next (fields) button
+        MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_SIGN);
+
+        nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
+        nextButton.setLore(UI.color("Fields", UI.COLOR_TEXT));
+        
+        nextButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            Menus.SHOP_FIELDS.open(player);
+        });
+
+        menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
         return menu;
     }

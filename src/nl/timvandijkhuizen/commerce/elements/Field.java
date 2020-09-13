@@ -4,6 +4,7 @@ import org.bukkit.Material;
 
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.base.FieldType;
+import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
 public class Field extends Element {
@@ -30,7 +31,7 @@ public class Field extends Element {
     }
     
     @Override
-    public boolean validate() {
+    public boolean validate(String scenario) {
         if (icon == null) {
             addError("icon", "Icon is required");
             return false;
@@ -111,7 +112,9 @@ public class Field extends Element {
             throw new RuntimeException("Fields must be saved before an option can be created");
         }
         
-        return new ConfigOption<>("field-" + id, type);
+        return new ConfigOption<>("field-" + id, type)
+            .setIcon(new ConfigIcon(icon, name))
+            .setRequired(required);
     }
 
 }

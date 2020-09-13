@@ -4,20 +4,28 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
+import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class Order extends Element {
-
+    
+    public static final String SCENARIO_FIELDS = "fields";
+    public static final String SCENARIO_PAY = "pay";
+    
     private String number;
     private UUID playerUniqueId;
     private String playerName;
     private StoreCurrency currency;
     private boolean completed;
     private DataList<LineItem> lineItems;
+    private OrderFields fields;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems) {
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFields fields) {
         this.setId(id);
         this.number = number;
         this.playerUniqueId = playerUniqueId;
@@ -25,6 +33,7 @@ public class Order extends Element {
         this.currency = currency;
         this.completed = completed;
         this.lineItems = lineItems;
+        this.fields = fields;
     }
     
     public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -33,10 +42,13 @@ public class Order extends Element {
         this.playerName = playerName;
         this.currency = currency;
         this.lineItems = new DataList<>();
+        this.fields = new OrderFields();
     }
     
     @Override
-    public boolean validate() {
+    public boolean validate(String scenario) {
+        FieldService fieldService = Commerce.getInstance().getService("fields");
+        
         if (number == null || number.length() == 0) {
             addError("number", "Number is required");
             return false;
@@ -60,6 +72,28 @@ public class Order extends Element {
         if (currency == null) {
             addError("currency", "Currency is required");
             return false;
+        }
+        
+        if (fields == null) {
+            addError("fields", "Fields is required");
+            return false;
+        }
+        
+        if(scenario.equals(SCENARIO_FIELDS) || scenario.equals(SCENARIO_PAY)) {
+            boolean fieldsValid = true;
+            
+            for(Field field : fieldService.getFields()) {
+                ConfigOption<?> option = field.getOption();
+                
+                if(option.isRequired() && option.isValueEmpty(fields)) {
+                    addError("fields." + field.getId(), "Field \"" + field.getName() + "\" is required");
+                    fieldsValid = false;
+                }
+            }
+            
+            if(!fieldsValid) {
+                return false;
+            }
         }
         
         return true;
@@ -121,6 +155,10 @@ public class Order extends Element {
     
     public DataList<LineItem> getLineItems() {
         return lineItems;
+    }
+    
+    public OrderFields getFields() {
+        return fields;
     }
     
 }

@@ -34,9 +34,6 @@ public class MenuShopProducts implements PredefinedMenu {
         Category category = args.get(0);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
         Order cart = orderService.getCart(player);
-
-        // Create cart item
-        MenuItemBuilder cartItem = ShopHelper.createCartItem(player);
         
         // Add product buttons
         Set<Product> products = args.getSet(1);
@@ -52,13 +49,13 @@ public class MenuShopProducts implements PredefinedMenu {
                 String[] description = WordUtils.wrap(product.getDescription(), 40).split("\n");
                 List<String> lore = new ArrayList<>();
                 
-                // Add saving lore if saving
+                // Add action lore if not null
                 if(actionLore.get() != null) {
                     lore.add(actionLore.get());
                     return lore;
                 }
                 
-                // Add product lore
+                // Create lore
                 for(String line : description) {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
@@ -103,8 +100,8 @@ public class MenuShopProducts implements PredefinedMenu {
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
-        // Currency button
-        menu.setButton(cartItem, menu.getSize().getSlots() - 9 + 4);
+        // Cart button
+        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 4);
         
         return menu;
     }

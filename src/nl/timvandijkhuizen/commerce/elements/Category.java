@@ -24,7 +24,7 @@ public class Category extends Element {
     }
 
     @Override
-    public boolean validate() {
+    public boolean validate(String scenario) {
         if (icon == null) {
             addError("icon", "Icon is required");
             return false;

@@ -18,7 +18,7 @@ public class Command extends Element {
     }
 
     @Override
-    public boolean validate() {
+    public boolean validate(String scenario) {
         return true;
     }
 

@@ -7,12 +7,19 @@ import java.util.Set;
 
 public abstract class Model implements ModelInterface {
 
+    public static final String SCENARIO_DEFAULT = "default";
+    
+    private String scenario = "default";
     private Map<String, Set<String>> errors = new HashMap<>();
-
+    
     @Override
     public boolean isValid() {
         errors.clear();
-        return validate();
+        return validate(scenario);
+    }
+    
+    public void setScenario(String scenario) {
+        this.scenario = scenario;
     }
 
     @Override
@@ -26,7 +33,7 @@ public abstract class Model implements ModelInterface {
     @Override
     public Set<String> getErrors() {
         Set<String> all = new HashSet<>();
-
+        
         for (Set<String> attributeErrors : errors.values()) {
             all.addAll(attributeErrors);
         }

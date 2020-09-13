@@ -23,6 +23,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Command;
@@ -163,7 +164,8 @@ public class StorageMysql extends Storage {
             + "playerUniqueId VARCHAR(36) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"
-            + "completed BOOLEAN NOT NULL"
+            + "completed BOOLEAN NOT NULL,"
+            + "fields JSON NOT NULL"
         + ");");
         
         PreparedStatement createLineItems = connection.prepareStatement("CREATE TABLE IF NOT EXISTS lineItems ("
@@ -641,6 +643,7 @@ public class StorageMysql extends Storage {
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
+            OrderFields fields = DbHelper.parseOrderFields(result.getString(7));
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -653,7 +656,7 @@ public class StorageMysql extends Storage {
                 DataList<LineItem> lineItems = new DataList<>(rawLineItems);
                 
                 // Add order to list
-                order = new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems);
+                order = new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems, fields);
             } else {
                 ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
             }
@@ -689,6 +692,7 @@ public class StorageMysql extends Storage {
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
+            OrderFields fields = DbHelper.parseOrderFields(result.getString(7));
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -706,7 +710,7 @@ public class StorageMysql extends Storage {
             DataList<LineItem> lineItems = new DataList<>(rawLineItems);
             
             // Add order to list
-            orders.add(new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems));
+            orders.add(new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems, fields));
         }
 
         // Cleanup
@@ -720,7 +724,7 @@ public class StorageMysql extends Storage {
     @Override
     public void createOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed, fields) VALUES (?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Set arguments
@@ -729,6 +733,7 @@ public class StorageMysql extends Storage {
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
+        statement.setString(6, DbHelper.prepareJsonConfig(order.getFields()));
 
         // Execute query
         statement.executeUpdate();
@@ -749,7 +754,7 @@ public class StorageMysql extends Storage {
     @Override
     public void updateOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=? WHERE id=?;";
+        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set arguments
@@ -758,7 +763,8 @@ public class StorageMysql extends Storage {
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
-        statement.setInt(6, order.getId());
+        statement.setString(6, DbHelper.prepareJsonConfig(order.getFields()));
+        statement.setInt(7, order.getId());
 
         // Execute query
         statement.execute();
