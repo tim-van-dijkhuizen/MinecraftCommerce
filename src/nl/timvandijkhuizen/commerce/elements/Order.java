@@ -7,7 +7,7 @@ import java.util.stream.StreamSupport;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
-import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
@@ -23,9 +23,9 @@ public class Order extends Element {
     private StoreCurrency currency;
     private boolean completed;
     private DataList<LineItem> lineItems;
-    private OrderFields fields;
+    private OrderFieldData fieldData;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFields fields) {
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData) {
         this.setId(id);
         this.number = number;
         this.playerUniqueId = playerUniqueId;
@@ -33,7 +33,7 @@ public class Order extends Element {
         this.currency = currency;
         this.completed = completed;
         this.lineItems = lineItems;
-        this.fields = fields;
+        this.fieldData = fieldData;
     }
     
     public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -42,7 +42,7 @@ public class Order extends Element {
         this.playerName = playerName;
         this.currency = currency;
         this.lineItems = new DataList<>();
-        this.fields = new OrderFields();
+        this.fieldData = new OrderFieldData();
     }
     
     @Override
@@ -74,7 +74,7 @@ public class Order extends Element {
             return false;
         }
         
-        if (fields == null) {
+        if (fieldData == null) {
             addError("fields", "Fields is required");
             return false;
         }
@@ -85,7 +85,7 @@ public class Order extends Element {
             for(Field field : fieldService.getFields()) {
                 ConfigOption<?> option = field.getOption();
                 
-                if(option.isRequired() && option.isValueEmpty(fields)) {
+                if(option.isRequired() && option.isValueEmpty(fieldData)) {
                     addError("fields." + field.getId(), "Field \"" + field.getName() + "\" is required");
                     fieldsValid = false;
                 }
@@ -157,8 +157,8 @@ public class Order extends Element {
         return lineItems;
     }
     
-    public OrderFields getFields() {
-        return fields;
+    public OrderFieldData getFieldData() {
+        return fieldData;
     }
     
 }

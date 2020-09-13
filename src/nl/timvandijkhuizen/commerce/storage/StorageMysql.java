@@ -23,7 +23,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
-import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Command;
@@ -643,7 +643,7 @@ public class StorageMysql extends Storage {
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
-            OrderFields fields = DbHelper.parseOrderFields(result.getString(7));
+            OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -692,7 +692,7 @@ public class StorageMysql extends Storage {
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
-            OrderFields fields = DbHelper.parseOrderFields(result.getString(7));
+            OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -733,7 +733,7 @@ public class StorageMysql extends Storage {
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
-        statement.setString(6, DbHelper.prepareJsonConfig(order.getFields()));
+        statement.setString(6, DbHelper.prepareJsonConfig(order.getFieldData()));
 
         // Execute query
         statement.executeUpdate();
@@ -763,7 +763,7 @@ public class StorageMysql extends Storage {
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setBoolean(5, order.isCompleted());
-        statement.setString(6, DbHelper.prepareJsonConfig(order.getFields()));
+        statement.setString(6, DbHelper.prepareJsonConfig(order.getFieldData()));
         statement.setInt(7, order.getId());
 
         // Execute query

@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
@@ -36,7 +36,7 @@ public class MenuShopFields implements PredefinedMenu {
          
         // Get cart & fields
         Order cart = orderService.getCart(player);
-        OrderFields fields = cart.getFields();
+        OrderFieldData fieldData = cart.getFieldData();
         
         // Add fields
         for (Field field : fieldService.getFields()) {
@@ -58,10 +58,8 @@ public class MenuShopFields implements PredefinedMenu {
                 }
                 
                 // Create lore
-                if(!option.isValueEmpty(fields)) {
-                    for(String line : option.getValueLore(fields)) {
-                        lore.add(UI.color(line, UI.COLOR_SECONDARY));
-                    }
+                if(!option.isValueEmpty(fieldData)) {
+                    lore.add(UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
@@ -87,8 +85,8 @@ public class MenuShopFields implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 
-                option.getValueInput(player, option.getValue(fields), value -> {
-                    option.setValue(fields, value);
+                option.getValueInput(player, option.getValue(fieldData), value -> {
+                    option.setValue(fieldData, value);
                     
                     actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
                     menu.disableButtons();

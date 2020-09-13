@@ -1,15 +1,22 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
+import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.content.actions.OpenOrderList;
+import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -24,6 +31,7 @@ public class MenuOrderView implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, MenuArguments args) {
+        FieldService fieldService = Commerce.getInstance().getService("fields");
         Menu menu = new Menu("View Order", MenuSize.XXL);
         Order order = args.get(0);
 
@@ -90,7 +98,28 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder fieldsButton = new MenuItemBuilder(Material.OAK_SIGN);
 
         fieldsButton.setName(UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        fieldsButton.setLore(UI.color("Click to view the fields", UI.COLOR_TEXT));
+
+        // Add fields to lore
+        Set<Field> fields = fieldService.getFields();
+        OrderFieldData fieldData = order.getFieldData();
+
+        if (fields.size() > 0) {
+            for(Field field : fields) {
+                ConfigOption<?> option = field.getOption();
+                String value = option.getValueLore(fieldData);
+                
+                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + field.getName() + ": ", UI.COLOR_TEXT) + UI.color(value, UI.COLOR_SECONDARY));
+            }
+        } else {
+            fieldsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        }
+        
+        fieldsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        
+        fieldsButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            Menus.ORDER_FIELDS.open(player, order);
+         });
         
         menu.setButton(fieldsButton, 32);
 

@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
-import nl.timvandijkhuizen.commerce.config.sources.OrderFields;
+import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 
@@ -47,8 +47,8 @@ public class DbHelper {
         return new GatewayConfig(type, parseJson(json));
     }
     
-    public static OrderFields parseOrderFields(String json) {
-        return new OrderFields(parseJson(json));
+    public static OrderFieldData parseOrderFields(String json) {
+        return new OrderFieldData(parseJson(json));
     }
 
 }

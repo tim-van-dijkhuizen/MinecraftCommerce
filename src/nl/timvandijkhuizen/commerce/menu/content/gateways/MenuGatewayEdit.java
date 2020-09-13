@@ -141,9 +141,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
                     }
                     
                     if(!option.isValueEmpty(config)) {
-                        for(String line : option.getValueLore(config)) {
-                            optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
-                        }
+                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                     } else {
                         optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }

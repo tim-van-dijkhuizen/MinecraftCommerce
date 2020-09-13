@@ -46,9 +46,7 @@ public class MenuConfig implements PredefinedMenu {
             item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
-                for(String line : option.getValueLore(config)) {
-                    item.addLore(UI.color(line, UI.COLOR_SECONDARY));
-                }
+                item.addLore(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
             } else {
                 item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
@@ -72,9 +70,7 @@ public class MenuConfig implements PredefinedMenu {
                         
                         // Set new lore
                         if(!option.isValueEmpty(config)) {
-                            for(String line : option.getValueLore(config)) {
-                                item.addLore(UI.color(line, UI.COLOR_SECONDARY));
-                            }
+                            item.addLore(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                         } else {
                             item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                         }

@@ -54,8 +54,8 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     }
 
     @Override
-    public String[] getValueLore(StoreCurrency value) {
-        return new String[] { value.getCode() };
+    public String getValueLore(StoreCurrency value) {
+        return value.getCode();
     }
 
     @Override

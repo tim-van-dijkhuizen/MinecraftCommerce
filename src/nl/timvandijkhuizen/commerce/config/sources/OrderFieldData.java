@@ -10,13 +10,13 @@ import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 
-public class OrderFields extends JsonConfig {
+public class OrderFieldData extends JsonConfig {
 
-    public OrderFields(JsonObject json) {
+    public OrderFieldData(JsonObject json) {
         super(json);
     }
     
-    public OrderFields() {
+    public OrderFieldData() {
         super();
     }
     

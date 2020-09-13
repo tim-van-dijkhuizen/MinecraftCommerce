@@ -41,9 +41,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
             item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
-                for(String line : option.getValueLore(config)) {
-                    item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
-                }
+                item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
             } else {
                 item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
@@ -62,9 +60,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
                     
                     // Set new lore
                     if(!option.isValueEmpty(config)) {
-                        for(String line : option.getValueLore(config)) {
-                            item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(line, UI.COLOR_SECONDARY));
-                        }
+                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                     } else {
                         item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }
