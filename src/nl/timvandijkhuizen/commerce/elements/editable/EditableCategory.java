@@ -7,11 +7,11 @@ import nl.timvandijkhuizen.commerce.elements.Category;
 public class EditableCategory extends Category {
 
     public EditableCategory() {
-        super(Material.CHEST_MINECART, "", "");
+        super();
     }
     
-    public EditableCategory(int id, Material icon, String name, String description) {
-        super(id, icon, name, description);
+    public EditableCategory(Category source) {
+        super(source.getId(), source.getIcon(), source.getName(), source.getDescription());
     }
     
     public void setIcon(Material icon) {

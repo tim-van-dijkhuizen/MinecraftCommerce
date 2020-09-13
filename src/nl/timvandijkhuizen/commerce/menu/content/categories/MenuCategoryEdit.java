@@ -11,7 +11,6 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.editable.EditableCategory;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
@@ -28,8 +27,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
     @Override
     public Menu create(Player player, MenuArguments args) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
-        Category source = args.get(0);
-        EditableCategory category = source != null ? source.getEditableCopy() : new EditableCategory();
+        EditableCategory category = args.get(0, new EditableCategory());
         Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
 
         // Icon button

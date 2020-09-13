@@ -48,7 +48,7 @@ public class MenuCategoryList implements PredefinedMenu {
                 UI.playSound(player, UI.SOUND_CLICK);
                 
                 if (clickType == ClickType.LEFT) {
-                    Menus.CATEGORY_EDIT.open(player, category);
+                    Menus.CATEGORY_EDIT.open(player, category.getEditableCopy());
                 } else if (clickType == ClickType.RIGHT) {
                     item.setLore(UI.color("Deleting...", UI.COLOR_TEXT));
                     menu.refresh();
