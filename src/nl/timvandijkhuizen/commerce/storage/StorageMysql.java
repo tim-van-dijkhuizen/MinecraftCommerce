@@ -1002,7 +1002,7 @@ public class StorageMysql extends Storage {
     @Override
     public UserPreferences getUserPreferences(UUID uuid) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT preferences FROM user_preferences WHERE uuid=?";
+        String sql = "SELECT preferences FROM user_preferences WHERE uuid=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid.toString());
