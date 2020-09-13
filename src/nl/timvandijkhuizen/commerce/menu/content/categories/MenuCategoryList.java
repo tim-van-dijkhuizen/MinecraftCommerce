@@ -1,7 +1,5 @@
 package nl.timvandijkhuizen.commerce.menu.content.categories;
 
-import java.util.Set;
-
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,10 +25,7 @@ public class MenuCategoryList implements PredefinedMenu {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
         PagedMenu menu = new PagedMenu("Product Categories", 3, 7, 1, 1);
 
-        // Add category buttons
-        Set<Category> categories = args.getSet(0);
-
-        for (Category category : categories) {
+        for (Category category : categoryService.getCategories()) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
 
             // Set category name

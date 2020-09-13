@@ -3,19 +3,21 @@ package nl.timvandijkhuizen.commerce.elements;
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.commerce.base.Element;
+import nl.timvandijkhuizen.commerce.base.SourceElement;
+import nl.timvandijkhuizen.commerce.elements.editable.EditableCategory;
 
-public class Category extends Element {
+public class Category extends Element implements SourceElement<EditableCategory> {
 
-    private Material icon;
-    private String name;
-    private String description;
+    protected Material icon;
+    protected String name;
+    protected String description;
 
-    public Category() {
-        this.icon = Material.CHEST_MINECART;
-        this.name = "";
-        this.description = "";
+    public Category(Material icon, String name, String description) {
+        this.icon = icon;
+        this.name = name;
+        this.description = description;
     }
-
+    
     public Category(int id, Material icon, String name, String description) {
         this.setId(id);
         this.icon = icon;
@@ -56,25 +58,25 @@ public class Category extends Element {
     public Material getIcon() {
         return icon;
     }
-
-    public void setIcon(Material icon) {
-        this.icon = icon;
-    }
     
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    @Override
+    public EditableCategory getEditableCopy() {
+        return new EditableCategory(getId(), icon, name, description);
+    }
+
+    @Override
+    public void updateFromCopy(EditableCategory copy) {
+        this.icon = copy.getIcon();
+        this.name = copy.getName();
+        this.description = copy.getDescription();
     }
 
 }

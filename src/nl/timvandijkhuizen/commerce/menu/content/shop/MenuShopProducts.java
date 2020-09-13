@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.WordUtils;
@@ -15,8 +14,9 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenShopCategories;
+import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -30,15 +30,14 @@ public class MenuShopProducts implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, MenuArguments args) {
+        ProductService productService = Commerce.getInstance().getService("products");
         OrderService orderService = Commerce.getInstance().getService("orders");
         Category category = args.get(0);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
         Order cart = orderService.getCart(player);
         
         // Add product buttons
-        Set<Product> products = args.getSet(1);
-
-        for (Product product : products) {
+        for (Product product : productService.getProducts(category)) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
             AtomicReference<String> actionLore = new AtomicReference<>();
             
@@ -96,7 +95,10 @@ public class MenuShopProducts implements PredefinedMenu {
         // Go back button
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
-        backButton.setClickListener(new OpenShopCategories());
+        backButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            Menus.SHOP_CATEGORIES.open(player);
+        });
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 

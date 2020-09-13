@@ -14,7 +14,6 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenOrderList;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
@@ -137,7 +136,10 @@ public class MenuOrderView implements PredefinedMenu {
         // Go back button
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
-        backButton.setClickListener(new OpenOrderList());
+        backButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            Menus.ORDER_LIST.open(player);
+        });
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 4);
 

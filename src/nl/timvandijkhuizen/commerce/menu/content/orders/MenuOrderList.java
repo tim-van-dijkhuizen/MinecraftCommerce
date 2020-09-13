@@ -1,7 +1,5 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
-import java.util.Set;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,10 +24,7 @@ public class MenuOrderList implements PredefinedMenu {
         OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Orders", 3, 7, 1, 1, 1, 5, 7);
 
-        // Add order buttons
-        Set<Order> orders = args.getSet(0);
-
-        for (Order order : orders) {
+        for (Order order : orderService.getOrders()) {
             MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);
 
             // Set order name

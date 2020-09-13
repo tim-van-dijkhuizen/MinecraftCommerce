@@ -2,8 +2,10 @@ package nl.timvandijkhuizen.commerce.services;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -26,6 +28,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 public class ProductService extends BaseService {
 
     private Set<CommandVariable> commandVariables;
+    private Set<Product> products;
 
     @Override
     public String getHandle() {
@@ -42,24 +45,26 @@ public class ProductService extends BaseService {
 
         commandVariables = event.getVariables();
     }
+    
+    @Override
+    public void load() throws Exception {
+        Storage storage = Commerce.getInstance().getStorage();
+        
+        // Load fields from storage
+        try {
+            products = storage.getProducts();
+        } catch (Exception e) {
+            ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
+        }
+    }
 
     /**
      * Returns all products.
      * 
      * @param callback
      */
-    public void getProducts(Consumer<Set<Product>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
-
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Product> products = storage.getProducts(null);
-                MainThread.execute(() -> callback.accept(products));
-            } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
-            }
-        });
+    public Set<Product> getProducts() {
+        return products;
     }
 
     /**
@@ -67,18 +72,10 @@ public class ProductService extends BaseService {
      * 
      * @param callback
      */
-    public void getProducts(Category category, Consumer<Set<Product>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
-
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Product> products = storage.getProducts(category);
-                MainThread.execute(() -> callback.accept(products));
-            } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
-            }
-        });
+    public Set<Product> getProducts(Category category) {
+        return products.stream()
+            .filter(i -> i.getCategory().equals(category))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
     
     /**
@@ -104,6 +101,7 @@ public class ProductService extends BaseService {
             try {
                 if (isNew) {
                     storage.createProduct(product);
+                    products.add(product);
                 } else {
                     storage.updateProduct(product);
                 }
@@ -146,6 +144,7 @@ public class ProductService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteProduct(product);
+                products.remove(product);
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));

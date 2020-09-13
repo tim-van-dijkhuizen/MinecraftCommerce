@@ -22,9 +22,23 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class OrderService extends BaseService {
 
+    private Set<Order> orders;
+    
     @Override
     public String getHandle() {
         return "orders";
+    }
+    
+    @Override
+    public void load() throws Exception {
+        Storage storage = Commerce.getInstance().getStorage();
+        
+        // Load fields from storage
+        try {
+            orders = storage.getOrders();
+        } catch (Exception e) {
+            ConsoleHelper.printError("Failed to load orders: " + e.getMessage(), e);
+        }
     }
     
     /**
@@ -68,20 +82,10 @@ public class OrderService extends BaseService {
     /**
      * Returns all orders.
      * 
-     * @param callback
+     * @return
      */
-    public void getOrders(Consumer<Set<Order>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
-
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Order> orders = storage.getOrders();
-                MainThread.execute(() -> callback.accept(orders));
-            } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load orders: " + e.getMessage(), e);
-            }
-        });
+    public Set<Order> getOrders() {
+        return orders;
     }
 
     /**
@@ -107,6 +111,7 @@ public class OrderService extends BaseService {
             try {
                 if (isNew) {
                     storage.createOrder(order);
+                    orders.add(order);
                 } else {
                     storage.updateOrder(order);
                 }
@@ -157,6 +162,7 @@ public class OrderService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteOrder(order);
+                orders.remove(order);
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));

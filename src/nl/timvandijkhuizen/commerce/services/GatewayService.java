@@ -18,6 +18,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 public class GatewayService extends BaseService {
 
     private Set<GatewayType> types;
+    private Set<Gateway> gateways;
     
     @Override
     public String getHandle() {
@@ -28,29 +29,32 @@ public class GatewayService extends BaseService {
     public void init() throws Exception {
         RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
 
+        // Register gateway types
         event.addType(GatewayMollie.class);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         types = event.getTypes();
     }
     
+    @Override
+    public void load() throws Exception {
+        Storage storage = Commerce.getInstance().getStorage();
+        
+        // Load fields from storage
+        try {
+            gateways = storage.getGateways();
+        } catch (Exception e) {
+            ConsoleHelper.printError("Failed to load gateways: " + e.getMessage(), e);
+        }
+    }
+    
     /**
      * Returns all gateways.
      * 
-     * @param callback
+     * @return
      */
-    public void getGateways(Consumer<Set<Gateway>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
-
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Gateway> gateways = storage.getGateways();
-                MainThread.execute(() -> callback.accept(gateways));
-            } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load gateways: " + e.getMessage(), e);
-            }
-        });
+    public Set<Gateway> getGateways() {
+        return gateways;
     }
 
     /**
@@ -74,6 +78,7 @@ public class GatewayService extends BaseService {
             try {
                 if (isNew) {
                     storage.createGateway(gateway);
+                    gateways.add(gateway);
                 } else {
                     storage.updateGateway(gateway);
                 }
@@ -99,6 +104,7 @@ public class GatewayService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteGateway(gateway);
+                gateways.remove(gateway);
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));

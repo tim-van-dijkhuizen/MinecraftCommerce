@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.elements.Category;
+import nl.timvandijkhuizen.commerce.elements.editable.EditableCategory;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -21,7 +21,7 @@ public class MenuCategoryIcon implements PredefinedMenu {
     @Override
     public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Category Icon", 3, 7, 1, 1, 1, 5, 7);
-        Category category = args.get(0);
+        EditableCategory category = args.get(0);
         Material selected = category.getIcon();
 
         for (Material icon : Commerce.MENU_ICONS) {

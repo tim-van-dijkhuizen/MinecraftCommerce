@@ -53,13 +53,12 @@ public abstract class Storage implements Service {
     public abstract void deleteCategory(Category category) throws Exception;
     
     /**
-     * Returns all products for the specified category.
-     * All products will be returned if the category is null.
+     * Returns all products.
      * 
      * @return
      * @throws Exception
      */
-    public abstract Set<Product> getProducts(Category category) throws Exception;
+    public abstract Set<Product> getProducts() throws Exception;
 
     /**
      * Creates a product.
