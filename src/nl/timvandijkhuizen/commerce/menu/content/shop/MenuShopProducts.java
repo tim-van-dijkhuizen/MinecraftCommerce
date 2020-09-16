@@ -33,10 +33,10 @@ public class MenuShopProducts implements PredefinedMenu {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Category category = args.get(0);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
-        Order cart = orderService.getCart(player);
         
         // Add product buttons
         Set<Product> products = args.getSet(1);
+        Order cart = args.get(2);
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
@@ -101,7 +101,7 @@ public class MenuShopProducts implements PredefinedMenu {
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
         
         return menu;
     }

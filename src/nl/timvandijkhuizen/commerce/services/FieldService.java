@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class FieldService extends BaseService {
             // Create option cache
             options = fields.stream()
                 .map(i -> i.getOption())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         });
     }
     
@@ -99,7 +100,7 @@ public class FieldService extends BaseService {
                 // Update option cache
                 options = storage.getFields().stream()
                     .map(i -> i.getOption())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
                 
                 // Execute callback
                 MainThread.execute(() -> callback.accept(true));
@@ -127,7 +128,7 @@ public class FieldService extends BaseService {
                 // Update option cache
                 options = storage.getFields().stream()
                     .map(i -> i.getOption())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
                 
                 // Execute callback
                 MainThread.execute(() -> callback.accept(true));

@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,10 +9,9 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
-import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.Menus;
+import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopCart;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopGateways;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -34,23 +32,19 @@ public class MenuShopFields implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Fields", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
          
-        // Get cart & fields
-        Order cart = orderService.getCart(player);
+        // Add field buttons
+        Order cart = args.get(0);
         OrderFieldData fieldData = cart.getFieldData();
         
-        // Add field buttons
-        Set<Field> fields = args.get(0);
-        
-        for (Field field : fields) {
-            MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
+        for (ConfigOption option : fieldData.getOptions()) {
+            MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             TypedValue<String> actionLore = new TypedValue<>();
-            ConfigOption option = field.getOption();
             
             // Get meta and description
             DataArguments meta = option.getMeta();
             String description = meta.getString(0);
             
-            item.setName(UI.color(field.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             item.setLore(() -> {
                 List<String> lore = new ArrayList<>();
@@ -90,7 +84,7 @@ public class MenuShopFields implements PredefinedMenu {
             // Set click listener
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 option.getValueInput(player, option.getValue(fieldData), value -> {
                     option.setValue(fieldData, value);
                     
@@ -121,16 +115,12 @@ public class MenuShopFields implements PredefinedMenu {
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Cart", UI.COLOR_TEXT));
-        
-        previousButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-            Menus.SHOP_CART.open(player);
-        });
+        previousButton.setClickListener(new ActionShopCart());
 
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
         
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 3);
+        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         // Next (gateway) button
         MenuItemBuilder nextButton = new MenuItemBuilder(Material.DIAMOND);

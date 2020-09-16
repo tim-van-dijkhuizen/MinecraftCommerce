@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
@@ -15,7 +15,7 @@ public class ActionShopFields implements MenuItemAction {
 
     @Override
     public void onClick(MenuItemClick event) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
@@ -27,17 +27,17 @@ public class ActionShopFields implements MenuItemAction {
         activeMenu.refresh();
 
         // Create menu
-        fieldService.getFields(fields -> {
+        orderService.getCart(whoClicked, cart -> {
             activeMenu.enableButtons();
             
-            if (fields == null) {
+            if (cart == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
-                clickedItem.setLore(UI.color("Error: Failed to load fields.", UI.COLOR_ERROR));
+                clickedItem.setLore(UI.color("Error: Failed to load cart.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }
 
-            Menus.SHOP_FIELDS.open(whoClicked, fields);
+            Menus.SHOP_FIELDS.open(whoClicked, cart);
         });
     }
     

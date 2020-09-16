@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.elements.Category;
+import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopProducts;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
@@ -28,6 +29,7 @@ public class MenuShopCategories implements PredefinedMenu {
 
         // Add category buttons
         Set<Category> categories = args.getSet(0);
+        Order cart = args.get(1);
 
         for (Category category : categories) {
             MenuItemBuilder item = new MenuItemBuilder(category.getIcon());
@@ -59,7 +61,7 @@ public class MenuShopCategories implements PredefinedMenu {
         menu.setButton(closeButton, menu.getSize().getSlots() - 9 + 3);
         
         // Currency button
-        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 4);
+        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

@@ -14,14 +14,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
-import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class CacheService extends BaseService implements Listener {
 
     private Map<UUID, UserPreferences> userPreferences = new HashMap<>();
-    private Map<UUID, Order> userCarts = new HashMap<>();
     
     @Override
     public String getHandle() {
@@ -39,13 +37,6 @@ public class CacheService extends BaseService implements Listener {
         } catch (Exception e) {
             ConsoleHelper.printError("Failed to load user preferences for " + uuid, e);
         }
-        
-        // Load cart
-        try {
-            userCarts.put(uuid, storage.getCart(uuid));
-        } catch (Exception e) {
-            ConsoleHelper.printError("Failed to load user cart for " + uuid, e);
-        }
     }
     
     @EventHandler
@@ -53,7 +44,6 @@ public class CacheService extends BaseService implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         
         userPreferences.remove(uuid);
-        userCarts.remove(uuid);
     }
     
     UserPreferences getPreferences(Player player) {
@@ -62,14 +52,6 @@ public class CacheService extends BaseService implements Listener {
     
     void updatePreferences(Player player, UserPreferences preferences) {
         userPreferences.put(player.getUniqueId(), preferences);
-    }
-    
-    Order getCart(Player player) {
-        return userCarts.get(player.getUniqueId());
-    }
-    
-    void updateCart(Player player, Order cart) {
-        userCarts.put(player.getUniqueId(), cart);
     }
 
 }

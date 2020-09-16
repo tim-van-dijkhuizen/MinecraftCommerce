@@ -33,18 +33,25 @@ public class OrderService extends BaseService {
      * @param player
      * @return
      */
-    public Order getCart(Player player) {
-        CacheService cacheService = Commerce.getInstance().getService("cache");
-        Order cart = cacheService.getCart(player);
-        
-        // Set default if null
-        if(cart == null) {
-            cart = createCart(player);
-            cacheService.updateCart(player, cart);
-            return cart;
-        }
-        
-        return cart;
+    public void getCart(Player player, Consumer<Order> callback) {
+        Storage storage = Commerce.getInstance().getStorage();
+
+        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
+            try {
+                Order cart = storage.getCart(player.getUniqueId());
+                
+                // Create cart if we didn't find one
+                if(cart == null) {
+                    callback.accept(createCart(player));
+                    return;
+                }
+                
+                MainThread.execute(() -> callback.accept(cart));
+            } catch (Exception e) {
+                MainThread.execute(() -> callback.accept(null));
+                ConsoleHelper.printError("Failed to load cart: " + e.getMessage(), e);
+            }
+        });
     }
     
     /**
@@ -99,7 +106,7 @@ public class OrderService extends BaseService {
             callback.accept(false);
             return;
         }
-
+        
         // Create or edit order
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             DataList<LineItem> lineItems = order.getLineItems();
@@ -110,7 +117,7 @@ public class OrderService extends BaseService {
                 } else {
                     storage.updateOrder(order);
                 }
-                
+
                 // Set order id and remove if quantity <= 0
                 for (LineItem lineItem : lineItems) {
                     lineItem.setOrderId(order.getId());
@@ -119,7 +126,7 @@ public class OrderService extends BaseService {
                         order.getLineItems().remove(lineItem);
                     }
                 }
-
+                
                 // Update line items
                 for (LineItem lineItem : lineItems.getByAction(DataAction.CREATE)) {
                     storage.createLineItem(lineItem);
@@ -132,10 +139,10 @@ public class OrderService extends BaseService {
                 for (LineItem lineItem : lineItems.getByAction(DataAction.DELETE)) {
                     storage.deleteLineItem(lineItem);
                 }
-                
-                // Remove pending from data list
-                lineItems.clearPending();
 
+                // Clear pending
+                lineItems.clearPending();;
+                
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));

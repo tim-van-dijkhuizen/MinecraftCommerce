@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
+import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -24,6 +25,7 @@ public class CommandCommerce extends BaseCommand {
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
+        OrderService orderService = Commerce.getInstance().getService("orders");
 
         player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
 
@@ -34,7 +36,14 @@ public class CommandCommerce extends BaseCommand {
                 return;
             }
 
-            Menus.SHOP_CATEGORIES.open(player, categories);
+            orderService.getCart(player, cart -> {
+                if (cart == null) {
+                    player.sendMessage(UI.color("Failed to load cart.", UI.COLOR_ERROR));
+                    return;
+                }
+                
+                Menus.SHOP_CATEGORIES.open(player, categories, cart);
+            });
         });
     }
 

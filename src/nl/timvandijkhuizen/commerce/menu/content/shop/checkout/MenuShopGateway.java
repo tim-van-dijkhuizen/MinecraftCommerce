@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.elements.Gateway;
+import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopFields;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
@@ -25,6 +26,7 @@ public class MenuShopGateway implements PredefinedMenu {
         
         // Add gateways buttons
         Set<Gateway> gateways = args.get(0);
+        Order cart = args.get(1);
         
         for (Gateway gateway : gateways) {
             MenuItemBuilder item = new MenuItemBuilder(gateway.getType().getIcon());
@@ -50,7 +52,7 @@ public class MenuShopGateway implements PredefinedMenu {
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
         
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(player), menu.getSize().getSlots() - 9 + 3);
+        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         return menu;
     }

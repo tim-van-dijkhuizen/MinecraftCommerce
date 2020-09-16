@@ -1,33 +1,26 @@
 package nl.timvandijkhuizen.commerce.menu.content.actions.shop;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.OrderService;
-import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopProducts implements MenuItemAction {
+public class ActionShopCart implements MenuItemAction {
 
-    private Category category;
-    
-    public ActionShopProducts(Category category) {
-        this.category = category;
-    }
-    
     @Override
     public void onClick(MenuItemClick event) {
-        ProductService productService = Commerce.getInstance().getService("products");
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
+        ClickType clickType = event.getClickType();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
         
@@ -36,26 +29,21 @@ public class ActionShopProducts implements MenuItemAction {
         activeMenu.refresh();
 
         // Create menu
-        productService.getProducts(category, categories -> {
-            if (categories == null) {
+        orderService.getCart(whoClicked, cart -> {
+            activeMenu.enableButtons();
+            
+            if (cart == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
-                clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));
-                activeMenu.enableButtons();
+                clickedItem.setLore(UI.color("Error: Failed to load cart.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }
 
-            orderService.getCart(whoClicked, cart -> {
-                if (cart == null) {
-                    UI.playSound(whoClicked, UI.SOUND_ERROR);
-                    clickedItem.setLore(UI.color("Error: Failed to load cart.", UI.COLOR_ERROR));
-                    activeMenu.enableButtons();
-                    activeMenu.refresh();
-                    return;
-                }
-                
-                Menus.SHOP_PRODUCTS.open(whoClicked, category, categories, cart);
-            });
+            if(clickType == ClickType.LEFT) {
+                Menus.SHOP_CART.open(whoClicked, cart);
+            } else if(clickType == ClickType.RIGHT) {
+                Menus.SHOP_CURRENCY.open(whoClicked, cart, activeMenu);
+            }
         });
     }
     
