@@ -101,9 +101,13 @@ public class MenuOrderView implements PredefinedMenu {
 
         if (options.size() > 0) {
             for(ConfigOption<?> option : options) {
-                String value = option.getValueLore(fieldData);
+                String value = UI.color("None", UI.COLOR_SECONDARY, ChatColor.BOLD);
                 
-                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(value, UI.COLOR_SECONDARY));
+                if(!option.isValueEmpty(fieldData)) {
+                    value = UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY);
+                }
+                        
+                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
             }
         } else {
             fieldsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
