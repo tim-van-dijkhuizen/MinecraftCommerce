@@ -6,20 +6,20 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuAction;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class OpenCategoryList implements MenuAction {
+public class ActionCategoryList implements MenuItemAction {
 
     private boolean clickSound = true;
     
-    public OpenCategoryList(boolean clickSound) {
+    public ActionCategoryList(boolean clickSound) {
         this.clickSound = clickSound;
     }
     
-    public OpenCategoryList() { }
+    public ActionCategoryList() { }
     
     @Override
     public void onClick(MenuItemClick event) {

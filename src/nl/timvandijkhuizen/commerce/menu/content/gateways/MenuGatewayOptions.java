@@ -1,12 +1,14 @@
 package nl.timvandijkhuizen.commerce.menu.content.gateways;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -28,25 +30,24 @@ public class MenuGatewayOptions implements PredefinedMenu {
 
         // Add configuration options
         for (ConfigOption option : config.getOptions()) {
-            ConfigIcon icon = option.getIcon();
+            MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             
-            // Ignore options without an icon
-            if(icon == null) {
-                continue;
-            }
+            item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
-            // Create and add option
-            MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
-            
-            item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
-            if(!option.isValueEmpty(config)) {
-                item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
-            } else {
-                item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            }
-            
-            item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.setLore(() -> {
+                List<String> lore = new ArrayList<>();
+                
+                if(!option.isValueEmpty(config)) {
+                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
+                } else {
+                    lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                }
+                
+                lore.add("");
+                lore.add(UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                
+                return lore;
+            });
             
             // Set click listener
             item.setClickListener(event -> {
@@ -54,20 +55,6 @@ public class MenuGatewayOptions implements PredefinedMenu {
                 
                 option.getValueInput(player, option.getValue(config), value -> {
                     option.setValue(config, value);
-                    
-                    // Clear lore
-                    item.removeLore();
-                    
-                    // Set new lore
-                    if(!option.isValueEmpty(config)) {
-                        item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
-                    } else {
-                        item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                    }
-                    
-                    item.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                    
-                    // Open menu
                     menu.open(player);
                 });
             });

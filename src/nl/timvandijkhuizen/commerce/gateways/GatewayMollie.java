@@ -9,7 +9,6 @@ import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.elements.TransactionResponse;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 
@@ -33,7 +32,7 @@ public class GatewayMollie implements GatewayType {
     @Override
     public Collection<ConfigOption<?>> getOptions() {
         return Arrays.asList(
-            new ConfigOption<>("apiKey", ConfigTypes.PASSWORD).setIcon(new ConfigIcon(Material.OAK_SIGN, "Api Key")).setRequired(true)
+            new ConfigOption<>("apiKey", "Api Key", Material.OAK_SIGN, ConfigTypes.PASSWORD).setRequired(true)
         );
     }
     

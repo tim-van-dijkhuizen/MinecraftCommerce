@@ -1,14 +1,13 @@
 package nl.timvandijkhuizen.commerce.elements;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
-import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
@@ -47,8 +46,6 @@ public class Order extends Element {
     
     @Override
     public boolean validate(String scenario) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
-        
         if (number == null || number.length() == 0) {
             addError("number", "Number is required");
             return false;
@@ -80,13 +77,12 @@ public class Order extends Element {
         }
         
         if(scenario.equals(SCENARIO_FIELDS) || scenario.equals(SCENARIO_PAY)) {
+            Collection<ConfigOption<?>> options = fieldData.getOptions();
             boolean fieldsValid = true;
             
-            for(Field field : fieldService.getFields()) {
-                ConfigOption<?> option = field.getOption();
-                
+            for(ConfigOption<?> option : options) {
                 if(option.isRequired() && option.isValueEmpty(fieldData)) {
-                    addError("fields." + field.getId(), "Field \"" + field.getName() + "\" is required");
+                    addError(option.getPath(), "Field \"" + option.getName() + "\" is required");
                     fieldsValid = false;
                 }
             }

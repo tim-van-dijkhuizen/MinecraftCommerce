@@ -25,7 +25,6 @@ import nl.timvandijkhuizen.commerce.storage.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -59,24 +58,20 @@ public class Commerce extends PluginBase {
         config = new YamlConfig(this);
         
         // Create options
-        configDevMode = new ConfigOption<>("general.devMode", ConfigTypes.BOOLEAN)
-            .setIcon(new ConfigIcon(Material.REDSTONE, "Dev Mode"))
+        configDevMode = new ConfigOption<>("general.devMode", "Dev Mode", Material.REDSTONE, ConfigTypes.BOOLEAN)
             .setRequired(true)
             .setDefaultValue(false);
         
-        configStorageType = new ConfigOption<>("storage.type", ConfigTypes.STRING)
-            .setIcon(new ConfigIcon(Material.ENDER_CHEST, "Storage Type"))
+        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.ENDER_CHEST, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue("mysql")
             .setReadOnly(true);
         
-        configCurrencies = new ConfigOption<>("general.currencies", new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
-            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currencies"))
+        configCurrencies = new ConfigOption<>("general.currencies", "Currencies", Material.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
             .setRequired(true)
             .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
         
-        configBaseCurrency = new ConfigOption<>("general.baseCurrency", new ConfigTypeStoreCurrency())
-            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Base Currency"))
+        configBaseCurrency = new ConfigOption<>("general.baseCurrency", "Base Currency", Material.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         

@@ -1,54 +1,44 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions;
+package nl.timvandijkhuizen.commerce.menu.content.actions.shop;
 
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuAction;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class OpenOrderList implements MenuAction {
+public class ActionShopGateways implements MenuItemAction {
 
-    private boolean clickSound = true;
-    
-    public OpenOrderList(boolean clickSound) {
-        this.clickSound = clickSound;
-    }
-    
-    public OpenOrderList() { }
-    
     @Override
     public void onClick(MenuItemClick event) {
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
-        if(clickSound) {
-            UI.playSound(whoClicked, UI.SOUND_CLICK);
-        }
+        UI.playSound(whoClicked, UI.SOUND_CLICK);
         
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
 
         // Create menu
-        orderService.getOrders(orders -> {
+        gatewayService.getGateways(gateways -> {
             activeMenu.enableButtons();
             
-            if (orders == null) {
+            if (gateways == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
-                clickedItem.setLore(UI.color("Error: Failed to load orders.", UI.COLOR_ERROR));
+                clickedItem.setLore(UI.color("Error: Failed to load gateways.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }
 
-            Menus.ORDER_LIST.open(whoClicked, orders);
+            Menus.SHOP_GATEWAY.open(whoClicked, gateways);
         });
     }
-
+    
 }

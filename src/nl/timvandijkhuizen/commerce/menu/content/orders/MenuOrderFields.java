@@ -1,17 +1,15 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
-import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -26,20 +24,17 @@ public class MenuOrderFields implements PredefinedMenu {
     @Override
     public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Order Fields", 3, 7, 1, 1, 2, 5, 6);
-        FieldService fieldService = Commerce.getInstance().getService("fields");
         
         // Get order and fields
         Order order = args.get(0);
         OrderFieldData fieldData = order.getFieldData();
+        Collection<ConfigOption<?>> options = fieldData.getOptions();
         
         // Add fields
-        for (Field field : fieldService.getFields()) {
-            ConfigOption<?> option = field.getOption();
+        for (ConfigOption<?> option : options) {
+            MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             
-            // Create and add option
-            MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
-            
-            item.setName(UI.color(field.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             item.setLore(() -> {
                 List<String> lore = new ArrayList<>();

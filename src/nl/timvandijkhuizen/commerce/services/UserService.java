@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -14,7 +14,6 @@ import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.spigotutils.MainThread;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -22,7 +21,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class UserService extends BaseService {
 
-    private Set<ConfigOption<?>> userOptions = new HashSet<>();
+    private Set<ConfigOption<?>> userOptions = new LinkedHashSet<>();
     
     @Override
     public String getHandle() {
@@ -36,8 +35,7 @@ public class UserService extends BaseService {
         StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
         
         // Create user options
-        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", new ConfigTypeStoreCurrency())
-            .setIcon(new ConfigIcon(Material.SUNFLOWER, "Currency"))
+        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", Material.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(baseCurrency);
         

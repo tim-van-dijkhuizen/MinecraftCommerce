@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.MainThread;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -33,17 +32,9 @@ public class MenuConfig implements PredefinedMenu {
 
         // Add config options
         for (ConfigOption option : config.getOptions()) {
-            ConfigIcon icon = option.getIcon();
+            MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             
-            // Ignore options without an icon
-            if(icon == null) {
-                continue;
-            }
-            
-            // Create and add option
-            MenuItemBuilder item = new MenuItemBuilder(icon.getMaterial());
-            
-            item.setName(UI.color(icon.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
             if(!option.isValueEmpty(config)) {
                 item.addLore(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));

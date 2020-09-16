@@ -1,21 +1,18 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
-import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenOrderList;
-import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionOrderList;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -31,7 +28,6 @@ public class MenuOrderView implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, MenuArguments args) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
         Menu menu = new Menu("View Order", MenuSize.XXL);
         Order order = args.get(0);
 
@@ -100,15 +96,14 @@ public class MenuOrderView implements PredefinedMenu {
         fieldsButton.setName(UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         // Add fields to lore
-        Set<Field> fields = fieldService.getFields();
         OrderFieldData fieldData = order.getFieldData();
+        Collection<ConfigOption<?>> options = fieldData.getOptions();
 
-        if (fields.size() > 0) {
-            for(Field field : fields) {
-                ConfigOption<?> option = field.getOption();
+        if (options.size() > 0) {
+            for(ConfigOption<?> option : options) {
                 String value = option.getValueLore(fieldData);
                 
-                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + field.getName() + ": ", UI.COLOR_TEXT) + UI.color(value, UI.COLOR_SECONDARY));
+                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(value, UI.COLOR_SECONDARY));
             }
         } else {
             fieldsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -137,7 +132,7 @@ public class MenuOrderView implements PredefinedMenu {
         // Go back button
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
-        backButton.setClickListener(new OpenOrderList());
+        backButton.setClickListener(new ActionOrderList());
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 4);
 

@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.ChatColor;
@@ -14,7 +15,7 @@ import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopGateways;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -32,14 +33,15 @@ public class MenuShopFields implements PredefinedMenu {
     public Menu create(Player player, MenuArguments args) {
         PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Fields", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
-        FieldService fieldService = Commerce.getInstance().getService("fields");
          
         // Get cart & fields
         Order cart = orderService.getCart(player);
         OrderFieldData fieldData = cart.getFieldData();
         
-        // Add fields
-        for (Field field : fieldService.getFields()) {
+        // Add field buttons
+        Set<Field> fields = args.get(0);
+        
+        for (Field field : fields) {
             AtomicReference<String> actionLore = new AtomicReference<>();
             ConfigOption option = field.getOption();
             
@@ -65,13 +67,11 @@ public class MenuShopFields implements PredefinedMenu {
                 }
                 
                 // Add validation errors to lore
-                String errorKey = "fields." + field.getId();
-                
-                if (cart.hasErrors(errorKey)) {
+                if (cart.hasErrors(option.getPath())) {
                     lore.add("");
                     lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
 
-                    for (String error : cart.getErrors(errorKey)) {
+                    for (String error : cart.getErrors(option.getPath())) {
                         lore.add(UI.color(" - " + error, UI.COLOR_ERROR));
                     }
                 }
@@ -151,12 +151,9 @@ public class MenuShopFields implements PredefinedMenu {
                 UI.playSound(player, UI.SOUND_ERROR);
                 cart.setScenario(Order.SCENARIO_DEFAULT);
                 menu.refresh();
-                return;
+            } else {
+                new ActionShopGateways().onClick(event);
             }
-            
-            UI.playSound(player, UI.SOUND_CLICK);
-            cart.setScenario(Order.SCENARIO_DEFAULT);
-            Menus.SHOP_GATEWAY.open(player);
         });
 
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);

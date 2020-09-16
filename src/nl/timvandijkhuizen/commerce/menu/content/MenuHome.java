@@ -5,10 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenCategoryList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenGatewayList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenOrderList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenProductList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionCategoryList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionFieldList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionGatewayList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionOrderList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionProductList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
@@ -21,7 +22,7 @@ public class MenuHome implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, MenuArguments args) {
-        Menu menu = new Menu("Custom payments", MenuSize.XL);
+        Menu menu = new Menu("Commerce", MenuSize.XL);
 
         // Configuration button
         MenuItemBuilder configButton = new MenuItemBuilder(Material.COMPARATOR);
@@ -41,7 +42,7 @@ public class MenuHome implements PredefinedMenu {
 
         categoriesButton.setName(UI.color("Product Categories", UI.COLOR_PRIMARY, ChatColor.BOLD));
         categoriesButton.setLore(UI.color("Manage product categories", UI.COLOR_TEXT));
-        categoriesButton.setClickListener(new OpenCategoryList());
+        categoriesButton.setClickListener(new ActionCategoryList());
 
         menu.setButton(categoriesButton, 13);
 
@@ -50,7 +51,7 @@ public class MenuHome implements PredefinedMenu {
 
         productsButton.setName(UI.color("Products", UI.COLOR_PRIMARY, ChatColor.BOLD));
         productsButton.setLore(UI.color("Manage products", UI.COLOR_TEXT));
-        productsButton.setClickListener(new OpenProductList());
+        productsButton.setClickListener(new ActionProductList());
 
         menu.setButton(productsButton, 15);
 
@@ -59,11 +60,7 @@ public class MenuHome implements PredefinedMenu {
 
         fieldsButton.setName(UI.color("Order fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
         fieldsButton.setLore(UI.color("Manage order fields", UI.COLOR_TEXT));
-
-        fieldsButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-            Menus.FIELD_LIST.open(player);
-        });
+        fieldsButton.setClickListener(new ActionFieldList());
 
         menu.setButton(fieldsButton, 20);
 
@@ -72,7 +69,7 @@ public class MenuHome implements PredefinedMenu {
 
         gatewayButton.setName(UI.color("Gateways", UI.COLOR_PRIMARY, ChatColor.BOLD));
         gatewayButton.setLore(UI.color("Manage gateways", UI.COLOR_TEXT));
-        gatewayButton.setClickListener(new OpenGatewayList());
+        gatewayButton.setClickListener(new ActionGatewayList());
 
         menu.setButton(gatewayButton, 22);
         
@@ -81,7 +78,7 @@ public class MenuHome implements PredefinedMenu {
 
         orderButton.setName(UI.color("Orders", UI.COLOR_PRIMARY, ChatColor.BOLD));
         orderButton.setLore(UI.color("Manage orders", UI.COLOR_TEXT));
-        orderButton.setClickListener(new OpenOrderList());
+        orderButton.setClickListener(new ActionOrderList());
 
         menu.setButton(orderButton, 24);
 

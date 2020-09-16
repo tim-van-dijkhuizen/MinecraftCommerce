@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce.config.sources;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import com.google.gson.JsonObject;
 
@@ -33,10 +32,7 @@ public class OrderFieldData extends JsonConfig {
     @Override
     public Collection<ConfigOption<?>> getOptions() {
         FieldService fieldService = Commerce.getInstance().getService("fields");
-        
-        return fieldService.getFields().stream()
-            .map(i -> i.getOption())
-            .collect(Collectors.toSet());
+        return fieldService.getOptions();
     }
 
 }

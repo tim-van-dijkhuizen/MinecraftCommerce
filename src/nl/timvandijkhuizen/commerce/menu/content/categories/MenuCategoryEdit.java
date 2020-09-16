@@ -9,19 +9,17 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenCategoryList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionCategoryList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -177,7 +175,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
-        cancelButton.setClickListener(new OpenCategoryList());
+        cancelButton.setClickListener(new ActionCategoryList());
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
@@ -190,8 +188,6 @@ public class MenuCategoryEdit implements PredefinedMenu {
         }
 
         saveButton.setClickListener(event -> {
-            ClickType clickType = event.getClickType();
-
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
             menu.disableButtons();
@@ -202,10 +198,8 @@ public class MenuCategoryEdit implements PredefinedMenu {
                 menu.enableButtons();
                 
                 if (success) {
-                    OpenCategoryList action = new OpenCategoryList(false);
-                    
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
+                    new ActionCategoryList(false).onClick(event);
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.CATEGORY_EDIT.open(player, category);

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenShopProducts;
+import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopProducts;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
@@ -43,7 +43,7 @@ public class MenuShopCategories implements PredefinedMenu {
             }
 
             // Set click listener
-            item.setClickListener(new OpenShopProducts(category));
+            item.setClickListener(new ActionShopProducts(category));
 
             menu.addStructuredButton(item);
         }

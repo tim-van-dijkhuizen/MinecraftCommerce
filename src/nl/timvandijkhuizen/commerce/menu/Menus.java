@@ -29,6 +29,7 @@ import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopCurrency;
 import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopProducts;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopCart;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopFields;
+import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopGateway;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -73,7 +74,7 @@ public enum Menus {
     
     SHOP_CART(new MenuShopCart()),
     SHOP_FIELDS(new MenuShopFields()),
-    SHOP_GATEWAY(null);
+    SHOP_GATEWAY(new MenuShopGateway());
 
     private PredefinedMenu predefinedMenu;
 

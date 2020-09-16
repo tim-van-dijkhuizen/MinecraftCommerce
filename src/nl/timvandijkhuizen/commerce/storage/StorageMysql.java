@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -35,7 +35,6 @@ import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.DbHelper;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -43,7 +42,7 @@ import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class StorageMysql extends Storage {
-
+    
     // MySQL source
     private HikariDataSource dbSource;
     
@@ -59,24 +58,19 @@ public class StorageMysql extends Storage {
         YamlConfig config = Commerce.getInstance().getConfig();
 
         // Create configuration options
-        configHost = new ConfigOption<>("storage.host", ConfigTypes.STRING)
-            .setIcon(new ConfigIcon(Material.CHEST, "Storage Host"))
+        configHost = new ConfigOption<>("storage.host", "Storage Host", Material.CHEST, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPort = new ConfigOption<>("storage.port", ConfigTypes.INTEGER)
-            .setIcon(new ConfigIcon(Material.CHEST, "Storage Port"))
+        configPort = new ConfigOption<>("storage.port", "Storage Port", Material.CHEST, ConfigTypes.INTEGER)
             .setRequired(true);
         
-        configDatabase = new ConfigOption<>("storage.database", ConfigTypes.STRING)
-            .setIcon(new ConfigIcon(Material.CHEST, "Storage Database"))
+        configDatabase = new ConfigOption<>("storage.database", "Storage Database", Material.CHEST, ConfigTypes.STRING)
             .setRequired(true);
         
-        configUsername = new ConfigOption<>("storage.username", ConfigTypes.STRING)
-            .setIcon(new ConfigIcon(Material.CHEST, "Storage Username"))
+        configUsername = new ConfigOption<>("storage.username", "Storage Username", Material.CHEST, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPassword = new ConfigOption<>("storage.password", ConfigTypes.PASSWORD)
-            .setIcon(new ConfigIcon(Material.CHEST, "Storage Password"))
+        configPassword = new ConfigOption<>("storage.password", "Storage Password", Material.CHEST, ConfigTypes.PASSWORD)
             .setRequired(true);
         
         // Add configuration options
@@ -229,7 +223,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Category> categories = new HashSet<>();
+        Set<Category> categories = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -332,7 +326,7 @@ public class StorageMysql extends Storage {
         
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Product> products = new HashSet<>();
+        Set<Product> products = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -448,7 +442,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Command> commands = new HashSet<>();
+        Set<Command> commands = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -521,7 +515,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Field> fields = new HashSet<>();
+        Set<Field> fields = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -683,7 +677,7 @@ public class StorageMysql extends Storage {
         
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Order> orders = new HashSet<>();
+        Set<Order> orders = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -805,7 +799,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<LineItem> lineItems = new HashSet<>();
+        Set<LineItem> lineItems = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -910,7 +904,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Gateway> gateways = new HashSet<>();
+        Set<Gateway> gateways = new LinkedHashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);

@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.commerce.menu.content.fields;
 
+import java.util.Set;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,7 +28,9 @@ public class MenuFieldList implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Order Fields", 3, 7, 1, 1);
 
         // Add field buttons
-        for (Field field : fieldService.getFields()) {
+        Set<Field> fields = args.get(0);
+        
+        for (Field field : fields) {
             MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
 
             // Set field name

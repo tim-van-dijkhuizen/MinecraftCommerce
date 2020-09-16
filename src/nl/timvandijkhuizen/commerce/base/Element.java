@@ -25,5 +25,12 @@ public abstract class Element extends Model implements ElementInterface {
 
         this.id = id;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Element 
+            && obj.getClass() == getClass()
+            && ((Element) obj).getId().equals(getId());
+    }
 
 }

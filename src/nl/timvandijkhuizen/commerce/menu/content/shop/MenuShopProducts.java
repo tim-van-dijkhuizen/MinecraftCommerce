@@ -15,7 +15,7 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenShopCategories;
+import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopCategories;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -96,7 +96,7 @@ public class MenuShopProducts implements PredefinedMenu {
         // Go back button
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
-        backButton.setClickListener(new OpenShopCategories());
+        backButton.setClickListener(new ActionShopCategories());
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 

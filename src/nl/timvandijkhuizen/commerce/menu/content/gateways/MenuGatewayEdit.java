@@ -10,22 +10,19 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenGatewayList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionGatewayList;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
-import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -133,17 +130,11 @@ public class MenuGatewayEdit implements PredefinedMenu {
             if(options.size() > 0) {
                 for(ConfigOption<?> option : options) {
                     GatewayConfig config = gateway.getConfig();
-                    ConfigIcon icon = option.getIcon();
-                    
-                    // Ignore options without an icon
-                    if(icon == null) {
-                        continue;
-                    }
-                    
+
                     if(!option.isValueEmpty(config)) {
-                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
+                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                     } else {
-                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + icon.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                        optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                     }
                 }
             } else {
@@ -191,7 +182,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
-        cancelButton.setClickListener(new OpenGatewayList());
+        cancelButton.setClickListener(new ActionGatewayList());
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
@@ -204,8 +195,6 @@ public class MenuGatewayEdit implements PredefinedMenu {
         }
 
         saveButton.setClickListener(event -> {
-            ClickType clickType = event.getClickType();
-
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
             menu.disableButtons();
@@ -216,10 +205,8 @@ public class MenuGatewayEdit implements PredefinedMenu {
                 menu.enableButtons();
                 
                 if (success) {
-                    OpenGatewayList action = new OpenGatewayList(false);
-                    
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
+                    new ActionGatewayList(false).onClick(event);
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.GATEWAY_EDIT.open(player, gateway);

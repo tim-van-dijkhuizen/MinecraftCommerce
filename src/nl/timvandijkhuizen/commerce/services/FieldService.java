@@ -1,8 +1,8 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -15,13 +15,14 @@ import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeBoolean;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeInteger;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeString;
 import nl.timvandijkhuizen.spigotutils.MainThread;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class FieldService extends BaseService {
 
     private Set<FieldType<?>> fieldTypes;
-    private Set<Field> fields = new HashSet<>();
+    private Set<ConfigOption<?>> options = null;
     
     @Override
     public String getHandle() {
@@ -30,7 +31,6 @@ public class FieldService extends BaseService {
 
     @Override
     public void init() throws Exception {
-        Storage storage = Commerce.getInstance().getStorage();
         RegisterFieldTypesEvent event = new RegisterFieldTypesEvent();
 
         // Register field types
@@ -40,13 +40,35 @@ public class FieldService extends BaseService {
         
         Bukkit.getServer().getPluginManager().callEvent(event);
         this.fieldTypes = event.getTypes();
-        
-        // Load fields from storage
-        fields = storage.getFields();
     }
     
-    public Set<Field> getFields() {
-        return fields;
+    @Override
+    public void load() throws Exception {
+        getFields(fields -> {
+            if(fields == null) {
+                ConsoleHelper.printError("Failed to cache options, fields cannot be loaded.");
+                return;
+            }
+            
+            // Create option cache
+            options = fields.stream()
+                .map(i -> i.getOption())
+                .collect(Collectors.toSet());
+        });
+    }
+    
+    public void getFields(Consumer<Set<Field>> callback) {
+        Storage storage = Commerce.getInstance().getStorage();
+
+        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
+            try {
+                Set<Field> fields = storage.getFields();
+                MainThread.execute(() -> callback.accept(fields));
+            } catch (Exception e) {
+                MainThread.execute(() -> callback.accept(null));
+                ConsoleHelper.printError("Failed to load fields: " + e.getMessage(), e);
+            }
+        });
     }
 
     /**
@@ -70,11 +92,16 @@ public class FieldService extends BaseService {
             try {
                 if (isNew) {
                     storage.createField(field);
-                    fields.add(field);
                 } else {
                     storage.updateField(field);
                 }
                 
+                // Update option cache
+                options = storage.getFields().stream()
+                    .map(i -> i.getOption())
+                    .collect(Collectors.toSet());
+                
+                // Execute callback
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));
@@ -96,7 +123,13 @@ public class FieldService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteField(field);
-                fields.remove(field);
+                
+                // Update option cache
+                options = storage.getFields().stream()
+                    .map(i -> i.getOption())
+                    .collect(Collectors.toSet());
+                
+                // Execute callback
                 MainThread.execute(() -> callback.accept(true));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(false));
@@ -125,6 +158,10 @@ public class FieldService extends BaseService {
             .filter(i -> i.getHandle().equals(handle))
             .findFirst()
             .orElse(null);
+    }
+    
+    public Set<ConfigOption<?>> getOptions() {
+        return options;
     }
     
 }

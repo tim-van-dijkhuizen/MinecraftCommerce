@@ -10,14 +10,13 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.OpenProductList;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionProductList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -25,7 +24,6 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -300,7 +298,7 @@ public class MenuProductEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
-        cancelButton.setClickListener(new OpenProductList());
+        cancelButton.setClickListener(new ActionProductList());
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
@@ -313,8 +311,6 @@ public class MenuProductEdit implements PredefinedMenu {
         }
 
         saveButton.setClickListener(event -> {
-            ClickType clickType = event.getClickType();
-
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
             menu.disableButtons();
@@ -325,10 +321,8 @@ public class MenuProductEdit implements PredefinedMenu {
                 menu.enableButtons();
                 
                 if (success) {
-                    OpenProductList action = new OpenProductList(false);
-                    
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    action.onClick(new MenuItemClick(player, menu, saveButton, clickType));
+                    new ActionProductList(false).onClick(event);
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.PRODUCT_EDIT.open(player, product);

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.menu.Menus;
+import nl.timvandijkhuizen.commerce.menu.content.actions.ActionFieldList;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
@@ -233,10 +234,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder cancelButton = MenuItems.CANCEL.clone();
 
-        cancelButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-            Menus.FIELD_LIST.open(player);
-        });
+        cancelButton.setClickListener(new ActionFieldList());
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
@@ -260,7 +258,7 @@ public class MenuFieldEdit implements PredefinedMenu {
                 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    Menus.FIELD_LIST.open(player);
+                    new ActionFieldList(false).onClick(event);
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.FIELD_EDIT.open(player, field);
