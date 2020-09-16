@@ -72,7 +72,7 @@ public class MenuOrderView implements PredefinedMenu {
             for(LineItem lineItem : lineItems) {
                 ProductSnapshot product = lineItem.getProduct();
                 String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
-                String price = ShopHelper.formatPrice(product.getPrice(), order.getCurrency());
+                String price = ShopHelper.formatPrice(lineItem.getPrice(), order.getCurrency());
                 
                 itemsButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
             }
