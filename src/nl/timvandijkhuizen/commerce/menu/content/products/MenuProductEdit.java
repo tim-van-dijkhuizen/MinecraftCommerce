@@ -19,8 +19,8 @@ import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.content.actions.ActionProductList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
@@ -31,7 +31,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuProductEdit implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         ProductService productService = Commerce.getInstance().getService("products");
         Product product = args.get(0, new Product());
         Menu menu = new Menu((product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);

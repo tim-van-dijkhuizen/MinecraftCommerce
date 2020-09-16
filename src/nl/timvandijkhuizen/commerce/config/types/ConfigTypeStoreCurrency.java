@@ -8,8 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import com.google.gson.JsonObject;
-
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -41,16 +39,6 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     @Override
     public void setValue(OptionConfig config, ConfigOption<StoreCurrency> option, StoreCurrency value) {
         config.set(option.getPath(), value.getCode());
-    }
-
-    @Override
-    public StoreCurrency getValue(JsonObject json, ConfigOption<StoreCurrency> option) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setValue(JsonObject json, ConfigOption<StoreCurrency> option, StoreCurrency value) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -29,6 +29,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.services.Service;
@@ -65,7 +66,7 @@ public class Commerce extends PluginBase {
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.ENDER_CHEST, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue("mysql")
-            .setReadOnly(true);
+            .setMeta(new DataArguments(true));
         
         configCurrencies = new ConfigOption<>("general.currencies", "Currencies", Material.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
             .setRequired(true)

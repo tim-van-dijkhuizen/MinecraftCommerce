@@ -12,8 +12,8 @@ import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
@@ -25,7 +25,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopCurrency implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Currency", 3, 7, 1, 1, 1, 5, 7);
         OrderService orderService = Commerce.getInstance().getService("orders");
         Order cart = orderService.getCart(player);

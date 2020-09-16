@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,8 +17,9 @@ import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopGateways;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.data.TypedValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
@@ -30,7 +30,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopFields implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Fields", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
          
@@ -42,11 +42,13 @@ public class MenuShopFields implements PredefinedMenu {
         Set<Field> fields = args.get(0);
         
         for (Field field : fields) {
-            AtomicReference<String> actionLore = new AtomicReference<>();
+            MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
+            TypedValue<String> actionLore = new TypedValue<>();
             ConfigOption option = field.getOption();
             
-            // Create and add option
-            MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
+            // Get meta and description
+            DataArguments meta = option.getMeta();
+            String description = meta.getString(0);
             
             item.setName(UI.color(field.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
@@ -59,11 +61,14 @@ public class MenuShopFields implements PredefinedMenu {
                     return lore;
                 }
                 
+                lore.add(UI.color(description, UI.COLOR_TEXT));
+                lore.add("");
+                
                 // Create lore
                 if(!option.isValueEmpty(fieldData)) {
-                    lore.add(UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY));
+                    lore.add(UI.color("Value: ", UI.COLOR_TEXT) + UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY));
                 } else {
-                    lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                    lore.add(UI.color("Value: ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
                 
                 // Add validation errors to lore
@@ -76,10 +81,11 @@ public class MenuShopFields implements PredefinedMenu {
                     }
                 }
                 
+                lore.add("");
+                lore.add(UI.color("Left-click to edit this field.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                
                 return lore;
             });
-            
-            item.addLore("", UI.color("Left-click to edit this field.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             // Set click listener
             item.setClickListener(event -> {

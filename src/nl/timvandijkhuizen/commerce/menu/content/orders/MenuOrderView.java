@@ -15,8 +15,8 @@ import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.content.actions.ActionOrderList;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
@@ -27,7 +27,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuOrderView implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         Menu menu = new Menu("View Order", MenuSize.XXL);
         Order order = args.get(0);
 

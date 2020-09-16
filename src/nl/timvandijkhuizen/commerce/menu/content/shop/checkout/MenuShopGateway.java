@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopFields;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
@@ -20,7 +20,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopGateway implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Gateways", 3, 7, 1, 1, 2, 5, 6);
         
         // Add gateways buttons

@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.commerce.menu.content.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,8 +14,8 @@ import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
@@ -25,7 +27,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuConfig implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         Commerce plugin = Commerce.getInstance();
         PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
         YamlConfig config = plugin.getConfig();
@@ -34,45 +36,39 @@ public class MenuConfig implements PredefinedMenu {
         for (ConfigOption option : config.getOptions()) {
             MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             
+            // Get meta and read only
+            DataArguments meta = option.getMeta();
+            boolean readOnly = meta.getBoolean(0, false);
+            
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
-            if(!option.isValueEmpty(config)) {
-                item.addLore(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
-            } else {
-                item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            }
-            
-            if(option.isReadOnly()) {
-                item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            } else {
-                item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            }
+
+            item.setLore(() -> {
+                List<String> lore = new ArrayList<>();
+                
+                if(!option.isValueEmpty(config)) {
+                    lore.add(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
+                } else {
+                    lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                }
+
+                lore.add("");
+                
+                if(readOnly) {
+                    lore.add(UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                } else {
+                    lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                }
+                
+                return lore;
+            });
             
             // Set click listener
             item.setClickListener(event -> {
-                if(!option.isReadOnly()) {
+                if(!readOnly) {
                     UI.playSound(player, UI.SOUND_CLICK);
                     
                     option.getValueInput(player, option.getValue(config), value -> {
                         option.setValue(config, value);
-                        
-                        // Clear lore
-                        item.removeLore();
-                        
-                        // Set new lore
-                        if(!option.isValueEmpty(config)) {
-                            item.addLore(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
-                        } else {
-                            item.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                        }
-                        
-                        if(option.isReadOnly()) {
-                            item.addLore("", UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                        } else {
-                            item.addLore("", UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                        }
-                        
-                        // Open menu
                         menu.open(player);
                     });
                 } else {

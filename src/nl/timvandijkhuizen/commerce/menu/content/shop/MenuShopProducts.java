@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -17,8 +16,9 @@ import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopCategories;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.data.TypedValue;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
@@ -29,7 +29,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopProducts implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Category category = args.get(0);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
@@ -40,7 +40,7 @@ public class MenuShopProducts implements PredefinedMenu {
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
-            AtomicReference<String> actionLore = new AtomicReference<>();
+            TypedValue<String> actionLore = new TypedValue<>();
             
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));

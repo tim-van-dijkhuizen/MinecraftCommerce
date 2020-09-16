@@ -16,8 +16,8 @@ import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopCategories;
 import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopFields;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
@@ -27,7 +27,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopCart implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Cart", 3, 7, 1, 1, 2, 5, 6);
         Order cart = orderService.getCart(player);

@@ -30,8 +30,8 @@ import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopProducts;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopCart;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopFields;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopGateway;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 
@@ -83,7 +83,7 @@ public enum Menus {
     }
 
     public void open(Player player, Object... rawArgs) {
-        MenuArguments args = new MenuArguments(rawArgs);
+        DataArguments args = new DataArguments(rawArgs);
         Menu menu = predefinedMenu.create(player, args);
 
         if (menu instanceof PagedMenu) {

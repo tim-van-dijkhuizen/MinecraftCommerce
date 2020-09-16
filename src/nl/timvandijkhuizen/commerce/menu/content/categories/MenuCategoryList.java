@@ -12,8 +12,8 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
@@ -23,7 +23,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuCategoryList implements PredefinedMenu {
 
     @Override
-    public Menu create(Player player, MenuArguments args) {
+    public Menu create(Player player, DataArguments args) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
         PagedMenu menu = new PagedMenu("Product Categories", 3, 7, 1, 1);
 

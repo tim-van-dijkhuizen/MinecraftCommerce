@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 
 public class Field extends Element {
 
@@ -112,7 +113,8 @@ public class Field extends Element {
         }
         
         return new ConfigOption<>("field-" + id, name, icon, type)
-            .setRequired(required);
+            .setRequired(required)
+            .setMeta(new DataArguments(description));
     }
 
 }
