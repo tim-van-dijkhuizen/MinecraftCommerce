@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -20,7 +21,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 public class FieldService extends BaseService {
 
     private Set<FieldType<?>> fieldTypes;
-    private Set<Field> fields;
+    private Set<Field> fields = new HashSet<>();
     
     @Override
     public String getHandle() {
@@ -29,6 +30,7 @@ public class FieldService extends BaseService {
 
     @Override
     public void init() throws Exception {
+        Storage storage = Commerce.getInstance().getStorage();
         RegisterFieldTypesEvent event = new RegisterFieldTypesEvent();
 
         // Register field types
@@ -38,18 +40,9 @@ public class FieldService extends BaseService {
         
         Bukkit.getServer().getPluginManager().callEvent(event);
         this.fieldTypes = event.getTypes();
-    }
-    
-    @Override
-    public void load() throws Exception {
-        Storage storage = Commerce.getInstance().getStorage();
         
         // Load fields from storage
-        try {
-            fields = storage.getFields();
-        } catch (Exception e) {
-            ConsoleHelper.printError("Failed to load fields: " + e.getMessage(), e);
-        }
+        fields = storage.getFields();
     }
     
     public Set<Field> getFields() {

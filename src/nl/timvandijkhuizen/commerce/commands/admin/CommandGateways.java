@@ -3,7 +3,9 @@ package nl.timvandijkhuizen.commerce.commands.admin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
+import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.commands.BaseCommand;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -21,7 +23,19 @@ public class CommandGateways extends BaseCommand {
 
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
-        Menus.GATEWAY_LIST.open(player);
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+
+        player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
+
+        // Create menu
+        gatewayService.getGateways(gateways -> {
+            if (gateways == null) {
+                player.sendMessage(UI.color("Failed to load gateways.", UI.COLOR_ERROR));
+                return;
+            }
+
+            Menus.GATEWAY_LIST.open(player, gateways);
+        });
     }
 
     @Override

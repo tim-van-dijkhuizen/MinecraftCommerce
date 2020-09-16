@@ -14,11 +14,13 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
+import nl.timvandijkhuizen.commerce.menu.content.actions.OpenShopCategories;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuArguments;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -100,18 +102,13 @@ public class MenuShopCart implements PredefinedMenu {
         // Cart button
         menu.setButton(cartItem, menu.getSize().getSlots() - 9 + 3);
 
-        // Previous button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.RED_BED);
+        // Home button
+        MenuItemBuilder homeButton = MenuItems.BACK.clone();
 
-        previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        previousButton.setLore(UI.color("Shop Home", UI.COLOR_TEXT));
-        
-        previousButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-            Menus.SHOP_CATEGORIES.open(player);
-        });
+        homeButton.setName(UI.color("Shop Home", UI.COLOR_SECONDARY, ChatColor.BOLD));
+        homeButton.setClickListener(new OpenShopCategories());
 
-        menu.setButton(previousButton, menu.getSize().getSlots() - 9);
+        menu.setButton(homeButton, menu.getSize().getSlots() - 9 + 4);
         
         // Next (fields) button
         MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_SIGN);

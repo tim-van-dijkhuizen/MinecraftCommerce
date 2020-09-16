@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.menu.content.gateways;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +31,10 @@ public class MenuGatewayList implements PredefinedMenu {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         PagedMenu menu = new PagedMenu("Gateways", 3, 7, 1, 1);
 
-        for (Gateway gateway : gatewayService.getGateways()) {
+        // Add gateway buttons
+        Set<Gateway> gateways = args.getSet(0);
+
+        for (Gateway gateway : gateways) {
             MenuItemBuilder item = new MenuItemBuilder(Material.OAK_FENCE_GATE);
             Collection<ConfigOption<?>> options = gateway.getType().getOptions();
 

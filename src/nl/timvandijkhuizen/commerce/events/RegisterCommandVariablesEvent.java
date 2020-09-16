@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.events;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.event.Event;
@@ -12,7 +12,7 @@ import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 public class RegisterCommandVariablesEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private Set<CommandVariable> variables = new LinkedHashSet<>();
+    private Set<CommandVariable> variables = new HashSet<>();
 
     @Override
     public HandlerList getHandlers() {

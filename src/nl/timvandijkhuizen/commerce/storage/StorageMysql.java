@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +33,6 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.DbHelper;
-import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigIcon;
@@ -230,7 +229,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Category> categories = new LinkedHashSet<>();
+        Set<Category> categories = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -319,14 +318,21 @@ public class StorageMysql extends Storage {
      */
     
     @Override
-    public Set<Product> getProducts() throws Exception {
+    public Set<Product> getProducts(Category category) throws Exception {
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT id, icon, name, description, price, categoryId FROM products;");
-        CategoryService categoryService = Commerce.getInstance().getService("categories");
+        PreparedStatement statement;
+        
+        // Get all products or products that belong to a category
+        if(category == null) {
+            statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products LEFT JOIN categories ON products.categoryId = categories.id;");
+        } else {
+            statement = connection.prepareStatement("SELECT id, icon, name, description, price FROM products WHERE categoryId=?;");
+            statement.setInt(1, category.getId());
+        }
         
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Product> products = new LinkedHashSet<>();
+        Set<Product> products = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -334,19 +340,22 @@ public class StorageMysql extends Storage {
             String name = result.getString(3);
             String description = result.getString(4);
             float price = result.getFloat(5);
-            int categoryId = result.getInt(6);
 
-            // Get category
-            Category category = categoryService.getCategoryById(categoryId);
-            
+            // Get category data
+            if(category == null) {
+                int categoryId = result.getInt(6);
+                Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
+                String categoryName = result.getString(8);
+                String categoryDescription = result.getString(9);
+                category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
+            }
+
             // Get commands
             Set<Command> rawCommands = this.getCommandsByProductId(id);
             DataList<Command> commands = new DataList<>(rawCommands);
 
             // Add product to list
-            if(category != null) {
-                products.add(new Product(id, icon, name, description, category, price, commands));
-            }
+            products.add(new Product(id, icon, name, description, category, price, commands));
         }
 
         // Cleanup
@@ -439,7 +448,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Command> commands = new LinkedHashSet<>();
+        Set<Command> commands = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -512,7 +521,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Field> fields = new LinkedHashSet<>();
+        Set<Field> fields = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -674,7 +683,7 @@ public class StorageMysql extends Storage {
         
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Order> orders = new LinkedHashSet<>();
+        Set<Order> orders = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -796,7 +805,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<LineItem> lineItems = new LinkedHashSet<>();
+        Set<LineItem> lineItems = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);
@@ -901,7 +910,7 @@ public class StorageMysql extends Storage {
 
         // Get result
         ResultSet result = statement.executeQuery();
-        Set<Gateway> gateways = new LinkedHashSet<>();
+        Set<Gateway> gateways = new HashSet<>();
 
         while (result.next()) {
             int id = result.getInt(1);

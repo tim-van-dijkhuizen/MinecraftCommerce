@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.commerce.menu.content.products;
 
+import java.util.Set;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,7 +30,10 @@ public class MenuProductList implements PredefinedMenu {
         ProductService productService = Commerce.getInstance().getService("products");
         PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1);
 
-        for (Product product : productService.getProducts()) {
+        // Add product buttons
+        Set<Product> products = args.getSet(0);
+
+        for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
             
             // Set product name

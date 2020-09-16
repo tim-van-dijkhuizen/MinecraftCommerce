@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -22,7 +22,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class UserService extends BaseService {
 
-    private Set<ConfigOption<?>> userOptions = new LinkedHashSet<>();
+    private Set<ConfigOption<?>> userOptions = new HashSet<>();
     
     @Override
     public String getHandle() {

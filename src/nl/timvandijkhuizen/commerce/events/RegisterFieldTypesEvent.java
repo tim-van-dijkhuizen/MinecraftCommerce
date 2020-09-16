@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.events;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.event.Event;
@@ -11,7 +11,7 @@ import nl.timvandijkhuizen.commerce.base.FieldType;
 public class RegisterFieldTypesEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private Set<FieldType<?>> types = new LinkedHashSet<>();
+    private Set<FieldType<?>> types = new HashSet<>();
 
     @Override
     public HandlerList getHandlers() {

@@ -1,7 +1,7 @@
 package nl.timvandijkhuizen.commerce.base;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public abstract class Model implements ModelInterface {
 
     @Override
     public void addError(String attribute, String error) {
-        Set<String> attributeErrors = errors.getOrDefault(attribute, new LinkedHashSet<>());
+        Set<String> attributeErrors = errors.getOrDefault(attribute, new HashSet<>());
 
         attributeErrors.add(error);
         errors.put(attribute, attributeErrors);
@@ -32,7 +32,7 @@ public abstract class Model implements ModelInterface {
 
     @Override
     public Set<String> getErrors() {
-        Set<String> all = new LinkedHashSet<>();
+        Set<String> all = new HashSet<>();
         
         for (Set<String> attributeErrors : errors.values()) {
             all.addAll(attributeErrors);
@@ -43,7 +43,7 @@ public abstract class Model implements ModelInterface {
 
     @Override
     public Set<String> getErrors(String attribute) {
-        return errors.getOrDefault(attribute, new LinkedHashSet<String>());
+        return errors.getOrDefault(attribute, new HashSet<String>());
     }
 
     @Override
