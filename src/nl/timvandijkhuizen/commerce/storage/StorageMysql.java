@@ -253,7 +253,7 @@ public class StorageMysql extends Storage {
     @Override
     public void createCategory(Category category) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO categories (icon, name, description) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO categories (icon, name, description) VALUES (?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Set arguments

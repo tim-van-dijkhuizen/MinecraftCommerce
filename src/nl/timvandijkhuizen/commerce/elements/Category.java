@@ -12,10 +12,10 @@ public class Category extends Element implements SourceElement<EditableCategory>
     protected String name;
     protected String description;
 
-    public Category() {
-        this.icon = Material.CHEST_MINECART;
-        this.name = "";
-        this.description = "";
+    public Category(Material icon, String name, String description) {
+        this.icon = icon;
+        this.name = name;
+        this.description = description;
     }
     
     public Category(int id, Material icon, String name, String description) {
@@ -69,7 +69,7 @@ public class Category extends Element implements SourceElement<EditableCategory>
 
     @Override
     public EditableCategory getEditableCopy() {
-        return new EditableCategory(this);
+        return new EditableCategory(getId(), icon, name, description);
     }
 
     @Override

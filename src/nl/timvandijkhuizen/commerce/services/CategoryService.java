@@ -61,7 +61,7 @@ public class CategoryService extends BaseService {
      * @param category
      * @param callback
      */
-    public void saveCategory(Category category, Consumer<Boolean> callback) {
+    public void saveCategory(EditableCategory category, Consumer<Boolean> callback) {
         Storage storage = Commerce.getInstance().getStorage();
         boolean isNew = category.getId() == null;
 
@@ -80,14 +80,11 @@ public class CategoryService extends BaseService {
                 } else {
                     storage.updateCategory(category);
                     
-                    // Update if its a copy
-                    if(category instanceof EditableCategory) {
-                        EditableCategory editable = (EditableCategory) category;
-                        Category course = getCategoryById(category.getId());
-                        
-                        if(course != null) {
-                            course.updateFromCopy(editable);
-                        }
+                    // Update source
+                    Category course = getCategoryById(category.getId());
+                    
+                    if(course != null) {
+                        course.updateFromCopy(category);
                     }
                 }
 
