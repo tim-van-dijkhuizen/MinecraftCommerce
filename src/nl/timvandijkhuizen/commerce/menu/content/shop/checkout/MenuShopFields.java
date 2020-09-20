@@ -85,7 +85,7 @@ public class MenuShopFields implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
 
-                option.getValueInput(player, option.getValue(fieldData), value -> {
+                option.getValueInput(fieldData, player, value -> {
                     option.setValue(fieldData, value);
                     
                     actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));

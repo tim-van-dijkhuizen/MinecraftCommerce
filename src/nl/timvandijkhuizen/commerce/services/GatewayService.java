@@ -10,7 +10,7 @@ import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
-import nl.timvandijkhuizen.commerce.gateways.GatewayMollie;
+import nl.timvandijkhuizen.commerce.gateways.GatewayPayPal;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
@@ -28,7 +28,7 @@ public class GatewayService extends BaseService {
     public void init() throws Exception {
         RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
 
-        event.addType(GatewayMollie.class);
+        event.addType(GatewayPayPal.class);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         types = event.getTypes();

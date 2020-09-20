@@ -29,6 +29,10 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         // Get store currency
         String code = config.getString(option.getPath());
         
+        if(code == null) {
+            return null;
+        }
+        
         Optional<StoreCurrency> currency = currencies.stream()
             .filter(i -> i.getCode().equals(code))
             .findFirst();
@@ -42,22 +46,25 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     }
 
     @Override
-    public String getValueLore(StoreCurrency value) {
-        return value.getCode();
+    public String getValueLore(OptionConfig config, ConfigOption<StoreCurrency> option) {
+        return !isValueEmpty(config, option) ? getValue(config, option).getCode() : "";
     }
 
     @Override
-    public boolean isValueEmpty(StoreCurrency value) {
-        return value == null;
+    public boolean isValueEmpty(OptionConfig config, ConfigOption<StoreCurrency> option) {
+        return getValue(config, option) == null;
     }
 
     @Override
-    public void getValueInput(Player player, StoreCurrency value, Consumer<StoreCurrency> callback) {
-        YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+    public void getValueInput(OptionConfig config, ConfigOption<StoreCurrency> option, Player player, Consumer<StoreCurrency> callback) {
         PagedMenu menu = new PagedMenu("Select Currency", 3, 7, 1, 1);
+        StoreCurrency selected = getValue(config, option);
 
+        // Get available currencies
+        YamlConfig pluginConfig = Commerce.getInstance().getConfig();
+        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
+        
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(Material.SUNFLOWER);
 
@@ -65,6 +72,10 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
             item.setLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + currency.getConversionRate(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Format: ", UI.COLOR_TEXT) + UI.color(currency.getFormat().toPattern(), UI.COLOR_SECONDARY));
 
+            if(selected != null && selected.getCode().equals(currency.getCode())) {
+                item.addEnchantGlow();
+            }
+            
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(currency);

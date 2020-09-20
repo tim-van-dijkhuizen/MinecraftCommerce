@@ -5,8 +5,7 @@ import java.util.Collection;
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.Transaction;
-import nl.timvandijkhuizen.commerce.elements.TransactionResponse;
+import nl.timvandijkhuizen.commerce.elements.Payment;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
 public interface GatewayType {
@@ -40,25 +39,21 @@ public interface GatewayType {
     public Collection<ConfigOption<?>> getOptions();
     
     /**
-     * Creates a transaction.
+     * Creates a payment URL for the specified order.
+     * Returns null if we were unable to obtain an url.
      * 
      * @param order
-     * @return
+     * @return string|null
      */
-    public Transaction createTransaction(Order order);
+    public String createPaymentUrl(Order order);
 
     /**
-     * Returns whether the gateway supports callback's.
-     * 
-     * @return
-     */
-    public boolean supportsCallback();
-
-    /**
-     * Processes a transaction response.
+     * Processes a webhook response. Returns
+     * null if the payment did not succeed.
      * 
      * @param response
+     * @return Payment|null
      */
-    public void processCallback(TransactionResponse response);
+    public Payment processWebhook(PaymentResponse response);
 
 }

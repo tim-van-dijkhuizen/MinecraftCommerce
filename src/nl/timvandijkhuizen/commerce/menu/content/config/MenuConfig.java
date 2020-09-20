@@ -67,7 +67,7 @@ public class MenuConfig implements PredefinedMenu {
                 if(!readOnly) {
                     UI.playSound(player, UI.SOUND_CLICK);
                     
-                    option.getValueInput(player, option.getValue(config), value -> {
+                    option.getValueInput(config, player, value -> {
                         option.setValue(config, value);
                         menu.open(player);
                     });

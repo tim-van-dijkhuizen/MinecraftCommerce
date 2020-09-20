@@ -16,7 +16,6 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
-import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -38,7 +37,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
                 List<String> lore = new ArrayList<>();
                 
                 if(!option.isValueEmpty(config)) {
-                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
@@ -53,7 +52,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 
-                option.getValueInput(player, option.getValue(config), value -> {
+                option.getValueInput(config, player, value -> {
                     option.setValue(config, value);
                     menu.open(player);
                 });
