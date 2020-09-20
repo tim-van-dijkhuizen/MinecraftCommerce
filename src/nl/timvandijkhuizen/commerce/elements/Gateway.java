@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.elements;
 
 import nl.timvandijkhuizen.commerce.base.Element;
+import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -10,6 +11,8 @@ public class Gateway extends Element {
     private String displayName;
     private GatewayType type;
     private GatewayConfig config;
+    
+    private GatewayClient client;
     
     public Gateway() {
         displayName = "";
@@ -76,6 +79,14 @@ public class Gateway extends Element {
     
     public GatewayConfig getConfig() {
         return config;
+    }
+    
+    public GatewayClient getClient() {
+    	if(client == null) {
+    		client = type.createClient(config);
+    	}
+    	
+    	return client;
     }
 
 }

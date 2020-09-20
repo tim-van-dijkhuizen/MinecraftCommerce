@@ -23,8 +23,9 @@ public class Order extends Element {
     private boolean completed;
     private DataList<LineItem> lineItems;
     private OrderFieldData fieldData;
+    private Gateway gateway;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData) {
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway) {
         this.setId(id);
         this.number = number;
         this.playerUniqueId = playerUniqueId;
@@ -33,6 +34,7 @@ public class Order extends Element {
         this.completed = completed;
         this.lineItems = lineItems;
         this.fieldData = fieldData;
+        this.gateway = gateway;
     }
     
     public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -90,6 +92,11 @@ public class Order extends Element {
             if(!fieldsValid) {
                 return false;
             }
+        }
+        
+        if(scenario.equals(SCENARIO_PAY) && gateway == null) {
+        	addError("gateway", "Gateway is required");
+        	return false;
         }
         
         return true;
@@ -155,6 +162,14 @@ public class Order extends Element {
     
     public OrderFieldData getFieldData() {
         return fieldData;
+    }
+    
+    public Gateway getGateway() {
+    	return gateway;
+    }
+    
+    public void setGateway(Gateway gateway) {
+    	this.gateway = gateway;
     }
     
 }

@@ -222,7 +222,7 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract Set<Gateway> getGateways() throws Exception;
-
+    
     /**
      * Creates a gateway.
      * 

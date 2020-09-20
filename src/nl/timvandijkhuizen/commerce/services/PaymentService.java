@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.GatewayType;
+import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.spigotutils.MainThread;
@@ -19,12 +19,21 @@ public class PaymentService extends BaseService {
         return "payments";
     }
     
-    public void createPaymentUrl(Order order, Gateway gateway, Consumer<String> callback) {
-        GatewayType type = gateway.getType();
+    public void createPaymentUrl(Order order, Consumer<String> callback) {
+    	Gateway gateway = order.getGateway();
         
+    	// Make sure the gateway was set
+    	if(gateway == null) {
+    		ConsoleHelper.printError("Unable to create payment link: Missing gateway");
+    		callback.accept(null);
+    		return;
+    	}
+        
+    	// Create payment link
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
-                callback.accept(type.createPaymentUrl(order));
+            	GatewayClient client = gateway.getClient();
+                callback.accept(client.createPaymentUrl(order));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to create payment url: " + e.getMessage(), e);

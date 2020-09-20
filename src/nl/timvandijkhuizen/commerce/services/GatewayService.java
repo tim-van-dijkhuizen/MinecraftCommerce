@@ -10,7 +10,7 @@ import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
-import nl.timvandijkhuizen.commerce.gateways.GatewayPayPal;
+import nl.timvandijkhuizen.commerce.gateways.paypal.GatewayPayPal;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;

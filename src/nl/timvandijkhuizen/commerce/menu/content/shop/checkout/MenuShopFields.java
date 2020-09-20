@@ -123,7 +123,7 @@ public class MenuShopFields implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         // Next (gateway) button
-        MenuItemBuilder nextButton = new MenuItemBuilder(Material.DIAMOND);
+        MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         nextButton.setLore(() -> {

@@ -19,6 +19,7 @@ import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.commerce.services.UserService;
 import nl.timvandijkhuizen.commerce.storage.StorageMysql;
@@ -28,7 +29,9 @@ import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeInteger;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
+import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeString;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
@@ -49,6 +52,8 @@ public class Commerce extends PluginBase {
     ConfigOption<String> configStorageType;
     ConfigOption<List<StoreCurrency>> configCurrencies;
     ConfigOption<StoreCurrency> configBaseCurrency;
+    ConfigOption<String> configWebhookUrl;
+    ConfigOption<Integer> configWebhookPort;
 
     @Override
     public void init() throws Exception {
@@ -76,11 +81,21 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
+        configWebhookUrl = new ConfigOption<>("general.webhookUrl", "Webhook Url", Material.FISHING_ROD, new ConfigTypeString())
+            .setRequired(true)
+            .setDefaultValue(getServer().getIp());
+        
+        configWebhookPort = new ConfigOption<>("general.webhookPort", "Webhook Port", Material.FISHING_ROD, new ConfigTypeInteger())
+            .setRequired(true)
+            .setDefaultValue(8080);
+        
         // Add options
         config.addOption(configDevMode);
         config.addOption(configStorageType);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
+        config.addOption(configWebhookUrl);
+        config.addOption(configWebhookPort);
         
         // Make sure all options exist
         config.setDefaultOptions();
@@ -133,6 +148,7 @@ public class Commerce extends PluginBase {
             new UserService(),
             new OrderService(),
             new FieldService(),
+            new PaymentService(),
             commandService
         };
     }

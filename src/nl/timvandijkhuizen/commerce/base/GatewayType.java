@@ -4,8 +4,7 @@ import java.util.Collection;
 
 import org.bukkit.Material;
 
-import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.Payment;
+import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
 public interface GatewayType {
@@ -39,21 +38,11 @@ public interface GatewayType {
     public Collection<ConfigOption<?>> getOptions();
     
     /**
-     * Creates a payment URL for the specified order.
-     * Returns null if we were unable to obtain an url.
+     * Creates and returns a gateway client
+     * for this gateway type.
      * 
-     * @param order
-     * @return string|null
+     * @return A new GatewayClient
      */
-    public String createPaymentUrl(Order order);
-
-    /**
-     * Processes a webhook response. Returns
-     * null if the payment did not succeed.
-     * 
-     * @param response
-     * @return Payment|null
-     */
-    public Payment processWebhook(PaymentResponse response);
+    public GatewayClient createClient(GatewayConfig config);
 
 }
