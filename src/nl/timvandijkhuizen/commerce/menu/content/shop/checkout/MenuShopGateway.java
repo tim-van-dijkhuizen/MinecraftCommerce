@@ -28,7 +28,7 @@ public class MenuShopGateway implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Gateways", 3, 7, 1, 1, 2, 5, 6);
+        PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Gateways (3/4)", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
         
         // Add gateways buttons
@@ -85,8 +85,8 @@ public class MenuShopGateway implements PredefinedMenu {
             menu.addPagedButton(item);
         }
         
-        // Previous (cart) button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.MINECART);
+        // Previous (fields) button
+        MenuItemBuilder previousButton = new MenuItemBuilder(Material.OAK_SIGN);
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Fields", UI.COLOR_TEXT));
@@ -98,10 +98,10 @@ public class MenuShopGateway implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         // Next (payment) button
-        MenuItemBuilder nextButton = new MenuItemBuilder(Material.DIAMOND);
+        MenuItemBuilder nextButton = new MenuItemBuilder(Material.EMERALD);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        nextButton.setLore(UI.color("Payments", UI.COLOR_TEXT));
+        nextButton.setLore(UI.color("Payment", UI.COLOR_TEXT));
         nextButton.setClickListener(new ActionShopPayment());
 
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);

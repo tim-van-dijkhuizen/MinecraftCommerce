@@ -102,7 +102,7 @@ public class StoreCurrency implements ConfigObject {
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
                 if(input.length() > 255) {
-                    player.sendMessage(UI.color("The currency code cannot be longer than 255 characters", UI.COLOR_ERROR));
+                    context.getForWhom().sendRawMessage(UI.color("The currency code cannot be longer than 255 characters", UI.COLOR_ERROR));
                     UI.playSound(player, UI.SOUND_ERROR);
                     return this;
                 }

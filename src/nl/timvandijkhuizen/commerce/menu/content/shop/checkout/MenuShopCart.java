@@ -29,7 +29,7 @@ public class MenuShopCart implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
-        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Cart", 3, 7, 1, 1, 2, 5, 6);
+        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Cart (1/4)", 3, 7, 1, 1, 2, 5, 6);
         
         // Create LineItem buttons
         Order cart = args.get(0);

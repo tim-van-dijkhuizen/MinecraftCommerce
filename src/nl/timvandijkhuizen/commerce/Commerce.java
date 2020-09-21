@@ -86,11 +86,11 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.FISHING_ROD, new ConfigTypeString())
+        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.FISHING_ROD, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.FISHING_ROD, new ConfigTypeInteger())
+        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.FISHING_ROD, ConfigTypes.INTEGER)
             .setRequired(true)
             .setDefaultValue(8080);
         
