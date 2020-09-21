@@ -48,12 +48,13 @@ public class Commerce extends PluginBase {
     private YamlConfig config;
     
     // Configuration options
-    ConfigOption<Boolean> configDevMode;
-    ConfigOption<String> configStorageType;
-    ConfigOption<List<StoreCurrency>> configCurrencies;
-    ConfigOption<StoreCurrency> configBaseCurrency;
-    ConfigOption<String> configWebhookUrl;
-    ConfigOption<Integer> configWebhookPort;
+    private ConfigOption<String> configServerName;
+    private ConfigOption<Boolean> configDevMode;
+    private ConfigOption<String> configStorageType;
+    private ConfigOption<List<StoreCurrency>> configCurrencies;
+    private ConfigOption<StoreCurrency> configBaseCurrency;
+    private ConfigOption<String> configWebAddress;
+    private ConfigOption<Integer> configWebPort;
 
     @Override
     public void init() throws Exception {
@@ -64,6 +65,10 @@ public class Commerce extends PluginBase {
         config = new YamlConfig(this);
         
         // Create options
+        configServerName = new ConfigOption<>("general.serverName", "Server Name", Material.PAPER, new ConfigTypeString())
+            .setRequired(true)
+            .setDefaultValue("Minecraft Commerce");
+        
         configDevMode = new ConfigOption<>("general.devMode", "Dev Mode", Material.REDSTONE, ConfigTypes.BOOLEAN)
             .setRequired(true)
             .setDefaultValue(false);
@@ -81,21 +86,22 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebhookUrl = new ConfigOption<>("general.webhookUrl", "Webhook Url", Material.FISHING_ROD, new ConfigTypeString())
+        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.FISHING_ROD, new ConfigTypeString())
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebhookPort = new ConfigOption<>("general.webhookPort", "Webhook Port", Material.FISHING_ROD, new ConfigTypeInteger())
+        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.FISHING_ROD, new ConfigTypeInteger())
             .setRequired(true)
             .setDefaultValue(8080);
         
         // Add options
+        config.addOption(configServerName);
         config.addOption(configDevMode);
         config.addOption(configStorageType);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
-        config.addOption(configWebhookUrl);
-        config.addOption(configWebhookPort);
+        config.addOption(configWebAddress);
+        config.addOption(configWebPort);
         
         // Make sure all options exist
         config.setDefaultOptions();
@@ -182,6 +188,30 @@ public class Commerce extends PluginBase {
 
     public Storage getStorage() {
         return getService("storage");
+    }
+    
+	/**
+	 * Creates a formatted URL from the specified action.
+	 * Uses the configured webUrl and webPort as base 
+	 * and then adds the action at the end.
+	 * 
+	 * 1. Replace backspaces with regular slash.
+	 * 2. Remove trailing slash.
+	 * 3. Add port and trailing slash.
+	 * 
+	 * @param action
+	 * @return The formatted url
+	 */
+    public static String createWebUrl(String action) {
+    	Commerce plugin = Commerce.getInstance();
+    	YamlConfig config = plugin.getConfig();
+    	
+    	// Get configuration values
+    	String webUrl = plugin.configWebAddress.getValue(config);
+    	int webPort = plugin.configWebPort.getValue(config);
+    	
+    	// Return webUrl + action
+    	return "http://" + webUrl + ":" + webPort + "/" + action;
     }
 
 }

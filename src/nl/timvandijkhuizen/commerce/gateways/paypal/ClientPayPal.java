@@ -18,25 +18,40 @@ import com.paypal.orders.OrderRequest;
 import com.paypal.orders.OrdersCreateRequest;
 import com.paypal.orders.PurchaseUnitRequest;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.PaymentResponse;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.OrderPayment;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class ClientPayPal implements GatewayClient {
 
 	private PayPalEnvironment environment;
 	private PayPalHttpClient client;
+	private ApplicationContext context;
 	
 	public ClientPayPal(String clientId, String clientSecret, boolean testMode) {
+		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
+		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
+		
 	    if(testMode) {
 	    	environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
 	    } else {
 	    	environment = new PayPalEnvironment.Live(clientId, clientSecret);
 	    }
 		
+	    // Create client
 	    client = new PayPalHttpClient(environment);
+	    
+	    // Create context
+		context = new ApplicationContext()
+			.brandName(optionServerName.getValue(pluginConfig))
+			.returnUrl(Commerce.createWebUrl("order/confirmation"))
+			.cancelUrl(Commerce.createWebUrl("order/cancelled"))
+			.landingPage("LOGIN");
 	}
     
     @Override
@@ -63,7 +78,7 @@ public class ClientPayPal implements GatewayClient {
 		
 		for(LineItem lineItem : order.getLineItems()) {
 			ProductSnapshot product = lineItem.getProduct();
-			String price = String.valueOf(lineItem.getPrice());
+			String price = String.valueOf(product.getPrice());
 			Item item = new Item();
 			
 			item.name(product.getName());
@@ -80,7 +95,7 @@ public class ClientPayPal implements GatewayClient {
 		OrderRequest requestBody = new OrderRequest();
 		
 		requestBody.checkoutPaymentIntent("CAPTURE");
-		requestBody.applicationContext(new ApplicationContext());
+		requestBody.applicationContext(context);
 		requestBody.purchaseUnits(Arrays.asList(unit));
 		
 		// Create request

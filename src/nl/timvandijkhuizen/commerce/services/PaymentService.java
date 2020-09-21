@@ -33,10 +33,12 @@ public class PaymentService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
             	GatewayClient client = gateway.getClient();
-                callback.accept(client.createPaymentUrl(order));
+            	String url = client.createPaymentUrl(order);
+            	
+                MainThread.execute(() -> callback.accept(url));
             } catch (Exception e) {
                 MainThread.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to create payment url: " + e.getMessage(), e);
+                ConsoleHelper.printError("Failed to create payment url", e);
             }
         });
     }
