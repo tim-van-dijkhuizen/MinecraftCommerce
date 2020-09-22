@@ -48,8 +48,9 @@ public class MenuShopPayment implements PredefinedMenu {
         acceptButton.setClickListener(event -> {
         	ClickType type = event.getClickType();
         	
+        	UI.playSound(player, UI.SOUND_CLICK);
+        	
         	if(type == ClickType.LEFT) {
-        		UI.playSound(player, UI.SOUND_CLICK);
         		accepted.set(!accepted.get());
             	
             	if(accepted.get()) {

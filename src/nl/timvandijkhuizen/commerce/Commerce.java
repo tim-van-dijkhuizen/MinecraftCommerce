@@ -29,7 +29,6 @@ import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
-import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeInteger;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeString;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
@@ -73,11 +72,6 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(false);
         
-        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.ENDER_CHEST, ConfigTypes.STRING)
-            .setRequired(true)
-            .setDefaultValue("mysql")
-            .setMeta(new DataArguments(true));
-        
         configCurrencies = new ConfigOption<>("general.currencies", "Currencies", Material.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
             .setRequired(true)
             .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
@@ -86,22 +80,27 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.FISHING_ROD, ConfigTypes.DOMAIN)
+        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.FISHING_ROD, ConfigTypes.INTEGER)
+        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.COBWEB, ConfigTypes.INTEGER)
             .setRequired(true)
             .setDefaultValue(8080);
+        
+        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.ENDER_CHEST, ConfigTypes.STRING)
+            .setRequired(true)
+            .setDefaultValue("mysql")
+            .setMeta(new DataArguments(true));
         
         // Add options
         config.addOption(configServerName);
         config.addOption(configDevMode);
-        config.addOption(configStorageType);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
         config.addOption(configWebAddress);
         config.addOption(configWebPort);
+        config.addOption(configStorageType);
         
         // Make sure all options exist
         config.setDefaultOptions();
