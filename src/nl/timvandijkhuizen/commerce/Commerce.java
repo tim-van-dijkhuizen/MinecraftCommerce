@@ -14,6 +14,7 @@ import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.commands.CommandCommerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.commerce.config.types.ConfigTypePort;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
@@ -98,7 +99,7 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", Material.COBWEB, ConfigTypes.INTEGER)
+        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", Material.COBWEB, new ConfigTypePort())
             .setRequired(true)
             .setDefaultValue(8080)
             .setMeta(new DataArguments(true));
