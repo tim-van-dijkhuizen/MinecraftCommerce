@@ -49,37 +49,38 @@ public class MenuShopGateway implements PredefinedMenu {
             		return lore;
             	}
             	
-            	if(cart.getGateway() != null && cart.getGateway().equals(gateway)) {
-            		lore.add(UI.color("Selected", UI.COLOR_SECONDARY));
-            	} else {
-            		lore.add("");
-            		lore.add(UI.color("Left-click to pay using this gateway.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            	}
+        		lore.add("");
+        		lore.add(UI.color("Left-click to select this gateway.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             		
         		return lore;
             });
             
+            item.setEnchantmentGlow(() -> gateway.equals(cart.getGateway()));
+            
             // Set click listener
             item.setClickListener(event -> {
-                cart.setGateway(gateway);
-                
                 UI.playSound(player, UI.SOUND_CLICK);
-                actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
-                menu.disableButtons();
-                menu.refresh();
                 
-                orderService.saveOrder(cart, success -> {
-                    if(success) {
-                        UI.playSound(player, UI.SOUND_SUCCESS);
-                        actionLore.set(null);
-                    } else {
-                        UI.playSound(player, UI.SOUND_ERROR);
-                        actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
-                    }
+                if(!gateway.equals(cart.getGateway())) {
+                    cart.setGateway(gateway);
                     
-                    menu.enableButtons();
+                    actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
+                    menu.disableButtons();
                     menu.refresh();
-                });
+                    
+                    orderService.saveOrder(cart, success -> {
+                        if(success) {
+                            UI.playSound(player, UI.SOUND_SUCCESS);
+                            actionLore.set(null);
+                        } else {
+                            UI.playSound(player, UI.SOUND_ERROR);
+                            actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
+                        }
+                        
+                        menu.enableButtons();
+                        menu.refresh();
+                    });
+                }
             });
             
             menu.addPagedButton(item);
@@ -101,12 +102,44 @@ public class MenuShopGateway implements PredefinedMenu {
         MenuItemBuilder nextButton = new MenuItemBuilder(Material.EMERALD);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        nextButton.setLore(UI.color("Payment", UI.COLOR_TEXT));
-        nextButton.setClickListener(new ActionShopPayment());
+        
+        nextButton.setLore(() -> {
+            List<String> lore = new ArrayList<>();
 
+            lore.add(UI.color("Payment", UI.COLOR_TEXT));
+            
+            if(!isValid(cart)) {
+                lore.add("");
+                lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
+                
+                for(String error : cart.getErrors("gateway")) {
+                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+                }
+            }
+            
+            return lore;
+        });
+        
+        nextButton.setClickListener(event -> {
+            if(isValid(cart)) {
+                new ActionShopPayment().onClick(event);
+            } else {
+                UI.playSound(player, UI.SOUND_ERROR);
+            }
+        });
+        
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
         return menu;
+    }
+    
+    private boolean isValid(Order cart) {
+        String oldScenario = cart.getScenario();
+        cart.setScenario(Order.SCENARIO_GATEWAYS);
+        boolean isValid = cart.isValid();
+        cart.setScenario(oldScenario);
+        
+        return isValid;
     }
 
 }

@@ -18,6 +18,10 @@ public abstract class Model implements ModelInterface {
         return validate(scenario);
     }
     
+    public String getScenario() {
+        return scenario;
+    }
+    
     public void setScenario(String scenario) {
         this.scenario = scenario;
     }

@@ -28,7 +28,8 @@ public abstract class Element extends Model implements ElementInterface {
     
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Element 
+        return obj != null
+            && obj instanceof Element 
             && obj.getClass() == getClass()
             && ((Element) obj).getId().equals(getId());
     }

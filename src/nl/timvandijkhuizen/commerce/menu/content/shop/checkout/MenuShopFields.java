@@ -71,7 +71,7 @@ public class MenuShopFields implements PredefinedMenu {
                     lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
 
                     for (String error : cart.getErrors(option.getPath())) {
-                        lore.add(UI.color(" - " + error, UI.COLOR_ERROR));
+                        lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
                     }
                 }
                 
@@ -126,35 +126,42 @@ public class MenuShopFields implements PredefinedMenu {
         MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
+        
         nextButton.setLore(() -> {
             List<String> lore = new ArrayList<>();
             
             lore.add(UI.color("Gateway", UI.COLOR_TEXT));
             
-            if(cart.hasErrors()) {
+            if(!isValid(cart)) {
                 lore.add("");
-                lore.add(UI.color("Error: One or more fields have invalid values.", UI.COLOR_ERROR));
+                lore.add(UI.color("Errors: ", UI.COLOR_ERROR, ChatColor.BOLD));
+                lore.add(UI.color(UI.TAB + Icon.SQUARE + " One or more fields have invalid values.", UI.COLOR_ERROR));
             }
             
             return lore;
         });
         
         nextButton.setClickListener(event -> {
-            cart.setScenario(Order.SCENARIO_FIELDS);
-            
-            // Check if fields are valid
-            if(!cart.isValid()) {
-                UI.playSound(player, UI.SOUND_ERROR);
-                cart.setScenario(Order.SCENARIO_DEFAULT);
-                menu.refresh();
-            } else {
+            if(isValid(cart)) {
                 new ActionShopGateways().onClick(event);
+            } else {
+                UI.playSound(player, UI.SOUND_ERROR);
+                menu.refresh();
             }
         });
 
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
         return menu;
+    }
+    
+    private boolean isValid(Order cart) {
+        String oldScenario = cart.getScenario();
+        cart.setScenario(Order.SCENARIO_FIELDS);
+        boolean isValid = cart.isValid();
+        cart.setScenario(oldScenario);
+        
+        return isValid;
     }
 
 }

@@ -48,7 +48,7 @@ public class MenuProductEdit implements PredefinedMenu {
             iconButton.addEnchantGlow();
 
             for (String error : product.getErrors("icon")) {
-                iconButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
         
@@ -82,7 +82,7 @@ public class MenuProductEdit implements PredefinedMenu {
             nameButton.addEnchantGlow();
 
             for (String error : product.getErrors("name")) {
-                nameButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                nameButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -106,7 +106,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 
@@ -136,7 +136,7 @@ public class MenuProductEdit implements PredefinedMenu {
             descriptionButton.addEnchantGlow();
 
             for (String error : product.getErrors("description")) {
-                descriptionButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                descriptionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -160,7 +160,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 
@@ -186,7 +186,7 @@ public class MenuProductEdit implements PredefinedMenu {
             categoryButton.addEnchantGlow();
 
             for (String error : product.getErrors("category")) {
-                categoryButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                categoryButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -231,7 +231,7 @@ public class MenuProductEdit implements PredefinedMenu {
             priceButton.addEnchantGlow();
 
             for (String error : product.getErrors("price")) {
-                priceButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                priceButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -255,7 +255,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 

@@ -55,7 +55,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             displayNameButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("displayName")) {
-                displayNameButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                displayNameButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -79,7 +79,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 
@@ -105,7 +105,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             typeButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("type")) {
-                typeButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                typeButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -152,7 +152,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             optionButton.addEnchantGlow();
 
             for (String error : gateway.getErrors("config")) {
-                optionButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 

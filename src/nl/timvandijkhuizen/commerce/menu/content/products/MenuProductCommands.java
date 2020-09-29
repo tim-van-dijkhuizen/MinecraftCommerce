@@ -22,6 +22,7 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductCommands implements PredefinedMenu {
@@ -75,7 +76,7 @@ public class MenuProductCommands implements PredefinedMenu {
         createButton.addLore("", UI.color("Available variables:", UI.COLOR_TEXT));
 
         for (CommandVariable variable : productService.getCommandVariables()) {
-            createButton.addLore(UI.color(" - {" + variable.getKey() + "}", UI.COLOR_SECONDARY));
+            createButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + UI.color(" {" + variable.getKey() + "}", UI.COLOR_SECONDARY));
         }
 
         createButton.setClickListener(event -> {
@@ -101,7 +102,7 @@ public class MenuProductCommands implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 

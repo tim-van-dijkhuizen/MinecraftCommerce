@@ -14,6 +14,7 @@ import nl.timvandijkhuizen.spigotutils.data.DataList;
 public class Order extends Element {
     
     public static final String SCENARIO_FIELDS = "fields";
+    public static final String SCENARIO_GATEWAYS = "gateways";
     public static final String SCENARIO_PAY = "pay";
     
     private String number;
@@ -25,7 +26,10 @@ public class Order extends Element {
     private OrderFieldData fieldData;
     private Gateway gateway;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway) {
+    private String paymentUrl;
+    private boolean updatePaymentUrl;
+    
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, String paymentUrl) {
         this.setId(id);
         this.number = number;
         this.playerUniqueId = playerUniqueId;
@@ -35,6 +39,7 @@ public class Order extends Element {
         this.lineItems = lineItems;
         this.fieldData = fieldData;
         this.gateway = gateway;
+        this.paymentUrl = paymentUrl;
     }
     
     public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -94,7 +99,7 @@ public class Order extends Element {
             }
         }
         
-        if(scenario.equals(SCENARIO_PAY) && gateway == null) {
+        if((scenario.equals(SCENARIO_GATEWAYS) || scenario.equals(SCENARIO_PAY)) && gateway == null) {
         	addError("gateway", "Gateway is required");
         	return false;
         }
@@ -170,6 +175,19 @@ public class Order extends Element {
     
     public void setGateway(Gateway gateway) {
     	this.gateway = gateway;
+    }
+    
+    public String getPaymentUrl() {
+        return paymentUrl;
+    }
+    
+    public void setPaymentUrl(String paymentUrl) {
+        this.paymentUrl = paymentUrl;
+        this.updatePaymentUrl = true;
+    }
+    
+    public boolean updatePaymentUrl() {
+        return updatePaymentUrl;
     }
     
 }

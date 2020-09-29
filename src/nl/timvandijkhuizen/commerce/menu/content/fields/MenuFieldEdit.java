@@ -21,6 +21,7 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuFieldEdit implements PredefinedMenu {
@@ -43,7 +44,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             iconButton.addEnchantGlow();
 
             for (String error : field.getErrors("icon")) {
-                iconButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
         
@@ -77,7 +78,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             nameButton.addEnchantGlow();
 
             for (String error : field.getErrors("name")) {
-                nameButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                nameButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -101,7 +102,7 @@ public class MenuFieldEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 
@@ -131,7 +132,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             descriptionButton.addEnchantGlow();
 
             for (String error : field.getErrors("description")) {
-                descriptionButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                descriptionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 
@@ -155,7 +156,7 @@ public class MenuFieldEdit implements PredefinedMenu {
                 }
             }).withLocalEcho(false).buildConversation(player);
 
-            player.closeInventory();
+            menu.close(player);
             conversation.begin();
         });
 
@@ -181,7 +182,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             typeButton.addEnchantGlow();
 
             for (String error : field.getErrors("type")) {
-                typeButton.addLore(UI.color(" - " + error, UI.COLOR_ERROR));
+                typeButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
 

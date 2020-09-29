@@ -97,7 +97,7 @@ public class MenuHome implements PredefinedMenu {
 
         closeButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            player.closeInventory();
+            menu.close(player);
         });
 
         menu.setButton(closeButton, 40);
