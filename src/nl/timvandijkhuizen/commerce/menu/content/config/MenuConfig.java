@@ -51,13 +51,13 @@ public class MenuConfig implements PredefinedMenu {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
 
-                lore.add("");
-                
                 if(restart) {
-                    lore.add(UI.color("This option requires a server restart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                } else {
-                    lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                    lore.add("");
+                    lore.add(UI.color("Warning:", UI.COLOR_ERROR, ChatColor.BOLD) + " " + UI.color("This option requires a restart.", UI.COLOR_ERROR));
                 }
+                
+                lore.add("");
+                lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 
                 return lore;
             });
