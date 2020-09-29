@@ -20,6 +20,11 @@ public class CommandCategories extends BaseCommand {
     public String getUsage() {
         return "/commerce admin categories";
     }
+    
+    @Override
+    public String getPermission() {
+        return "commerce.admin";
+    }
 
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {

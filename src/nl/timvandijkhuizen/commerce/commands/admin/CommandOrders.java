@@ -22,6 +22,11 @@ public class CommandOrders extends BaseCommand {
     }
 
     @Override
+    public String getPermission() {
+        return "commerce.admin";
+    }
+    
+    @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
         OrderService orderService = Commerce.getInstance().getService("orders");
 

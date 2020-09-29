@@ -22,6 +22,11 @@ public class CommandGateways extends BaseCommand {
     }
 
     @Override
+    public String getPermission() {
+        return "commerce.admin";
+    }
+    
+    @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
 
