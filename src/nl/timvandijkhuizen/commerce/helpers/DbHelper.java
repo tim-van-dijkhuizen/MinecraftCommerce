@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.helpers;
 
 import org.bukkit.Material;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import nl.timvandijkhuizen.commerce.base.GatewayType;
@@ -13,7 +12,7 @@ import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 
 public class DbHelper {
 
-    public static final Gson GSON = new Gson();
+    
     
     public static String prepareMaterial(Material material) {
         return material.name();
@@ -27,12 +26,12 @@ public class DbHelper {
         }
     }
     
-    public static String prepareJson(JsonObject json) {
-        return GSON.toJson(json);
+    public static String prepareJson(JsonObject object) {
+        return JsonHelper.toJson(object);
     }
 
     public static JsonObject parseJson(String json) {
-        return GSON.fromJson(json, JsonObject.class);
+        return JsonHelper.fromJson(json);
     }
     
     public static String prepareJsonConfig(JsonConfig config) {

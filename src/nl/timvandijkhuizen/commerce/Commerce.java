@@ -5,13 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.bukkit.Material;
 
 import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.commands.CommandCommerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.commerce.services.CacheService;
@@ -22,6 +25,7 @@ import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.commerce.services.UserService;
+import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.storage.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
@@ -44,23 +48,33 @@ public class Commerce extends PluginBase {
     public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
     
     private static Commerce instance;
+    private Set<StorageType> storageTypes;
     private YamlConfig config;
     
     // Configuration options
     private ConfigOption<String> configServerName;
     private ConfigOption<Boolean> configDevMode;
-    private ConfigOption<String> configStorageType;
+    private ConfigOption<StorageType> configStorageType;
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
-    private ConfigOption<String> configWebAddress;
-    private ConfigOption<Integer> configWebPort;
+    private ConfigOption<String> configWebserverAddress;
+    private ConfigOption<Integer> configWebserverPort;
 
     @Override
     public void init() throws Exception {
         instance = this;
         MainThread.setPlugin(this);
         
-        // Setup config
+        // Register storage types
+        RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
+        StorageType typeMysql = new StorageType("mysql", StorageMysql.class);
+        
+        event.addStorageType(typeMysql);
+        
+        getServer().getPluginManager().callEvent(event);
+        storageTypes = event.getStorageTypes();
+        
+        // Setup configuration options
         config = new YamlConfig(this);
         
         // Create options
@@ -80,17 +94,18 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebAddress = new ConfigOption<>("general.webUrl", "Web Address", Material.COBWEB, ConfigTypes.DOMAIN)
+        configWebserverAddress = new ConfigOption<>("general.webserverUrl", "Webserver Address", Material.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebPort = new ConfigOption<>("general.webPort", "Web Port", Material.COBWEB, ConfigTypes.INTEGER)
+        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", Material.COBWEB, ConfigTypes.INTEGER)
             .setRequired(true)
-            .setDefaultValue(8080);
+            .setDefaultValue(8080)
+            .setMeta(new DataArguments(true));
         
-        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.ENDER_CHEST, ConfigTypes.STRING)
+        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType(storageTypes))
             .setRequired(true)
-            .setDefaultValue("mysql")
+            .setDefaultValue(typeMysql)
             .setMeta(new DataArguments(true));
         
         // Add options
@@ -98,8 +113,8 @@ public class Commerce extends PluginBase {
         config.addOption(configDevMode);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
-        config.addOption(configWebAddress);
-        config.addOption(configWebPort);
+        config.addOption(configWebserverAddress);
+        config.addOption(configWebserverPort);
         config.addOption(configStorageType);
         
         // Make sure all options exist
@@ -141,10 +156,15 @@ public class Commerce extends PluginBase {
     public Service[] registerServices() throws Exception {
         CommandService commandService = new CommandService(this);
 
+        // Register command
         commandService.register(new CommandCommerce());
 
+        // Get storage driver
+        StorageType storageType = configStorageType.getValue(config);
+        Class<? extends Storage> storageDriver = storageType.getDriver();
+        
         return new Service[] {
-            getDatabase(),
+            storageDriver.newInstance(),
             new CacheService(),
             new MenuService(),
             new CategoryService(),
@@ -154,27 +174,9 @@ public class Commerce extends PluginBase {
             new OrderService(),
             new FieldService(),
             new PaymentService(),
-            commandService
+            commandService,
+            new WebService()
         };
-    }
-
-    private Storage getDatabase() throws Exception {
-        RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
-
-        event.addStorageType("mysql", StorageMysql.class);
-        getServer().getPluginManager().callEvent(event);
-
-        // Register chosen storage type
-        Map<String, Class<? extends Storage>> storageTypes = event.getStorageTypes();
-        ConfigOption<String> optionType = config.getOption("storage.type");
-        String storageTypeKey = optionType.getValue(config);
-
-        if (storageTypes.containsKey(storageTypeKey)) {
-            Class<? extends Storage> storageClass = storageTypes.get(storageTypeKey);
-            return storageClass.newInstance();
-        } else {
-            throw new RuntimeException("Unsupported database driver");
-        }
     }
     
     public static Commerce getInstance() {
@@ -206,8 +208,8 @@ public class Commerce extends PluginBase {
     	YamlConfig config = plugin.getConfig();
     	
     	// Get configuration values
-    	String webUrl = plugin.configWebAddress.getValue(config);
-    	int webPort = plugin.configWebPort.getValue(config);
+    	String webUrl = plugin.configWebserverAddress.getValue(config);
+    	int webPort = plugin.configWebserverPort.getValue(config);
     	
     	// Return webUrl + action
     	return "http://" + webUrl + ":" + webPort + "/" + action;

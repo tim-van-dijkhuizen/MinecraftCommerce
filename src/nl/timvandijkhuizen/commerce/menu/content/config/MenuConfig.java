@@ -32,13 +32,13 @@ public class MenuConfig implements PredefinedMenu {
         PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
         YamlConfig config = plugin.getConfig();
 
-        // Add config options
+        // Add configuration options
         for (ConfigOption option : config.getOptions()) {
             MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
             
             // Get meta and read only
             DataArguments meta = option.getMeta();
-            boolean readOnly = meta.getBoolean(0, false);
+            boolean restart = meta.getBoolean(0, false);
             
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -53,8 +53,8 @@ public class MenuConfig implements PredefinedMenu {
 
                 lore.add("");
                 
-                if(readOnly) {
-                    lore.add(UI.color("This option cannot be changed from the GUI.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                if(restart) {
+                    lore.add(UI.color("This option requires a server restart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 } else {
                     lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
@@ -64,16 +64,12 @@ public class MenuConfig implements PredefinedMenu {
             
             // Set click listener
             item.setClickListener(event -> {
-                if(!readOnly) {
-                    UI.playSound(player, UI.SOUND_CLICK);
-                    
-                    option.getValueInput(config, player, value -> {
-                        option.setValue(config, value);
-                        menu.open(player);
-                    });
-                } else {
-                    UI.playSound(player, UI.SOUND_ERROR);
-                }
+                UI.playSound(player, UI.SOUND_CLICK);
+                
+                option.getValueInput(config, player, value -> {
+                    option.setValue(config, value);
+                    menu.open(player);
+                });
             });
             
             menu.addPagedButton(item);

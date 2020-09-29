@@ -59,19 +59,19 @@ public class StorageMysql extends Storage {
         YamlConfig config = Commerce.getInstance().getConfig();
 
         // Create configuration options
-        configHost = new ConfigOption<>("storage.host", "Storage Host", Material.CHEST, ConfigTypes.STRING)
+        configHost = new ConfigOption<>("storage.host", "Storage Host", Material.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPort = new ConfigOption<>("storage.port", "Storage Port", Material.CHEST, ConfigTypes.INTEGER)
+        configPort = new ConfigOption<>("storage.port", "Storage Port", Material.BARREL, ConfigTypes.INTEGER)
             .setRequired(true);
         
-        configDatabase = new ConfigOption<>("storage.database", "Storage Database", Material.CHEST, ConfigTypes.STRING)
+        configDatabase = new ConfigOption<>("storage.database", "Storage Database", Material.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configUsername = new ConfigOption<>("storage.username", "Storage Username", Material.CHEST, ConfigTypes.STRING)
+        configUsername = new ConfigOption<>("storage.username", "Storage Username", Material.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPassword = new ConfigOption<>("storage.password", "Storage Password", Material.CHEST, ConfigTypes.PASSWORD)
+        configPassword = new ConfigOption<>("storage.password", "Storage Password", Material.BARREL, ConfigTypes.PASSWORD)
             .setRequired(true);
         
         // Add configuration options
