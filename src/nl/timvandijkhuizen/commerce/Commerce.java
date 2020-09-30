@@ -213,7 +213,7 @@ public class Commerce extends PluginBase {
     	int webPort = plugin.configWebserverPort.getValue(config);
     	
     	// Return webUrl + action
-    	return "http://" + webUrl + ":" + webPort + "/" + action;
+    	return "https://" + webUrl + ":" + webPort + "/" + action;
     }
 
 }
