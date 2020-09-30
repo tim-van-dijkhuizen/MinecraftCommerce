@@ -34,10 +34,8 @@ public class WebService extends BaseService {
         bootstrap.group(THREAD_GROUP);
         bootstrap.channel(NioServerSocketChannel.class);
         bootstrap.childHandler(new HttpInitializer());
-        bootstrap.option(ChannelOption.MAX_MESSAGES_PER_READ, Integer.MAX_VALUE);
         bootstrap.childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(true));
         bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
-        bootstrap.childOption(ChannelOption.MAX_MESSAGES_PER_READ, Integer.MAX_VALUE);
         
         // Bind to configured port
         YamlConfig config = Commerce.getInstance().getConfig();

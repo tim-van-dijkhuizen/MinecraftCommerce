@@ -12,13 +12,13 @@ import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         FullHttpResponse response;
         HttpMethod method = request.method();
         String uri = request.uri();
 
         ConsoleHelper.printInfo("HTTP request " + method.name() + " " + uri);
-        
+
         if(method == HttpMethod.GET && uri.equals("/test")) {
             response = WebHelper.createResponse(HttpResponseStatus.NOT_FOUND, "Not Found");
         } else {
@@ -29,7 +29,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             }
         }
         
-        WebHelper.writeResponse(ctx, request, response);
+        WebHelper.writeResponse(ctx, response);
     }
 
     @Override

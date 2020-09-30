@@ -2,17 +2,15 @@ package nl.timvandijkhuizen.commerce.webserver;
 
 import java.io.File;
 
-import javax.net.ssl.SSLEngine;
-
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.ssl.JdkSslServerContext;
+import io.netty.handler.ssl.OptionalSslHandler;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.SslContextBuilder;
 import nl.timvandijkhuizen.commerce.Commerce;
 
 public class HttpInitializer extends ChannelInitializer<SocketChannel> {
@@ -32,12 +30,8 @@ public class HttpInitializer extends ChannelInitializer<SocketChannel> {
             }
             
             // Create SSL handler
-            SslContext sslContext = new JdkSslServerContext(certChain, certKey);
-            SSLEngine sslEngine = sslContext.newEngine(ch.alloc());
-            SslHandler sslHandler = new SslHandler(sslEngine);
-            
-            sslEngine.setUseClientMode(false);
-            sslEngine.setNeedClientAuth(false);
+            SslContext sslContext = SslContextBuilder.forServer(certChain, certKey).build();
+            OptionalSslHandler sslHandler = new OptionalSslHandler(sslContext);
             
             pipeline.addLast("ssl", sslHandler);
         } catch (Exception e) {
