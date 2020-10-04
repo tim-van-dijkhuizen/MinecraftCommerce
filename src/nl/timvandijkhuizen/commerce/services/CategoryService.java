@@ -3,8 +3,6 @@ package nl.timvandijkhuizen.commerce.services;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
-
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Category;
@@ -27,14 +25,9 @@ public class CategoryService extends BaseService {
     public void getCategories(Consumer<Set<Category>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Category> categories = storage.getCategories();
-                ThreadHelper.execute(() -> callback.accept(categories));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load categories: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getCategories(), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load categories: " + error.getMessage(), error);
         });
     }
 
@@ -55,19 +48,15 @@ public class CategoryService extends BaseService {
         }
 
         // Create or edit category
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                if (isNew) {
-                    storage.createCategory(category);
-                } else {
-                    storage.updateCategory(category);
-                }
-
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to create/update category: " + e.getMessage(), e);
+        ThreadHelper.executeAsync(() -> {
+            if (isNew) {
+                storage.createCategory(category);
+            } else {
+                storage.updateCategory(category);
             }
+        }, () ->  callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to create/update category: " + error.getMessage(), error);
         });
     }
 
@@ -81,14 +70,9 @@ public class CategoryService extends BaseService {
         Storage storage = Commerce.getInstance().getStorage();
 
         // Delete category
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.deleteCategory(category);
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to delete category: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> storage.deleteCategory(category), () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to delete category: " + error.getMessage(), error);
         });
     }
 

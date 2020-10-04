@@ -42,14 +42,9 @@ public class GatewayService extends BaseService {
     public void getGateways(Consumer<Set<Gateway>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Gateway> gateways = storage.getGateways();
-                ThreadHelper.execute(() -> callback.accept(gateways));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load gateways: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getGateways(), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load gateways: " + error.getMessage(), error);
         });
     }
 
@@ -70,19 +65,15 @@ public class GatewayService extends BaseService {
         }
 
         // Create or edit gateway
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                if (isNew) {
-                    storage.createGateway(gateway);
-                } else {
-                    storage.updateGateway(gateway);
-                }
-
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to create/update gateway: " + e.getMessage(), e);
+        ThreadHelper.executeAsync(() -> {
+            if (isNew) {
+                storage.createGateway(gateway);
+            } else {
+                storage.updateGateway(gateway);
             }
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to create/update gateway: " + error.getMessage(), error);
         });
     }
 
@@ -96,14 +87,9 @@ public class GatewayService extends BaseService {
         Storage storage = Commerce.getInstance().getStorage();
 
         // Delete gateway
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.deleteGateway(gateway);
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to delete gateway: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> storage.deleteGateway(gateway), () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to delete gateway: " + error.getMessage(), error);
         });
     }
     

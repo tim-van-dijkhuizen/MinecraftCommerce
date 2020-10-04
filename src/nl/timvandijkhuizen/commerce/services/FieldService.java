@@ -61,14 +61,9 @@ public class FieldService extends BaseService {
     public void getFields(Consumer<Set<Field>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Field> fields = storage.getFields();
-                ThreadHelper.execute(() -> callback.accept(fields));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load fields: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getFields(), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load fields: " + error.getMessage(), error);
         });
     }
 
@@ -89,25 +84,20 @@ public class FieldService extends BaseService {
         }
 
         // Create or edit field
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                if (isNew) {
-                    storage.createField(field);
-                } else {
-                    storage.updateField(field);
-                }
-                
-                // Update option cache
-                options = storage.getFields().stream()
-                    .map(i -> i.getOption())
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-                
-                // Execute callback
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to create/update field: " + e.getMessage(), e);
+        ThreadHelper.executeAsync(() -> {
+            if (isNew) {
+                storage.createField(field);
+            } else {
+                storage.updateField(field);
             }
+            
+            // Update option cache
+            options = storage.getFields().stream()
+                .map(i -> i.getOption())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to create/update field: " + error.getMessage(), error);
         });
     }
 
@@ -121,21 +111,16 @@ public class FieldService extends BaseService {
         Storage storage = Commerce.getInstance().getStorage();
 
         // Delete field
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.deleteField(field);
-                
-                // Update option cache
-                options = storage.getFields().stream()
-                    .map(i -> i.getOption())
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-                
-                // Execute callback
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to delete field: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> {
+            storage.deleteField(field);
+            
+            // Update option cache
+            options = storage.getFields().stream()
+                .map(i -> i.getOption())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to delete field: " + error.getMessage(), error);
         });
     }
     

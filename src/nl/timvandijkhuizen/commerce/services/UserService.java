@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -64,14 +63,11 @@ public class UserService extends BaseService {
     public void savePreferences(Player player, UserPreferences preferences, Consumer<Boolean> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.saveUserPreferences(player.getUniqueId(), preferences);
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to save user preferences: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> {
+        	storage.saveUserPreferences(player.getUniqueId(), preferences);
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to save user preferences: " + error.getMessage(), error);
         });
     }
 

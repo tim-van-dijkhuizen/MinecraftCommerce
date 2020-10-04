@@ -51,14 +51,9 @@ public class ProductService extends BaseService {
     public void getProducts(Consumer<Set<Product>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Product> products = storage.getProducts(null);
-                ThreadHelper.execute(() -> callback.accept(products));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getProducts(null), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load products: " + error.getMessage(), error);
         });
     }
 
@@ -70,14 +65,9 @@ public class ProductService extends BaseService {
     public void getProducts(Category category, Consumer<Set<Product>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Product> products = storage.getProducts(category);
-                ThreadHelper.execute(() -> callback.accept(products));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getProducts(category), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load products: " + error.getMessage(), error);
         });
     }
     
@@ -98,38 +88,34 @@ public class ProductService extends BaseService {
         }
 
         // Create or edit product
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            DataList<Command> commands = product.getCommands();
-
-            try {
-                if (isNew) {
-                    storage.createProduct(product);
-                } else {
-                    storage.updateProduct(product);
-                }
-
-                // Set product id on commands
-                for (Command command : commands) {
-                    command.setProductId(product.getId());
-                }
-
-                // Update commands
-                for (Command command : commands.getByAction(DataAction.CREATE)) {
-                    storage.createCommand(command);
-                }
-
-                for (Command command : commands.getByAction(DataAction.DELETE)) {
-                    storage.deleteCommand(command);
-                }
-
-                // Remove pending from data list
-                commands.clearPending();
-                
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to create/update product: " + e.getMessage(), e);
+        ThreadHelper.executeAsync(() -> {
+        	DataList<Command> commands = product.getCommands();
+        	
+            if (isNew) {
+                storage.createProduct(product);
+            } else {
+                storage.updateProduct(product);
             }
+
+            // Set product id on commands
+            for (Command command : commands) {
+                command.setProductId(product.getId());
+            }
+
+            // Update commands
+            for (Command command : commands.getByAction(DataAction.CREATE)) {
+                storage.createCommand(command);
+            }
+
+            for (Command command : commands.getByAction(DataAction.DELETE)) {
+                storage.deleteCommand(command);
+            }
+
+            // Remove pending from data list
+            commands.clearPending();
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to create/update product: " + error.getMessage(), error);
         });
     }
 
@@ -143,14 +129,9 @@ public class ProductService extends BaseService {
         Storage storage = Commerce.getInstance().getStorage();
 
         // Delete product
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.deleteProduct(product);
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to delete product: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> storage.deleteProduct(product), () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to delete product: " + error.getMessage(), error);
         });
     }
 

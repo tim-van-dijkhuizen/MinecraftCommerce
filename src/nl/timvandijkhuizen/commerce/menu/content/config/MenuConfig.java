@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -95,32 +94,28 @@ public class MenuConfig implements PredefinedMenu {
             menu.disableButtons();
             menu.refresh();
 
-            // Save product
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                config.save();
+            // Save configuration
+            ThreadHelper.executeAsync(() -> config.save(), () -> {
+                plugin.reload();
                 
-                ThreadHelper.execute(() -> {
-                    plugin.reload();
+                // Check for errors
+                Map<String, String> errors = plugin.getServiceErrors();
+                
+                if(errors.isEmpty()) {
+                    UI.playSound(player, UI.SOUND_SUCCESS);
+                    saveButton.setLore(UI.color("Successfully saved config.", UI.COLOR_SUCCESS));
+                } else {
+                    UI.playSound(player, UI.SOUND_ERROR);
+                    saveButton.setLore(UI.color("Failed to save config.", UI.COLOR_ERROR));
+                    saveButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR));
                     
-                    // Check for errors
-                    Map<String, String> errors = plugin.getServiceErrors();
-                    
-                    if(errors.isEmpty()) {
-                        UI.playSound(player, UI.SOUND_SUCCESS);
-                        saveButton.setLore(UI.color("Successfully saved config.", UI.COLOR_SUCCESS));
-                    } else {
-                        UI.playSound(player, UI.SOUND_ERROR);
-                        saveButton.setLore(UI.color("Failed to save config.", UI.COLOR_ERROR));
-                        saveButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR));
-                        
-                        for(Entry<String, String> error : errors.entrySet()) {
-                            saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue(), UI.COLOR_ERROR));
-                        }
+                    for(Entry<String, String> error : errors.entrySet()) {
+                        saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue(), UI.COLOR_ERROR));
                     }
-                    
-                    menu.enableButtons();
-                    menu.refresh();
-                });
+                }
+                
+                menu.enableButtons();
+                menu.refresh();
             });
         });
 

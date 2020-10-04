@@ -2,9 +2,6 @@ package nl.timvandijkhuizen.commerce.services;
 
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
-
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
@@ -30,17 +27,13 @@ public class PaymentService extends BaseService {
     	}
         
     	// Create payment link
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-            	GatewayClient client = gateway.getClient();
-            	String url = client.createPaymentUrl(order);
-            	
-                ThreadHelper.execute(() -> callback.accept(url));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to create payment url", e);
-            }
-        });
+    	ThreadHelper.getAsync(() -> {
+        	GatewayClient client = gateway.getClient();
+        	return client.createPaymentUrl(order);
+    	}, callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to create payment url", error);
+    	});
     }
 
 }

@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
@@ -36,21 +35,18 @@ public class OrderService extends BaseService {
     public void getCart(Player player, Consumer<Order> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Order cart = storage.getCart(player.getUniqueId());
-                
-                // Create cart if we didn't find one
-                if(cart == null) {
-                    callback.accept(createCart(player));
-                    return;
-                }
-                
-                ThreadHelper.execute(() -> callback.accept(cart));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load cart: " + e.getMessage(), e);
+        ThreadHelper.getAsync(() -> {
+            Order cart = storage.getCart(player.getUniqueId());
+            
+            // Create cart if we didn't find one
+            if(cart == null) {
+                return createCart(player);
             }
+            
+            return cart;
+        }, callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load cart: " + error.getMessage(), error);
         });
     }
     
@@ -80,14 +76,9 @@ public class OrderService extends BaseService {
     public void getOrders(Consumer<Set<Order>> callback) {
         Storage storage = Commerce.getInstance().getStorage();
 
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                Set<Order> orders = storage.getOrders();
-                ThreadHelper.execute(() -> callback.accept(orders));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(null));
-                ConsoleHelper.printError("Failed to load orders: " + e.getMessage(), e);
-            }
+        ThreadHelper.getAsync(() -> storage.getOrders(), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load orders: " + error.getMessage(), error);
         });
     }
 
@@ -113,46 +104,42 @@ public class OrderService extends BaseService {
         }
         
         // Create or edit order
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            DataList<LineItem> lineItems = order.getLineItems();
-            
-            try {
-                if (isNew) {
-                    storage.createOrder(order);
-                } else {
-                    storage.updateOrder(order);
-                }
-
-                // Set order id and remove if quantity <= 0
-                for (LineItem lineItem : lineItems) {
-                    lineItem.setOrderId(order.getId());
-                    
-                    if(lineItem.getQuantity() <= 0) {
-                        order.getLineItems().remove(lineItem);
-                    }
-                }
-                
-                // Update line items
-                for (LineItem lineItem : lineItems.getByAction(DataAction.CREATE)) {
-                    storage.createLineItem(lineItem);
-                }
-                
-                for (LineItem lineItem : lineItems.getByAction(DataAction.UPDATE)) {
-                    storage.updateLineItem(lineItem);
-                }
-
-                for (LineItem lineItem : lineItems.getByAction(DataAction.DELETE)) {
-                    storage.deleteLineItem(lineItem);
-                }
-
-                // Clear pending
-                lineItems.clearPending();;
-                
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to create/update order: " + e.getMessage(), e);
+        ThreadHelper.executeAsync(() -> {
+        	DataList<LineItem> lineItems = order.getLineItems();
+        	
+            if (isNew) {
+                storage.createOrder(order);
+            } else {
+                storage.updateOrder(order);
             }
+
+            // Set order id and remove if quantity <= 0
+            for (LineItem lineItem : lineItems) {
+                lineItem.setOrderId(order.getId());
+                
+                if(lineItem.getQuantity() <= 0) {
+                    order.getLineItems().remove(lineItem);
+                }
+            }
+            
+            // Update line items
+            for (LineItem lineItem : lineItems.getByAction(DataAction.CREATE)) {
+                storage.createLineItem(lineItem);
+            }
+            
+            for (LineItem lineItem : lineItems.getByAction(DataAction.UPDATE)) {
+                storage.updateLineItem(lineItem);
+            }
+
+            for (LineItem lineItem : lineItems.getByAction(DataAction.DELETE)) {
+                storage.deleteLineItem(lineItem);
+            }
+
+            // Clear pending
+            lineItems.clearPending();
+        }, () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to create/update order: " + error.getMessage(), error);
         });
     }
 
@@ -166,14 +153,9 @@ public class OrderService extends BaseService {
         Storage storage = Commerce.getInstance().getStorage();
 
         // Delete order
-        Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
-            try {
-                storage.deleteOrder(order);
-                ThreadHelper.execute(() -> callback.accept(true));
-            } catch (Exception e) {
-                ThreadHelper.execute(() -> callback.accept(false));
-                ConsoleHelper.printError("Failed to delete order: " + e.getMessage(), e);
-            }
+        ThreadHelper.executeAsync(() -> storage.deleteOrder(order), () -> callback.accept(true), error -> {
+            callback.accept(false);
+            ConsoleHelper.printError("Failed to delete order: " + error.getMessage(), error);
         });
     }
 
