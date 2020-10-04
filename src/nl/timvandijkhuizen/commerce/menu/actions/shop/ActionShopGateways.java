@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions.shop;
+package nl.timvandijkhuizen.commerce.menu.actions.shop;
 
 import org.bukkit.entity.Player;
 

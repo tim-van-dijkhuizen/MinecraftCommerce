@@ -1,6 +1,7 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions.shop;
+package nl.timvandijkhuizen.commerce.menu.actions.shop;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
@@ -11,7 +12,7 @@ import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopPayment implements MenuItemAction {
+public class ActionShopCart implements MenuItemAction {
 
     @Override
     public void onClick(MenuItemClick event) {
@@ -19,6 +20,7 @@ public class ActionShopPayment implements MenuItemAction {
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
+        ClickType clickType = event.getClickType();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
         
@@ -37,7 +39,11 @@ public class ActionShopPayment implements MenuItemAction {
                 return;
             }
 
-            Menus.SHOP_PAYMENT.open(whoClicked, cart);
+            if(clickType == ClickType.LEFT) {
+                Menus.SHOP_CART.open(whoClicked, cart);
+            } else if(clickType == ClickType.RIGHT) {
+                Menus.SHOP_CURRENCY.open(whoClicked, cart, activeMenu);
+            }
         });
     }
     

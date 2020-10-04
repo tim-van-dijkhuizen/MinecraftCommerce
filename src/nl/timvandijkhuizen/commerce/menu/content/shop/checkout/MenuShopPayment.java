@@ -13,7 +13,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopGateways;
+import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopGateways;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;

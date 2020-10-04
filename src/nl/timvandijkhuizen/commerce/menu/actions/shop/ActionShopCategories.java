@@ -1,29 +1,22 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions.shop;
+package nl.timvandijkhuizen.commerce.menu.actions.shop;
 
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.menu.Menus;
+import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
-import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopProducts implements MenuItemAction {
+public class ActionShopCategories implements MenuItemAction {
 
-    private Category category;
-    
-    public ActionShopProducts(Category category) {
-        this.category = category;
-    }
-    
     @Override
     public void onClick(MenuItemClick event) {
-        ProductService productService = Commerce.getInstance().getService("products");
+        CategoryService categoryService = Commerce.getInstance().getService("categories");
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
@@ -36,7 +29,7 @@ public class ActionShopProducts implements MenuItemAction {
         activeMenu.refresh();
 
         // Create menu
-        productService.getProducts(category, categories -> {
+        categoryService.getCategories(categories -> {
             if (categories == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));
@@ -54,9 +47,9 @@ public class ActionShopProducts implements MenuItemAction {
                     return;
                 }
                 
-                Menus.SHOP_PRODUCTS.open(whoClicked, category, categories, cart);
+                Menus.SHOP_CATEGORIES.open(whoClicked, categories, cart);
             });
         });
     }
-    
+
 }

@@ -12,7 +12,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopCart;
+import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopCart;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;

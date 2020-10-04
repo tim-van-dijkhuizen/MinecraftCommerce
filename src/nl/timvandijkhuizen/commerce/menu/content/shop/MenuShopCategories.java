@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
-import nl.timvandijkhuizen.commerce.menu.content.actions.shop.ActionShopProducts;
+import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopProducts;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
