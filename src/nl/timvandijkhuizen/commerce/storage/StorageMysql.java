@@ -989,6 +989,42 @@ public class StorageMysql extends Storage {
     /**
      * Gateways
      */
+    
+	@Override
+	public Gateway getGatewayById(int gatewayId) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM gateways WHERE id=? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+
+        statement.setInt(1, gatewayId);
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Gateway gateway = null;
+
+        if(result.next()) {
+            int id = result.getInt(1);
+            String displayName = result.getString(2);
+            String typeHandle = result.getString(3);
+            String json = result.getString(4);
+
+            // Get type by handle
+            GatewayType type = gatewayService.getTypeByHandle(typeHandle);
+            
+            if(type != null) {
+                GatewayConfig config = DbHelper.parseGatewayConfig(json, type);
+                gateway = new Gateway(id, displayName, type, config);
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return gateway;
+	}
 
     @Override
     public Set<Gateway> getGateways() throws Exception {

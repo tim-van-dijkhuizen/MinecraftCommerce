@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.gateways.paypal;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,13 +20,15 @@ import com.paypal.orders.OrderRequest;
 import com.paypal.orders.OrdersCreateRequest;
 import com.paypal.orders.PurchaseUnitRequest;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
-import nl.timvandijkhuizen.commerce.base.PaymentResponse;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
+import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
-import nl.timvandijkhuizen.commerce.elements.OrderPayment;
+import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
@@ -35,12 +38,8 @@ public class ClientPayPal implements GatewayClient {
 	
 	private PayPalEnvironment environment;
 	private PayPalHttpClient client;
-	private ApplicationContext context;
 	
-	public ClientPayPal(String clientId, String clientSecret, boolean testMode) {
-		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
-		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
-		
+	public ClientPayPal(String clientId, String clientSecret, boolean testMode) {		
 	    if(testMode) {
 	    	environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
 	    } else {
@@ -49,13 +48,6 @@ public class ClientPayPal implements GatewayClient {
 		
 	    // Create client
 	    client = new PayPalHttpClient(environment);
-	    
-	    // Create context
-		context = new ApplicationContext()
-			.brandName(optionServerName.getValue(pluginConfig))
-			.returnUrl(Commerce.createWebUrl("order/confirmation"))
-			.cancelUrl(Commerce.createWebUrl("order/cancelled"))
-			.landingPage("LOGIN");
 	}
     
     @Override
@@ -99,8 +91,21 @@ public class ClientPayPal implements GatewayClient {
 		OrderRequest requestBody = new OrderRequest();
 		
 		requestBody.checkoutPaymentIntent("CAPTURE");
-		requestBody.applicationContext(context);
 		requestBody.purchaseUnits(Arrays.asList(unit));
+		
+		// Set application context
+		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
+		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
+		
+		Gateway gateway = order.getGateway();
+		URL returnUrl = WebHelper.createWebUrl("order/confirmation?gatewayId=" + gateway.getId());
+		
+	    ApplicationContext context = new ApplicationContext()
+			.brandName(optionServerName.getValue(pluginConfig))
+			.returnUrl(returnUrl.toString())
+			.landingPage("LOGIN");
+	    
+	    requestBody.applicationContext(context);
 		
 		// Create request
 		OrdersCreateRequest request = new OrdersCreateRequest();
@@ -122,8 +127,8 @@ public class ClientPayPal implements GatewayClient {
     }
 
     @Override
-    public OrderPayment processWebhook(PaymentResponse response) throws Exception {
-        return null;
+    public FullHttpResponse handleWebRequest(FullHttpRequest response) throws Exception {
+        return WebHelper.createResponse("PayPal gateway response");
     }
 
 }

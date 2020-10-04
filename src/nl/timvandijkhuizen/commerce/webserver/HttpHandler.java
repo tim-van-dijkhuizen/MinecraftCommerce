@@ -1,11 +1,17 @@
 package nl.timvandijkhuizen.commerce.webserver;
 
+import java.net.URL;
+
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import nl.timvandijkhuizen.commerce.Commerce;
+import nl.timvandijkhuizen.commerce.base.GatewayClient;
+import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
@@ -14,22 +20,16 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         FullHttpResponse response;
-        HttpMethod method = request.method();
-        String uri = request.uri();
-
-        ConsoleHelper.printInfo("HTTP request " + method.name() + " " + uri);
-
-        if(method == HttpMethod.GET && uri.equals("/test")) {
-            response = WebHelper.createResponse(HttpResponseStatus.NOT_FOUND, "Not Found");
-        } else {
-            try {
-                response = WebHelper.createResponse("Hello World!");
-            } catch (Exception e) {
-                response = WebHelper.createResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-            }
+        
+        // Handle request and catch any errors
+        try {
+        	response = handleRequest(request);
+        } catch(Exception e) {
+        	ConsoleHelper.printError("An error occurred while handling a web request.", e);
+        	response = WebHelper.createResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, "An internal error occurred.");
         }
         
-        WebHelper.writeResponse(ctx, response);
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
     @Override
@@ -42,5 +42,29 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
+
+    private FullHttpResponse handleRequest(FullHttpRequest request) throws Exception {
+    	URL url = WebHelper.createWebUrl(request.uri());
+        QueryParameters queryParams = WebHelper.parseQuery(url);
         
+        // Get gatewayId parameter
+        Storage storage = Commerce.getInstance().getStorage();
+        Integer gatewayId = queryParams.getInteger("gatewayId");
+        
+        if(gatewayId != null) {
+        	Gateway gateway = storage.getGatewayById(gatewayId);
+        	
+        	if(gateway == null) {
+        		return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Invalid gateway.");
+        	}
+        	
+        	// Let gateway handle the response
+        	GatewayClient client = gateway.getClient();
+        	
+        	return client.handleWebRequest(request);
+        } else {
+        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required gatewayId parameter.");
+        }
+    }
+    
 }

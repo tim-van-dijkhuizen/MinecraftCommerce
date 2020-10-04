@@ -60,7 +60,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<Boolean> configDevMode;
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
-    private ConfigOption<String> configWebserverAddress;
+    private ConfigOption<String> configWebserverHost;
     private ConfigOption<Integer> configWebserverPort;
     private ConfigOption<File> configSslCertificate;
     private ConfigOption<File> configSslPrivateKey;
@@ -102,7 +102,7 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebserverAddress = new ConfigOption<>("general.webserverUrl", "Webserver Address", Material.COBWEB, ConfigTypes.DOMAIN)
+        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", Material.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
@@ -127,7 +127,7 @@ public class Commerce extends PluginBase {
         config.addOption(configDevMode);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
-        config.addOption(configWebserverAddress);
+        config.addOption(configWebserverHost);
         config.addOption(configWebserverPort);
         config.addOption(configSslCertificate);
         config.addOption(configSslPrivateKey);
@@ -205,30 +205,6 @@ public class Commerce extends PluginBase {
 
     public Storage getStorage() {
         return getService("storage");
-    }
-    
-	/**
-	 * Creates a formatted URL from the specified action.
-	 * Uses the configured webUrl and webPort as base 
-	 * and then adds the action at the end.
-	 * 
-	 * 1. Replace backspaces with regular slash.
-	 * 2. Remove trailing slash.
-	 * 3. Add port and trailing slash.
-	 * 
-	 * @param action
-	 * @return The formatted url
-	 */
-    public static String createWebUrl(String action) {
-    	Commerce plugin = Commerce.getInstance();
-    	YamlConfig config = plugin.getConfig();
-    	
-    	// Get configuration values
-    	String webUrl = plugin.configWebserverAddress.getValue(config);
-    	int webPort = plugin.configWebserverPort.getValue(config);
-    	
-    	// Return webUrl + action
-    	return "https://" + webUrl + ":" + webPort + "/" + action;
     }
 
 }

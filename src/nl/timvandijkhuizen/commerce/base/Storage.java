@@ -216,6 +216,14 @@ public abstract class Storage implements Service {
     public abstract void deleteLineItem(LineItem lineItem) throws Exception;
     
     /**
+     * Returns a gateway by its ID.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract Gateway getGatewayById(int gatewayId) throws Exception;
+    
+    /**
      * Returns all gateways.
      * 
      * @return

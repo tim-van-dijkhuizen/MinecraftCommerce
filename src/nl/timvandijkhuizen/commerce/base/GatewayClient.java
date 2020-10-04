@@ -1,7 +1,8 @@
 package nl.timvandijkhuizen.commerce.base;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.OrderPayment;
 
 public interface GatewayClient {
     
@@ -21,6 +22,6 @@ public interface GatewayClient {
      * @param response
      * @return Payment|null
      */
-    public OrderPayment processWebhook(PaymentResponse response) throws Exception;
+    public FullHttpResponse handleWebRequest(FullHttpRequest request) throws Exception;
 	
 }
