@@ -12,7 +12,7 @@ public interface GatewayClient {
      * @param order
      * @return string|null
      */
-    public String createPaymentUrl(Order order) throws Exception;
+    public PaymentUrl createPaymentUrl(Order order) throws Exception;
 
     /**
      * Processes a webhook response. Returns

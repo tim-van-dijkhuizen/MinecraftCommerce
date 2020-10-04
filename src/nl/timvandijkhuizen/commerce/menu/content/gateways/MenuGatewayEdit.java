@@ -206,7 +206,8 @@ public class MenuGatewayEdit implements PredefinedMenu {
                 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    new ActionGatewayList(false).onClick(event);
+                    saveButton.setLore("");
+                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.GATEWAY_EDIT.open(player, gateway);

@@ -322,7 +322,8 @@ public class MenuProductEdit implements PredefinedMenu {
                 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    new ActionProductList(false).onClick(event);
+                    saveButton.setLore("");
+                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.PRODUCT_EDIT.open(player, product);

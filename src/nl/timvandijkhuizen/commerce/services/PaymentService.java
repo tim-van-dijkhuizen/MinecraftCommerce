@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce.services;
 import java.util.function.Consumer;
 
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
+import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -16,7 +17,7 @@ public class PaymentService extends BaseService {
         return "payments";
     }
     
-    public void createPaymentUrl(Order order, Consumer<String> callback) {
+    public void createPaymentUrl(Order order, Consumer<PaymentUrl> callback) {
     	Gateway gateway = order.getGateway();
         
     	// Make sure the gateway was set

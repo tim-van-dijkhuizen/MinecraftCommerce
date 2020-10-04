@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import nl.timvandijkhuizen.commerce.base.Element;
+import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -25,11 +26,11 @@ public class Order extends Element {
     private DataList<LineItem> lineItems;
     private OrderFieldData fieldData;
     private Gateway gateway;
+    private PaymentUrl paymentUrl;
     
-    private String paymentUrl;
     private boolean updatePaymentUrl;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, String paymentUrl) {
+    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
         this.setId(id);
         this.number = number;
         this.playerUniqueId = playerUniqueId;
@@ -177,11 +178,11 @@ public class Order extends Element {
     	this.gateway = gateway;
     }
     
-    public String getPaymentUrl() {
+    public PaymentUrl getPaymentUrl() {
         return paymentUrl;
     }
     
-    public void setPaymentUrl(String paymentUrl) {
+    public void setPaymentUrl(PaymentUrl paymentUrl) {
         this.paymentUrl = paymentUrl;
         this.updatePaymentUrl = true;
     }

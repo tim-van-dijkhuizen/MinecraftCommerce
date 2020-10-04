@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
+import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
@@ -104,11 +105,11 @@ public class MenuShopPayment implements PredefinedMenu {
 
         payButton.setClickListener(event -> {
             if(cartValid && accepted.get()) {
-                String cachedUrl = cart.getPaymentUrl();
+                PaymentUrl cachedUrl = cart.getPaymentUrl();
                 
                 // Return cached URL if we've got one
-                if(cachedUrl != null) {
-                    sendPaymentUrl(player, menu, cachedUrl);
+                if(cachedUrl != null && !cachedUrl.hasExpired()) {
+                    sendPaymentUrl(player, menu, cachedUrl.getUrl());
                     return;
                 }
                 
@@ -128,7 +129,7 @@ public class MenuShopPayment implements PredefinedMenu {
                             
                             if(success) {
                                 payActionLore.set(null);
-                                sendPaymentUrl(player, menu, url);
+                                sendPaymentUrl(player, menu, url.getUrl());
                             } else {
                                 UI.playSound(player, UI.SOUND_ERROR);
                                 payActionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));

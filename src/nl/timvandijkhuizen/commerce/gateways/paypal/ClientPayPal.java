@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce.gateways.paypal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.paypal.core.PayPalEnvironment;
 import com.paypal.core.PayPalHttpClient;
@@ -21,6 +22,7 @@ import com.paypal.orders.PurchaseUnitRequest;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.PaymentResponse;
+import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.OrderPayment;
@@ -29,6 +31,8 @@ import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class ClientPayPal implements GatewayClient {
 
+	public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
+	
 	private PayPalEnvironment environment;
 	private PayPalHttpClient client;
 	private ApplicationContext context;
@@ -55,7 +59,7 @@ public class ClientPayPal implements GatewayClient {
 	}
     
     @Override
-    public String createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Exception {
+    public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Exception {
     	PurchaseUnitRequest unit = new PurchaseUnitRequest();
     	String currency = order.getCurrency().getCode();
     	String totalPrice = String.valueOf(order.getTotal());
@@ -112,7 +116,7 @@ public class ClientPayPal implements GatewayClient {
 		
 		return links.stream()
 			.filter(link -> link.rel().equals("approve"))
-			.map(link -> link.href())
+			.map(link -> new PaymentUrl(link.href(), System.currentTimeMillis() + URL_TTL))
 			.findFirst()
 			.orElse(null);
     }

@@ -259,7 +259,8 @@ public class MenuFieldEdit implements PredefinedMenu {
                 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    new ActionFieldList(false).onClick(event);
+                    saveButton.setLore("");
+                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.FIELD_EDIT.open(player, field);

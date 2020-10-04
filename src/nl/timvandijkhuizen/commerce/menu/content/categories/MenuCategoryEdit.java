@@ -200,7 +200,8 @@ public class MenuCategoryEdit implements PredefinedMenu {
                 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
-                    new ActionCategoryList(false).onClick(event);
+                    saveButton.setLore("");
+                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     Menus.CATEGORY_EDIT.open(player, category);

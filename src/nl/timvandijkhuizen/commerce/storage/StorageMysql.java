@@ -20,6 +20,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
+import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
@@ -163,6 +164,7 @@ public class StorageMysql extends Storage {
             + "fields JSON NOT NULL,"
             + "gatewayId INTEGER,"
             + "paymentUrl VARCHAR(255),"
+            + "paymentUrlExpire BIGINT,"
             + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
         + ");");
         
@@ -620,7 +622,7 @@ public class StorageMysql extends Storage {
     @Override
     public Order getCart(UUID uuid) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, "
+        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.playerUniqueId=? AND orders.completed=0 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -645,7 +647,6 @@ public class StorageMysql extends Storage {
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
             OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
-            String paymentUrl = result.getString(8);
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -654,10 +655,10 @@ public class StorageMysql extends Storage {
                 .orElse(null);
             
             // Get Gateway
-            Integer gatewayId = result.getInt(9);
-            String gatewayDisplayName = result.getString(10);
-            String gatewayTypeHandle = result.getString(11);
-            String gatewayJson = result.getString(12);
+            Integer gatewayId = result.getInt(10);
+            String gatewayDisplayName = result.getString(11);
+            String gatewayTypeHandle = result.getString(12);
+            String gatewayJson = result.getString(13);
             Gateway gateway = null;
             
             if(gatewayId != null) {
@@ -667,6 +668,15 @@ public class StorageMysql extends Storage {
                     GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
                     gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
                 }
+            }
+            
+            // Get payment URL
+            String paymentUrlRaw = result.getString(8);
+            long paymentUrlExpire = result.getLong(9);
+            PaymentUrl paymentUrl = null;
+            
+            if(paymentUrlRaw != null) {
+            	paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
             }
             
             if(currency != null) {
@@ -691,7 +701,7 @@ public class StorageMysql extends Storage {
     @Override
     public Set<Order> getOrders() throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, "
+        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -714,7 +724,6 @@ public class StorageMysql extends Storage {
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
             OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
-            String paymentUrl = result.getString(8);
 
             // Get currency
             StoreCurrency currency = currencies.stream()
@@ -728,10 +737,10 @@ public class StorageMysql extends Storage {
             }
             
             // Get Gateway
-            Integer gatewayId = result.getInt(9);
-            String gatewayDisplayName = result.getString(10);
-            String gatewayTypeHandle = result.getString(11);
-            String gatewayJson = result.getString(12);
+            Integer gatewayId = result.getInt(10);
+            String gatewayDisplayName = result.getString(11);
+            String gatewayTypeHandle = result.getString(12);
+            String gatewayJson = result.getString(13);
             Gateway gateway = null;
             
             if(gatewayId != null) {
@@ -741,6 +750,15 @@ public class StorageMysql extends Storage {
                     GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
                     gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
                 }
+            }
+            
+            // Get payment URL
+            String paymentUrlRaw = result.getString(8);
+            long paymentUrlExpire = result.getLong(9);
+            PaymentUrl paymentUrl = null;
+            
+            if(paymentUrlRaw != null) {
+            	paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
             }
             
             // Get LineItems's
@@ -762,9 +780,10 @@ public class StorageMysql extends Storage {
     @Override
     public void createOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         Gateway gateway = order.getGateway();
+        PaymentUrl paymentUrl = order.getPaymentUrl();
         
         // Set arguments
         statement.setString(1, order.getNumber());
@@ -780,7 +799,13 @@ public class StorageMysql extends Storage {
             statement.setNull(7, Types.INTEGER);
         }
         
-        statement.setString(8, order.getPaymentUrl());
+        if(paymentUrl != null) {
+            statement.setString(8, paymentUrl.getUrl());
+            statement.setLong(9, paymentUrl.getExpiryTime());
+        } else {
+        	statement.setNull(8, Types.VARCHAR);
+        	statement.setNull(9, Types.BIGINT);
+        }
 
         // Execute query
         statement.executeUpdate();
@@ -801,9 +826,10 @@ public class StorageMysql extends Storage {
     @Override
     public void updateOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=? WHERE id=?;";
+        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
         Gateway gateway = order.getGateway();
+        PaymentUrl paymentUrl = order.getPaymentUrl();
 
         // Set arguments
         statement.setString(1, order.getNumber());
@@ -819,8 +845,15 @@ public class StorageMysql extends Storage {
             statement.setNull(7, Types.INTEGER);
         }
         
-        statement.setString(8, order.getPaymentUrl());
-        statement.setInt(9, order.getId());
+        if(paymentUrl != null) {
+            statement.setString(8, paymentUrl.getUrl());
+            statement.setLong(9, paymentUrl.getExpiryTime());
+        } else {
+        	statement.setNull(8, Types.VARCHAR);
+        	statement.setNull(9, Types.BIGINT);
+        }
+        
+        statement.setInt(10, order.getId());
 
         // Execute query
         statement.execute();
