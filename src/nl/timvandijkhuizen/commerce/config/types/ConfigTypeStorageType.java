@@ -13,6 +13,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -55,9 +56,10 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
     }
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, Player player, Consumer<StorageType> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuItemClick event, Consumer<StorageType> callback) {
         PagedMenu menu = new PagedMenu("Select StorageType", 3, 7, 1, 1);
         StorageType selected = getValue(config, option);
+        Player player = event.getPlayer();
 
         for (StorageType type : availableTypes) {
             MenuItemBuilder item = new MenuItemBuilder(Material.BARREL);
@@ -68,7 +70,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
                 item.addEnchantGlow();
             }
             
-            item.setClickListener(event -> {
+            item.setClickListener(itemClick -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(type);
             });

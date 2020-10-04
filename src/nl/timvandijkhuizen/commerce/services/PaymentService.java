@@ -8,8 +8,8 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class PaymentService extends BaseService {
@@ -35,9 +35,9 @@ public class PaymentService extends BaseService {
             	GatewayClient client = gateway.getClient();
             	String url = client.createPaymentUrl(order);
             	
-                MainThread.execute(() -> callback.accept(url));
+                ThreadHelper.execute(() -> callback.accept(url));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to create payment url", e);
             }
         });

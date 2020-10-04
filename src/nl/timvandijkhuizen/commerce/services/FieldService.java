@@ -15,9 +15,9 @@ import nl.timvandijkhuizen.commerce.events.RegisterFieldTypesEvent;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeBoolean;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeInteger;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeString;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class FieldService extends BaseService {
@@ -64,9 +64,9 @@ public class FieldService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Field> fields = storage.getFields();
-                MainThread.execute(() -> callback.accept(fields));
+                ThreadHelper.execute(() -> callback.accept(fields));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load fields: " + e.getMessage(), e);
             }
         });
@@ -103,9 +103,9 @@ public class FieldService extends BaseService {
                     .collect(Collectors.toCollection(LinkedHashSet::new));
                 
                 // Execute callback
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to create/update field: " + e.getMessage(), e);
             }
         });
@@ -131,9 +131,9 @@ public class FieldService extends BaseService {
                     .collect(Collectors.toCollection(LinkedHashSet::new));
                 
                 // Execute callback
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to delete field: " + e.getMessage(), e);
             }
         });

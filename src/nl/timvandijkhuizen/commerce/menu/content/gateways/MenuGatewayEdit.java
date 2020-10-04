@@ -15,7 +15,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionGatewayList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionGatewayList;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;

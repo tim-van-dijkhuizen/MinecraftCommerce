@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Category;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class CategoryService extends BaseService {
@@ -30,9 +30,9 @@ public class CategoryService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Category> categories = storage.getCategories();
-                MainThread.execute(() -> callback.accept(categories));
+                ThreadHelper.execute(() -> callback.accept(categories));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load categories: " + e.getMessage(), e);
             }
         });
@@ -63,9 +63,9 @@ public class CategoryService extends BaseService {
                     storage.updateCategory(category);
                 }
 
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to create/update category: " + e.getMessage(), e);
             }
         });
@@ -84,9 +84,9 @@ public class CategoryService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteCategory(category);
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to delete category: " + e.getMessage(), e);
             }
         });

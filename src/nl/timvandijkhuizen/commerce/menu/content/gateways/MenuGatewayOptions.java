@@ -33,7 +33,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
             
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
-            item.setLore(() -> {
+            item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
                 
                 if(!option.isValueEmpty(config)) {
@@ -52,7 +52,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 
-                option.getValueInput(config, player, value -> {
+                option.getValueInput(config, event, value -> {
                     option.setValue(config, value);
                     menu.open(player);
                 });

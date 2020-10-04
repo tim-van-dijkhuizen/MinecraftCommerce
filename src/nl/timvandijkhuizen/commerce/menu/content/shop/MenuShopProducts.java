@@ -45,7 +45,7 @@ public class MenuShopProducts implements PredefinedMenu {
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            item.setLore(() -> {
+            item.setLoreGenerator(() -> {
                 String[] description = WordUtils.wrap(product.getDescription(), 40).split("\n");
                 List<String> lore = new ArrayList<>();
                 

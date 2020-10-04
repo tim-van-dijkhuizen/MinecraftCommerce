@@ -13,11 +13,11 @@ import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class OrderService extends BaseService {
@@ -46,9 +46,9 @@ public class OrderService extends BaseService {
                     return;
                 }
                 
-                MainThread.execute(() -> callback.accept(cart));
+                ThreadHelper.execute(() -> callback.accept(cart));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load cart: " + e.getMessage(), e);
             }
         });
@@ -83,9 +83,9 @@ public class OrderService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Order> orders = storage.getOrders();
-                MainThread.execute(() -> callback.accept(orders));
+                ThreadHelper.execute(() -> callback.accept(orders));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load orders: " + e.getMessage(), e);
             }
         });
@@ -148,9 +148,9 @@ public class OrderService extends BaseService {
                 // Clear pending
                 lineItems.clearPending();;
                 
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to create/update order: " + e.getMessage(), e);
             }
         });
@@ -169,9 +169,9 @@ public class OrderService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteOrder(order);
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to delete order: " + e.getMessage(), e);
             }
         });

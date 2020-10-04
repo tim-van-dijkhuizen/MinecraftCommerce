@@ -11,8 +11,8 @@ import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
 import nl.timvandijkhuizen.commerce.gateways.paypal.GatewayPayPal;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class GatewayService extends BaseService {
@@ -45,9 +45,9 @@ public class GatewayService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Gateway> gateways = storage.getGateways();
-                MainThread.execute(() -> callback.accept(gateways));
+                ThreadHelper.execute(() -> callback.accept(gateways));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load gateways: " + e.getMessage(), e);
             }
         });
@@ -78,9 +78,9 @@ public class GatewayService extends BaseService {
                     storage.updateGateway(gateway);
                 }
 
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to create/update gateway: " + e.getMessage(), e);
             }
         });
@@ -99,9 +99,9 @@ public class GatewayService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteGateway(gateway);
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to delete gateway: " + e.getMessage(), e);
             }
         });

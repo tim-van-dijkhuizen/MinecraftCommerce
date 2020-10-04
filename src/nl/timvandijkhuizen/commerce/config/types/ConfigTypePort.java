@@ -14,13 +14,15 @@ import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeInteger;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ConfigTypePort extends ConfigTypeInteger {
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<Integer> option, Player player, Consumer<Integer> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<Integer> option, MenuItemClick event, Consumer<Integer> callback) {
         ConversationFactory factory = new ConversationFactory(PluginBase.getInstance());
+        Player player = event.getPlayer();
 
         Conversation conversation = factory.withFirstPrompt(new NumericPrompt() {
             @Override

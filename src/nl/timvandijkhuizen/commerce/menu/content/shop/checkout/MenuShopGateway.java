@@ -41,7 +41,7 @@ public class MenuShopGateway implements PredefinedMenu {
             
             item.setName(UI.color(gateway.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
-            item.setLore(() -> {
+            item.setLoreGenerator(() -> {
             	List<String> lore = new ArrayList<>();
             	
             	if(actionLore.get() != null) {
@@ -55,7 +55,7 @@ public class MenuShopGateway implements PredefinedMenu {
         		return lore;
             });
             
-            item.setEnchantmentGlow(() -> gateway.equals(cart.getGateway()));
+            item.setGlowGenerator(() -> gateway.equals(cart.getGateway()));
             
             // Set click listener
             item.setClickListener(event -> {
@@ -103,7 +103,7 @@ public class MenuShopGateway implements PredefinedMenu {
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         
-        nextButton.setLore(() -> {
+        nextButton.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
 
             lore.add(UI.color("Payment", UI.COLOR_TEXT));

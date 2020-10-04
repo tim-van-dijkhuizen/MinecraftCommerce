@@ -1,29 +1,29 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions;
+package nl.timvandijkhuizen.commerce.menu.actions;
 
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionFieldList implements MenuItemAction {
+public class ActionGatewayList implements MenuItemAction {
 
     private boolean clickSound = true;
     
-    public ActionFieldList(boolean clickSound) {
+    public ActionGatewayList(boolean clickSound) {
         this.clickSound = clickSound;
     }
     
-    public ActionFieldList() { }
+    public ActionGatewayList() { }
     
     @Override
     public void onClick(MenuItemClick event) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
@@ -37,17 +37,17 @@ public class ActionFieldList implements MenuItemAction {
         activeMenu.refresh();
 
         // Create menu
-        fieldService.getFields(fields -> {
+        gatewayService.getGateways(gateways -> {
             activeMenu.enableButtons();
             
-            if (fields == null) {
+            if (gateways == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
-                clickedItem.setLore(UI.color("Error: Failed to load fields.", UI.COLOR_ERROR));
+                clickedItem.setLore(UI.color("Error: Failed to load gateways.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }
 
-            Menus.FIELD_LIST.open(whoClicked, fields);
+            Menus.GATEWAY_LIST.open(whoClicked, gateways);
         });
     }
 

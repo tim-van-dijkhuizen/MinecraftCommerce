@@ -11,10 +11,10 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
@@ -42,7 +42,7 @@ public class MenuConfig implements PredefinedMenu {
             
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            item.setLore(() -> {
+            item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
                 
                 if(!option.isValueEmpty(config)) {
@@ -66,7 +66,7 @@ public class MenuConfig implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 
-                option.getValueInput(config, player, value -> {
+                option.getValueInput(config, event, value -> {
                     option.setValue(config, value);
                     menu.open(player);
                 });
@@ -99,7 +99,7 @@ public class MenuConfig implements PredefinedMenu {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 config.save();
                 
-                MainThread.execute(() -> {
+                ThreadHelper.execute(() -> {
                     plugin.reload();
                     
                     // Check for errors

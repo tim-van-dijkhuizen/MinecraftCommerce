@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionCategoryList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionCategoryList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;

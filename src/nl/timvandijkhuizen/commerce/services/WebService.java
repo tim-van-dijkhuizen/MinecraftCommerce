@@ -30,20 +30,23 @@ public class WebService extends BaseService {
 	
     @Override
     public void init() throws Exception {
-        bootstrap = new ServerBootstrap();
+    	YamlConfig config = Commerce.getInstance().getConfig();
         
         // Create SSL context
-        File folder = Commerce.getInstance().getDataFolder();
-        File certChain = new File(folder, "certs/cert.pem");
-        File certKey = new File(folder, "certs/privkey.pem");
+        ConfigOption<File> optionSslCert = config.getOption("general.sslCertificate");
+        ConfigOption<File> optionSslKey = config.getOption("general.sslPrivateKey");
+        SslContext sslContext = null;
         
-        if(!certChain.exists() || !certKey.exists()) {
-            throw new Exception("Certificate files are missing");
+        if(!optionSslCert.isValueEmpty(config) && !optionSslCert.isValueEmpty(config)) {
+        	sslContext = SslContextBuilder.forServer(
+    			optionSslCert.getValue(config),
+    			optionSslKey.getValue(config)
+    		).build();
         }
-
-        SslContext sslContext = SslContextBuilder.forServer(certChain, certKey).build();
         
         // Configure server
+        bootstrap = new ServerBootstrap();
+        
         bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
         bootstrap.group(THREAD_GROUP);
@@ -53,7 +56,6 @@ public class WebService extends BaseService {
         bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
         
         // Bind to configured port
-        YamlConfig config = Commerce.getInstance().getConfig();
         ConfigOption<Integer> optionPort = config.getOption("general.webserverPort");
         int port = optionPort.getValue(config);
         

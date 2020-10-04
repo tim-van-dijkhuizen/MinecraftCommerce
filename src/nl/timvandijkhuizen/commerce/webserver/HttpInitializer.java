@@ -21,7 +21,12 @@ public class HttpInitializer extends ChannelInitializer<SocketChannel> {
 	public void initChannel(SocketChannel ch) {
 		ChannelPipeline pipeline = ch.pipeline();
 		
-        pipeline.addLast("ssl", new OptionalSslHandler(sslContext));
+        // Add SSL if its enabled
+		if(sslContext != null) {
+			pipeline.addLast("ssl", new OptionalSslHandler(sslContext));
+		}
+		
+		// Add other handlers
 		pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
 		pipeline.addLast("aggregator", new HttpObjectAggregator(100 * 1024 * 1024));
 		pipeline.addLast("encoder", new HttpResponseEncoder());

@@ -16,7 +16,7 @@ import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionProductList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionProductList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;

@@ -46,7 +46,7 @@ public class MenuShopFields implements PredefinedMenu {
             
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             
-            item.setLore(() -> {
+            item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
                 
                 // Return action lore if not null
@@ -85,7 +85,7 @@ public class MenuShopFields implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
 
-                option.getValueInput(fieldData, player, value -> {
+                option.getValueInput(fieldData, event, value -> {
                     option.setValue(fieldData, value);
                     
                     actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
@@ -127,7 +127,7 @@ public class MenuShopFields implements PredefinedMenu {
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         
-        nextButton.setLore(() -> {
+        nextButton.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
             
             lore.add(UI.color("Gateway", UI.COLOR_TEXT));

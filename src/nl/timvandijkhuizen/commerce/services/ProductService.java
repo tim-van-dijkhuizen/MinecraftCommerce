@@ -17,10 +17,10 @@ import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.events.RegisterCommandVariablesEvent;
 import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
 import nl.timvandijkhuizen.commerce.variables.VariableUsername;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class ProductService extends BaseService {
@@ -54,9 +54,9 @@ public class ProductService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Product> products = storage.getProducts(null);
-                MainThread.execute(() -> callback.accept(products));
+                ThreadHelper.execute(() -> callback.accept(products));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
             }
         });
@@ -73,9 +73,9 @@ public class ProductService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 Set<Product> products = storage.getProducts(category);
-                MainThread.execute(() -> callback.accept(products));
+                ThreadHelper.execute(() -> callback.accept(products));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(null));
+                ThreadHelper.execute(() -> callback.accept(null));
                 ConsoleHelper.printError("Failed to load products: " + e.getMessage(), e);
             }
         });
@@ -125,9 +125,9 @@ public class ProductService extends BaseService {
                 // Remove pending from data list
                 commands.clearPending();
                 
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to create/update product: " + e.getMessage(), e);
             }
         });
@@ -146,9 +146,9 @@ public class ProductService extends BaseService {
         Bukkit.getScheduler().runTaskAsynchronously(Commerce.getInstance(), () -> {
             try {
                 storage.deleteProduct(product);
-                MainThread.execute(() -> callback.accept(true));
+                ThreadHelper.execute(() -> callback.accept(true));
             } catch (Exception e) {
-                MainThread.execute(() -> callback.accept(false));
+                ThreadHelper.execute(() -> callback.accept(false));
                 ConsoleHelper.printError("Failed to delete product: " + e.getMessage(), e);
             }
         });

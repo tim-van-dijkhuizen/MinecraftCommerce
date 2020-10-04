@@ -44,7 +44,7 @@ public class ShopHelper {
         
         item.setName(UI.color("Cart", UI.COLOR_PRIMARY, ChatColor.BOLD));
         
-        item.setLore(() -> {
+        item.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
             
             lore.add(UI.color("Items:", UI.COLOR_TEXT));

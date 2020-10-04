@@ -15,6 +15,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -56,9 +57,10 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     }
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<StoreCurrency> option, Player player, Consumer<StoreCurrency> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<StoreCurrency> option, MenuItemClick event, Consumer<StoreCurrency> callback) {
         PagedMenu menu = new PagedMenu("Select Currency", 3, 7, 1, 1);
         StoreCurrency selected = getValue(config, option);
+        Player player = event.getPlayer();
 
         // Get available currencies
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
@@ -76,7 +78,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
                 item.addEnchantGlow();
             }
             
-            item.setClickListener(event -> {
+            item.setClickListener(itemClick -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(currency);
             });

@@ -5,11 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionCategoryList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionFieldList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionGatewayList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionOrderList;
-import nl.timvandijkhuizen.commerce.menu.content.actions.ActionProductList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionCategoryList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionFieldList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionGatewayList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionOrderList;
+import nl.timvandijkhuizen.commerce.menu.actions.ActionProductList;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;

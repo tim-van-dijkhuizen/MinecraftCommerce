@@ -1,29 +1,29 @@
-package nl.timvandijkhuizen.commerce.menu.content.actions;
+package nl.timvandijkhuizen.commerce.menu.actions;
 
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.ProductService;
+import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionProductList implements MenuItemAction {
+public class ActionFieldList implements MenuItemAction {
 
     private boolean clickSound = true;
     
-    public ActionProductList(boolean clickSound) {
+    public ActionFieldList(boolean clickSound) {
         this.clickSound = clickSound;
     }
     
-    public ActionProductList() { }
+    public ActionFieldList() { }
     
     @Override
     public void onClick(MenuItemClick event) {
-        ProductService productService = Commerce.getInstance().getService("products");
+        FieldService fieldService = Commerce.getInstance().getService("fields");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
@@ -37,17 +37,17 @@ public class ActionProductList implements MenuItemAction {
         activeMenu.refresh();
 
         // Create menu
-        productService.getProducts(products -> {
+        fieldService.getFields(fields -> {
             activeMenu.enableButtons();
             
-            if (products == null) {
+            if (fields == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
-                clickedItem.setLore(UI.color("Error: Failed to load products.", UI.COLOR_ERROR));
+                clickedItem.setLore(UI.color("Error: Failed to load fields.", UI.COLOR_ERROR));
                 activeMenu.refresh();
                 return;
             }
 
-            Menus.PRODUCT_LIST.open(whoClicked, products);
+            Menus.FIELD_LIST.open(whoClicked, fields);
         });
     }
 

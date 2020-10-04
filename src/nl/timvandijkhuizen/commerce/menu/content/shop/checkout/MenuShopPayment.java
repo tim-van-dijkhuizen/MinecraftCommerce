@@ -83,7 +83,7 @@ public class MenuShopPayment implements PredefinedMenu {
 
         payButton.setName(UI.color("Pay using " + gatewayName, UI.COLOR_PRIMARY, ChatColor.BOLD));
         
-        payButton.setLore(() -> {
+        payButton.setLoreGenerator(() -> {
         	List<String> lore = new ArrayList<>();
         	
         	if(payActionLore.get() != null) {

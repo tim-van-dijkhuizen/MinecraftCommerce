@@ -1,11 +1,13 @@
 package nl.timvandijkhuizen.commerce;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bukkit.Material;
@@ -28,16 +30,17 @@ import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.commerce.services.UserService;
 import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.storage.StorageMysql;
-import nl.timvandijkhuizen.spigotutils.MainThread;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeFile;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeString;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
@@ -55,16 +58,18 @@ public class Commerce extends PluginBase {
     // Configuration options
     private ConfigOption<String> configServerName;
     private ConfigOption<Boolean> configDevMode;
-    private ConfigOption<StorageType> configStorageType;
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
     private ConfigOption<String> configWebserverAddress;
     private ConfigOption<Integer> configWebserverPort;
+    private ConfigOption<File> configSslCertificate;
+    private ConfigOption<File> configSslPrivateKey;
+    private ConfigOption<StorageType> configStorageType;
 
     @Override
     public void init() throws Exception {
         instance = this;
-        MainThread.setPlugin(this);
+        ThreadHelper.setPlugin(this);
         
         // Register storage types
         RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
@@ -79,6 +84,8 @@ public class Commerce extends PluginBase {
         config = new YamlConfig(this);
         
         // Create options
+        ConfigTypeFile configTypeCert = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.pem$") });
+        
         configServerName = new ConfigOption<>("general.serverName", "Server Name", Material.PAPER, new ConfigTypeString())
             .setRequired(true)
             .setDefaultValue("Minecraft Commerce");
@@ -104,6 +111,12 @@ public class Commerce extends PluginBase {
             .setDefaultValue(8080)
             .setMeta(new DataArguments(true));
         
+        configSslCertificate = new ConfigOption<>("general.sslCertificate", "SSL Certificate", Material.TRIPWIRE_HOOK, configTypeCert)
+            .setMeta(new DataArguments(true));
+        
+        configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", Material.TRIPWIRE_HOOK, configTypeCert)
+            .setMeta(new DataArguments(true));
+        
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType(storageTypes))
             .setRequired(true)
             .setDefaultValue(typeMysql)
@@ -116,6 +129,8 @@ public class Commerce extends PluginBase {
         config.addOption(configBaseCurrency);
         config.addOption(configWebserverAddress);
         config.addOption(configWebserverPort);
+        config.addOption(configSslCertificate);
+        config.addOption(configSslPrivateKey);
         config.addOption(configStorageType);
         
         // Make sure all options exist
