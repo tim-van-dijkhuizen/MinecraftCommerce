@@ -24,7 +24,7 @@ public class MenuCategoryIcon implements PredefinedMenu {
         Category category = args.get(0);
         Material selected = category.getIcon();
 
-        for (Material icon : Commerce.MENU_ICONS) {
+        for (Material icon : Commerce.MATERIAL_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
 
             item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.COLOR_PRIMARY, ChatColor.BOLD));
