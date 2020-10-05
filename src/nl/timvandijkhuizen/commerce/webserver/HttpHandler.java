@@ -53,7 +53,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         UUID uniqueId = queryParams.getUUID("order");
         
         if(uniqueId != null) {
-        	Order order = storage.getOrderByUUID(uniqueId);
+        	Order order = storage.getOrderByUniqueId(uniqueId);
         	Gateway gateway = order != null ? order.getGateway() : null;
         	
         	if(order == null || gateway == null) {

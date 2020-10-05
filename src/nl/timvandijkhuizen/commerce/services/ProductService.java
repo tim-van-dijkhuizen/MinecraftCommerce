@@ -15,8 +15,9 @@ import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.events.RegisterCommandVariablesEvent;
+import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
+import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
 import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
-import nl.timvandijkhuizen.commerce.variables.VariableUsername;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -36,10 +37,11 @@ public class ProductService extends BaseService {
     public void init() throws Exception {
         RegisterCommandVariablesEvent event = new RegisterCommandVariablesEvent();
 
-        event.addVariable(VariableUsername.class);
         event.addVariable(VariableUniqueId.class);
+        event.addVariable(VariablePlayerUsername.class);
+        event.addVariable(VariablePlayerUniqueId.class);
+        
         Bukkit.getServer().getPluginManager().callEvent(event);
-
         commandVariables = event.getVariables();
     }
 

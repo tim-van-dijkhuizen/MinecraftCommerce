@@ -156,7 +156,7 @@ public class StorageMysql extends Storage {
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "number CHAR(36) NOT NULL,"
+            + "number CHAR(36) UNIQUE NOT NULL,"
             + "playerUniqueId CHAR(36) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"
@@ -184,7 +184,7 @@ public class StorageMysql extends Storage {
         + ");");
 
         PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
-            + "uuid CHAR(36) PRIMARY KEY,"
+            + "playerUniqueId CHAR(36) PRIMARY KEY,"
             + "preferences JSON NOT NULL"
         + ");");
         
@@ -622,71 +622,19 @@ public class StorageMysql extends Storage {
     @Override
     public Order getCart(UUID playerUniqueId) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uuid, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.playerUniqueId=? AND orders.completed=0 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
 
         statement.setString(1, playerUniqueId.toString());
-        
-        // Get currencies
-        YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(config);
         
         // Get result
         ResultSet result = statement.executeQuery();
         Order order = null;
 
         if (result.next()) {
-            int id = result.getInt(1);
-            UUID uuid = UUID.fromString(result.getString(2));
-            String playerName = result.getString(4);
-            String currencyCode = result.getString(5);
-            boolean completed = result.getBoolean(6);
-            OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
-
-            // Get currency
-            StoreCurrency currency = currencies.stream()
-                .filter(i -> i.getCode().equals(currencyCode))
-                .findFirst()
-                .orElse(null);
-            
-            // Get Gateway
-            Integer gatewayId = result.getInt(10);
-            String gatewayDisplayName = result.getString(11);
-            String gatewayTypeHandle = result.getString(12);
-            String gatewayJson = result.getString(13);
-            Gateway gateway = null;
-            
-            if(gatewayId != null) {
-                GatewayType gatewayType = gatewayService.getTypeByHandle(gatewayTypeHandle);
-                
-                if(gatewayType != null) {
-                    GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
-                    gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
-                }
-            }
-            
-            // Get payment URL
-            String paymentUrlRaw = result.getString(8);
-            long paymentUrlExpire = result.getLong(9);
-            PaymentUrl paymentUrl = null;
-            
-            if(paymentUrlRaw != null) {
-            	paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
-            }
-            
-            if(currency != null) {
-                Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
-                DataList<LineItem> lineItems = new DataList<>(rawLineItems);
-                
-                // Add order to list
-                order = new Order(id, uuid, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl);
-            } else {
-                ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
-            }
+            order = parseOrder(result);
         }
 
         // Cleanup
@@ -698,80 +646,49 @@ public class StorageMysql extends Storage {
     }
     
     @Override
-    public Order getOrderByUUID(UUID uuid) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    public Order getOrderByUniqueId(UUID uniqueId) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+    		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+    		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.uniqueId=? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uniqueId.toString());
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Order order = null;
+
+        if (result.next()) {
+            order = parseOrder(result);
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return order;
     }
     
     @Override
     public Set<Order> getOrders() throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uuid, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
-
-        // Get currencies
-        YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(config);
         
         // Get result
         ResultSet result = statement.executeQuery();
         Set<Order> orders = new LinkedHashSet<>();
 
         while (result.next()) {
-            int id = result.getInt(1);
-            UUID uuid = UUID.fromString(result.getString(2));
-            UUID playerUniqueId = UUID.fromString(result.getString(3));
-            String playerName = result.getString(4);
-            String currencyCode = result.getString(5);
-            boolean completed = result.getBoolean(6);
-            OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
-
-            // Get currency
-            StoreCurrency currency = currencies.stream()
-                .filter(i -> i.getCode().equals(currencyCode))
-                .findFirst()
-                .orElse(null);
+            Order order = parseOrder(result);
             
-            if(currency == null) {
-                ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
-                continue;
+            if(order != null) {
+            	orders.add(order);
             }
-            
-            // Get Gateway
-            Integer gatewayId = result.getInt(10);
-            String gatewayDisplayName = result.getString(11);
-            String gatewayTypeHandle = result.getString(12);
-            String gatewayJson = result.getString(13);
-            Gateway gateway = null;
-            
-            if(gatewayId != null) {
-                GatewayType gatewayType = gatewayService.getTypeByHandle(gatewayTypeHandle);
-                
-                if(gatewayType != null) {
-                    GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
-                    gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
-                }
-            }
-            
-            // Get payment URL
-            String paymentUrlRaw = result.getString(8);
-            long paymentUrlExpire = result.getLong(9);
-            PaymentUrl paymentUrl = null;
-            
-            if(paymentUrlRaw != null) {
-            	paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
-            }
-            
-            // Get LineItems's
-            Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
-            DataList<LineItem> lineItems = new DataList<>(rawLineItems);
-            
-            // Add order to list
-            orders.add(new Order(id, uuid, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl));
         }
 
         // Cleanup
@@ -785,7 +702,7 @@ public class StorageMysql extends Storage {
     @Override
     public void createOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (uuid, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         Gateway gateway = order.getGateway();
         PaymentUrl paymentUrl = order.getPaymentUrl();
@@ -831,7 +748,7 @@ public class StorageMysql extends Storage {
     @Override
     public void updateOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET uuid=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
+        String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
         Gateway gateway = order.getGateway();
         PaymentUrl paymentUrl = order.getPaymentUrl();
@@ -1094,12 +1011,12 @@ public class StorageMysql extends Storage {
     }
 
     @Override
-    public UserPreferences getUserPreferences(UUID uuid) throws Exception {
+    public UserPreferences getUserPreferences(UUID playerUniqueId) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT preferences FROM user_preferences WHERE uuid=? LIMIT 1";
+        String sql = "SELECT preferences FROM user_preferences WHERE playerUniqueId=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, uuid.toString());
+        statement.setString(1, playerUniqueId.toString());
         
         // Get result
         ResultSet result = statement.executeQuery();
@@ -1121,7 +1038,7 @@ public class StorageMysql extends Storage {
     }
 
     @Override
-    public void saveUserPreferences(UUID uuid, UserPreferences preferences) throws Exception {
+    public void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Exception {
         Connection connection = getConnection();
         String sql = "INSERT INTO user_preferences VALUES (?, ?) ON DUPLICATE KEY UPDATE preferences=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1129,7 +1046,7 @@ public class StorageMysql extends Storage {
         // Set parameters
         String json = DbHelper.prepareJsonConfig(preferences);
         
-        statement.setString(1, uuid.toString());
+        statement.setString(1, playerUniqueId.toString());
         statement.setString(2, json);
         statement.setString(3, json);
 
@@ -1139,6 +1056,64 @@ public class StorageMysql extends Storage {
         // Cleanup
         statement.close();
         connection.close();
+    }
+    
+    private Order parseOrder(ResultSet result) throws Exception {
+        int id = result.getInt(1);
+        UUID uniqueId = UUID.fromString(result.getString(2));
+        UUID playerUniqueId = UUID.fromString(result.getString(3));
+        String playerName = result.getString(4);
+        String currencyCode = result.getString(5);
+        boolean completed = result.getBoolean(6);
+        OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
+
+        // Get currency
+        YamlConfig config = Commerce.getInstance().getConfig();
+        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+        
+        StoreCurrency currency = currencies.stream()
+            .filter(i -> i.getCode().equals(currencyCode))
+            .findFirst()
+            .orElse(null);
+        
+        // Get Gateway
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        Integer gatewayId = result.getInt(10);
+        String gatewayDisplayName = result.getString(11);
+        String gatewayTypeHandle = result.getString(12);
+        String gatewayJson = result.getString(13);
+        Gateway gateway = null;
+        
+        if(gatewayId != null) {
+            GatewayType gatewayType = gatewayService.getTypeByHandle(gatewayTypeHandle);
+            
+            if(gatewayType != null) {
+                GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
+                gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
+            }
+        }
+        
+        // Get payment URL
+        String paymentUrlRaw = result.getString(8);
+        long paymentUrlExpire = result.getLong(9);
+        PaymentUrl paymentUrl = null;
+        
+        if(paymentUrlRaw != null) {
+        	paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
+        }
+        
+        if(currency != null) {
+            Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
+            DataList<LineItem> lineItems = new DataList<>(rawLineItems);
+            
+            // Add order to list
+            return new Order(id, uniqueId, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl);
+        } else {
+            ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
+        }
+        
+        return null;
     }
 
 }

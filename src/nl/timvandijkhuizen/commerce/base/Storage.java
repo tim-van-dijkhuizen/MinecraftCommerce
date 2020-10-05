@@ -148,7 +148,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract Order getCart(UUID uuid) throws Exception;
+    public abstract Order getCart(UUID playerUniqueId) throws Exception;
     
     /**
      * Returns an order by its UUID.
@@ -156,7 +156,7 @@ public abstract class Storage implements Service {
      * @return
      * @throws Exception
      */
-    public abstract Order getOrderByUUID(UUID uuid) throws Exception;
+    public abstract Order getOrderByUniqueId(UUID uniqueId) throws Exception;
     
     /**
      * Returns all orders.
@@ -258,19 +258,19 @@ public abstract class Storage implements Service {
     /**
      * Returns the UserPreferences of the specified user.
      * 
-     * @param uuid
+     * @param playerUniqueId
      * @return
      * @throws Exception
      */
-    public abstract UserPreferences getUserPreferences(UUID uuid) throws Exception;
+    public abstract UserPreferences getUserPreferences(UUID playerUniqueId) throws Exception;
 
     /**
      * Saves the UserPreferences for the specified user.
      * 
-     * @param uuid
+     * @param playerUniqueId
      * @param preferences
      * @throws Exception
      */
-    public abstract void saveUserPreferences(UUID uuid, UserPreferences preferences) throws Exception;
+    public abstract void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Exception;
     
 }

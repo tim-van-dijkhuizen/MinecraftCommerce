@@ -18,7 +18,7 @@ public class Order extends Element {
     public static final String SCENARIO_GATEWAYS = "gateways";
     public static final String SCENARIO_PAY = "pay";
     
-    private UUID uuid;
+    private UUID uniqueId;
     private UUID playerUniqueId;
     private String playerName;
     private StoreCurrency currency;
@@ -30,9 +30,9 @@ public class Order extends Element {
     
     private boolean updatePaymentUrl;
     
-    public Order(int id, UUID uuid, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
+    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
         this.setId(id);
-        this.uuid = uuid;
+        this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
@@ -43,8 +43,8 @@ public class Order extends Element {
         this.paymentUrl = paymentUrl;
     }
     
-    public Order(UUID uuid, UUID playerUniqueId, String playerName, StoreCurrency currency) {
-        this.uuid = uuid;
+    public Order(UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency) {
+        this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
@@ -54,8 +54,8 @@ public class Order extends Element {
     
     @Override
     public boolean validate(String scenario) {
-        if (uuid == null) {
-            addError("uuid", "UUID is required");
+        if (uniqueId == null) {
+            addError("uniqueId", "Unique ID is required");
             return false;
         }
         
@@ -104,7 +104,7 @@ public class Order extends Element {
     }
     
     public UUID getUniqueId() {
-        return uuid;
+        return uniqueId;
     }
 
     public UUID getPlayerUniqueId() {
@@ -125,6 +125,10 @@ public class Order extends Element {
 
     public boolean isCompleted() {
         return completed;
+    }
+    
+    public void setCompleted(boolean completed) {
+    	this.completed = completed;
     }
     
     public float getTotal() {

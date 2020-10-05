@@ -3,16 +3,16 @@ package nl.timvandijkhuizen.commerce.variables;
 import nl.timvandijkhuizen.commerce.base.CommandVariable;
 import nl.timvandijkhuizen.commerce.elements.Order;
 
-public class VariableUsername implements CommandVariable {
+public class VariablePlayerUniqueId implements CommandVariable {
 
     @Override
     public String getKey() {
-        return "username";
+        return "playerUniqueId";
     }
 
     @Override
     public String getValue(Order order) {
-        return order.getPlayerName();
+        return order.getPlayerUniqueId().toString();
     }
 
 }

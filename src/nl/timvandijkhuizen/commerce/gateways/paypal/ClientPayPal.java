@@ -17,19 +17,23 @@ import com.paypal.orders.LinkDescription;
 import com.paypal.orders.Money;
 import com.paypal.orders.Order;
 import com.paypal.orders.OrderRequest;
+import com.paypal.orders.OrdersCaptureRequest;
 import com.paypal.orders.OrdersCreateRequest;
 import com.paypal.orders.PurchaseUnitRequest;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
+import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class ClientPayPal implements GatewayClient {
 
@@ -124,16 +128,37 @@ public class ClientPayPal implements GatewayClient {
     }
 
     @Override
-    public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest response) throws Exception {
-        String content = "PayPal gateway response\n";
+    public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Exception {
+    	URL url = WebHelper.createWebUrl(request.uri());
+        QueryParameters queryParams = WebHelper.parseQuery(url);
+        String paypalOrderId = queryParams.getString("token");
         
-        content += "UUID: " + order.getUniqueId();
-        content += "Player UUID: " + order.getPlayerUniqueId();
-        content += "Player Name: " + order.getPlayerName();
-        content += "Currency: " + order.getCurrency().getCode();
-        content += "Total: " + order.getTotal();
+        // Check if token parameter exists
+        if(paypalOrderId == null) {
+        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required token parameter.");
+        }
         
-        return WebHelper.createResponse(content);
+        // Try to capture payment
+		OrdersCaptureRequest catureRequest = new OrdersCaptureRequest(paypalOrderId);
+		
+		try {
+			HttpResponse<Order> captureResponse = client.execute(catureRequest);
+			Order paypalOrder = captureResponse.result();
+			
+			// Check if the order was completed
+			if(!paypalOrder.status().equals("COMPLETED")) {
+				ConsoleHelper.printError(paypalOrder.toString());
+				return WebHelper.createResponse("Failed to capture payment, please try again.");
+			}
+			
+			// Complete order
+			order.setCompleted(true);
+			
+			return WebHelper.createResponse("OK");
+		} catch(Exception e) {
+			ConsoleHelper.printError("Failed to capture payment", e);
+			return WebHelper.createResponse("Failed to capture payment, please try again.");
+		}
     }
 
 }
