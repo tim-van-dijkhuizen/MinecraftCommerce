@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.webserver;
 
 import java.net.URL;
+import java.util.UUID;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,9 +10,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
+import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
@@ -49,21 +50,20 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         
         // Get gatewayId parameter
         Storage storage = Commerce.getInstance().getStorage();
-        Integer gatewayId = queryParams.getInteger("gatewayId");
+        UUID uniqueId = queryParams.getUUID("order");
         
-        if(gatewayId != null) {
-        	Gateway gateway = storage.getGatewayById(gatewayId);
+        if(uniqueId != null) {
+        	Order order = storage.getOrderByUUID(uniqueId);
+        	Gateway gateway = order != null ? order.getGateway() : null;
         	
-        	if(gateway == null) {
-        		return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Invalid gateway.");
+        	if(order == null || gateway == null) {
+        		return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Invalid order.");
         	}
         	
         	// Let gateway handle the response
-        	GatewayClient client = gateway.getClient();
-        	
-        	return client.handleWebRequest(request);
+        	return gateway.getClient().handleWebRequest(order, request);
         } else {
-        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required gatewayId parameter.");
+        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required order parameter.");
         }
     }
     

@@ -1,9 +1,9 @@
 package nl.timvandijkhuizen.commerce.services;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
@@ -61,11 +61,8 @@ public class OrderService extends BaseService {
         UserPreferences preferences = userService.getPreferences(player);
         ConfigOption<StoreCurrency> optionCurrency = preferences.getOption("currency");
         StoreCurrency currency = optionCurrency.getValue(preferences);
-        
-        // Create order number
-        String number = RandomStringUtils.random(20, true, true);
-        
-        return new Order(number, player.getUniqueId(), player.getName(), currency);
+
+        return new Order(UUID.randomUUID(), player.getUniqueId(), player.getName(), currency);
     }
     
     /**

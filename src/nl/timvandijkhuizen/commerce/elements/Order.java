@@ -18,7 +18,7 @@ public class Order extends Element {
     public static final String SCENARIO_GATEWAYS = "gateways";
     public static final String SCENARIO_PAY = "pay";
     
-    private String number;
+    private UUID uuid;
     private UUID playerUniqueId;
     private String playerName;
     private StoreCurrency currency;
@@ -30,9 +30,9 @@ public class Order extends Element {
     
     private boolean updatePaymentUrl;
     
-    public Order(int id, String number, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
+    public Order(int id, UUID uuid, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
         this.setId(id);
-        this.number = number;
+        this.uuid = uuid;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
@@ -43,8 +43,8 @@ public class Order extends Element {
         this.paymentUrl = paymentUrl;
     }
     
-    public Order(String number, UUID playerUniqueId, String playerName, StoreCurrency currency) {
-        this.number = number;
+    public Order(UUID uuid, UUID playerUniqueId, String playerName, StoreCurrency currency) {
+        this.uuid = uuid;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
@@ -54,13 +54,8 @@ public class Order extends Element {
     
     @Override
     public boolean validate(String scenario) {
-        if (number == null || number.length() == 0) {
-            addError("number", "Number is required");
-            return false;
-        }
-
-        if (number.length() > 40) {
-            addError("number", "Number cannot be longer than 20 characters");
+        if (uuid == null) {
+            addError("uuid", "UUID is required");
             return false;
         }
         
@@ -108,8 +103,8 @@ public class Order extends Element {
         return true;
     }
     
-    public String getNumber() {
-        return number;
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     public UUID getPlayerUniqueId() {

@@ -22,6 +22,6 @@ public interface GatewayClient {
      * @param response
      * @return Payment|null
      */
-    public FullHttpResponse handleWebRequest(FullHttpRequest request) throws Exception;
+    public FullHttpResponse handleWebRequest(Order order, FullHttpRequest request) throws Exception;
 	
 }

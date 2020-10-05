@@ -156,8 +156,8 @@ public class StorageMysql extends Storage {
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "number VARCHAR(20) NOT NULL,"
-            + "playerUniqueId VARCHAR(36) NOT NULL,"
+            + "number CHAR(36) NOT NULL,"
+            + "playerUniqueId CHAR(36) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"
             + "completed BOOLEAN NOT NULL,"
@@ -184,7 +184,7 @@ public class StorageMysql extends Storage {
         + ");");
 
         PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
-            + "uuid VARCHAR(36) PRIMARY KEY,"
+            + "uuid CHAR(36) PRIMARY KEY,"
             + "preferences JSON NOT NULL"
         + ");");
         
@@ -620,15 +620,15 @@ public class StorageMysql extends Storage {
      */
 
     @Override
-    public Order getCart(UUID uuid) throws Exception {
+    public Order getCart(UUID playerUniqueId) throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+        String sql = "SELECT orders.id, orders.uuid, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.playerUniqueId=? AND orders.completed=0 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
 
-        statement.setString(1, uuid.toString());
+        statement.setString(1, playerUniqueId.toString());
         
         // Get currencies
         YamlConfig config = Commerce.getInstance().getConfig();
@@ -641,8 +641,7 @@ public class StorageMysql extends Storage {
 
         if (result.next()) {
             int id = result.getInt(1);
-            String number = result.getString(2);
-            UUID playerUniqueId = UUID.fromString(result.getString(3));
+            UUID uuid = UUID.fromString(result.getString(2));
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
             boolean completed = result.getBoolean(6);
@@ -684,7 +683,7 @@ public class StorageMysql extends Storage {
                 DataList<LineItem> lineItems = new DataList<>(rawLineItems);
                 
                 // Add order to list
-                order = new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl);
+                order = new Order(id, uuid, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl);
             } else {
                 ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
             }
@@ -699,9 +698,15 @@ public class StorageMysql extends Storage {
     }
     
     @Override
+    public Order getOrderByUUID(UUID uuid) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
     public Set<Order> getOrders() throws Exception {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.number, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+        String sql = "SELECT orders.id, orders.uuid, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
     		+ "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
     		+ "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -718,7 +723,7 @@ public class StorageMysql extends Storage {
 
         while (result.next()) {
             int id = result.getInt(1);
-            String number = result.getString(2);
+            UUID uuid = UUID.fromString(result.getString(2));
             UUID playerUniqueId = UUID.fromString(result.getString(3));
             String playerName = result.getString(4);
             String currencyCode = result.getString(5);
@@ -766,7 +771,7 @@ public class StorageMysql extends Storage {
             DataList<LineItem> lineItems = new DataList<>(rawLineItems);
             
             // Add order to list
-            orders.add(new Order(id, number, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl));
+            orders.add(new Order(id, uuid, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl));
         }
 
         // Cleanup
@@ -780,13 +785,13 @@ public class StorageMysql extends Storage {
     @Override
     public void createOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (number, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (uuid, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         Gateway gateway = order.getGateway();
         PaymentUrl paymentUrl = order.getPaymentUrl();
         
         // Set arguments
-        statement.setString(1, order.getNumber());
+        statement.setString(1, order.getUniqueId().toString());
         statement.setString(2, order.getPlayerUniqueId().toString());
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
@@ -826,13 +831,13 @@ public class StorageMysql extends Storage {
     @Override
     public void updateOrder(Order order) throws Exception {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET number=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
+        String sql = "UPDATE orders SET uuid=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
         Gateway gateway = order.getGateway();
         PaymentUrl paymentUrl = order.getPaymentUrl();
 
         // Set arguments
-        statement.setString(1, order.getNumber());
+        statement.setString(1, order.getUniqueId().toString());
         statement.setString(2, order.getPlayerUniqueId().toString());
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
@@ -989,42 +994,6 @@ public class StorageMysql extends Storage {
     /**
      * Gateways
      */
-    
-	@Override
-	public Gateway getGatewayById(int gatewayId) throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT * FROM gateways WHERE id=? LIMIT 1";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
-
-        statement.setInt(1, gatewayId);
-        
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Gateway gateway = null;
-
-        if(result.next()) {
-            int id = result.getInt(1);
-            String displayName = result.getString(2);
-            String typeHandle = result.getString(3);
-            String json = result.getString(4);
-
-            // Get type by handle
-            GatewayType type = gatewayService.getTypeByHandle(typeHandle);
-            
-            if(type != null) {
-                GatewayConfig config = DbHelper.parseGatewayConfig(json, type);
-                gateway = new Gateway(id, displayName, type, config);
-            }
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return gateway;
-	}
 
     @Override
     public Set<Gateway> getGateways() throws Exception {

@@ -26,7 +26,6 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
-import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -96,9 +95,7 @@ public class ClientPayPal implements GatewayClient {
 		// Set application context
 		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
 		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
-		
-		Gateway gateway = order.getGateway();
-		URL returnUrl = WebHelper.createWebUrl("/order/confirmation?gatewayId=" + gateway.getId());
+		URL returnUrl = WebHelper.createWebUrl("/order/confirmation?order=" + order.getUniqueId());
 		
 	    ApplicationContext context = new ApplicationContext()
 			.brandName(optionServerName.getValue(pluginConfig))
@@ -127,8 +124,16 @@ public class ClientPayPal implements GatewayClient {
     }
 
     @Override
-    public FullHttpResponse handleWebRequest(FullHttpRequest response) throws Exception {
-        return WebHelper.createResponse("PayPal gateway response");
+    public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest response) throws Exception {
+        String content = "PayPal gateway response\n";
+        
+        content += "UUID: " + order.getUniqueId();
+        content += "Player UUID: " + order.getPlayerUniqueId();
+        content += "Player Name: " + order.getPlayerName();
+        content += "Currency: " + order.getCurrency().getCode();
+        content += "Total: " + order.getTotal();
+        
+        return WebHelper.createResponse(content);
     }
 
 }

@@ -151,6 +151,14 @@ public abstract class Storage implements Service {
     public abstract Order getCart(UUID uuid) throws Exception;
     
     /**
+     * Returns an order by its UUID.
+     * 
+     * @return
+     * @throws Exception
+     */
+    public abstract Order getOrderByUUID(UUID uuid) throws Exception;
+    
+    /**
      * Returns all orders.
      * 
      * @return
@@ -214,14 +222,6 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void deleteLineItem(LineItem lineItem) throws Exception;
-    
-    /**
-     * Returns a gateway by its ID.
-     * 
-     * @return
-     * @throws Exception
-     */
-    public abstract Gateway getGatewayById(int gatewayId) throws Exception;
     
     /**
      * Returns all gateways.

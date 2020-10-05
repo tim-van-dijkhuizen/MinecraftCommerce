@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.webserver;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class QueryParameters {
@@ -34,6 +35,10 @@ public class QueryParameters {
 	public Boolean getBoolean(String key) {
 		return getValue(key, raw -> Boolean.valueOf(raw));
 	}
+	
+    public UUID getUUID(String key) {
+        return getValue(key, raw -> UUID.fromString(raw));
+    }
 	
 	private <T> T getValue(String key, Function<String, T> converter) {
 		String value = params.get(key);
