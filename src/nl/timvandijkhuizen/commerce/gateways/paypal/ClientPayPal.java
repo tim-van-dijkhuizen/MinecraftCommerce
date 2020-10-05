@@ -98,7 +98,7 @@ public class ClientPayPal implements GatewayClient {
 		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
 		
 		Gateway gateway = order.getGateway();
-		URL returnUrl = WebHelper.createWebUrl("order/confirmation?gatewayId=" + gateway.getId());
+		URL returnUrl = WebHelper.createWebUrl("/order/confirmation?gatewayId=" + gateway.getId());
 		
 	    ApplicationContext context = new ApplicationContext()
 			.brandName(optionServerName.getValue(pluginConfig))
