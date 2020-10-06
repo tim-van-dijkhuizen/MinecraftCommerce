@@ -33,7 +33,7 @@ public class WebService extends BaseService {
 	
     @Override
     public String getHandle() {
-        return "webServer";
+        return "web";
     }
 	
     @Override
@@ -85,6 +85,7 @@ public class WebService extends BaseService {
         // Add file resolver
         FileTemplateResolver fileResolver = new FileTemplateResolver();
         
+        fileResolver.setCheckExistence(true);
         fileResolver.setPrefix(Commerce.getInstance().getDataFolder().getAbsolutePath() + File.separatorChar);
         fileResolver.setSuffix(".html");
         fileResolver.setCharacterEncoding("UTF-8");
@@ -97,6 +98,7 @@ public class WebService extends BaseService {
         // Add class loader resolver
         ClassLoaderTemplateResolver resourceResolver = new ClassLoaderTemplateResolver();
         
+        resourceResolver.setCheckExistence(true);
         resourceResolver.setPrefix("templates" + File.separatorChar);
         resourceResolver.setSuffix(".html");
         resourceResolver.setCharacterEncoding("UTF-8");

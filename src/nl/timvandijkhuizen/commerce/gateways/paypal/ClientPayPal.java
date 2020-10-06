@@ -3,7 +3,9 @@ package nl.timvandijkhuizen.commerce.gateways.paypal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.paypal.core.PayPalEnvironment;
@@ -31,6 +33,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -171,7 +174,17 @@ public class ClientPayPal implements GatewayClient {
     }
     
     private FullHttpResponse successResponse(nl.timvandijkhuizen.commerce.elements.Order order) {
-        return WebHelper.createResponse("OK");
+        WebService webService = Commerce.getInstance().getService("web");
+        
+        // Create map with variables
+        Map<String, Object> variables = new HashMap<>();
+        
+        variables.put("order", order);
+        
+        // Render template
+        String content = webService.renderTemplate("gateways/paypal/confirmation.html", variables);
+        
+        return WebHelper.createResponse(content);
     }
     
     private FullHttpResponse errorResponse(HttpResponseStatus status, String error) {

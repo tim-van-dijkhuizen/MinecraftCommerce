@@ -93,7 +93,7 @@ public class WebHelper {
      * @return
      */
     public static FullHttpResponse createResponse(String content) {
-        return createResponse(HttpResponseStatus.OK, TYPE_PLAIN, content);
+        return createResponse(HttpResponseStatus.OK, TYPE_HTML, content);
     }
     
     /**
@@ -104,7 +104,7 @@ public class WebHelper {
      * @return
      */
     public static FullHttpResponse createResponse(HttpResponseStatus status, String content) {
-        return createResponse(status, TYPE_PLAIN, content);
+        return createResponse(status, TYPE_HTML, content);
     }
     
     /**

@@ -1,0 +1,15 @@
+<html>
+    <body>
+        <h1 th:text="${order.uniqueId}"></h1>
+
+        <p>Player name: <span th:text="${order.playerName}"></span></p>
+        <p>Gateway: <span th:text="${order.gateway.displayName}"></span></p>
+        <p>Total: <span th:text="${order.total}"></span></p>
+
+        <h2>Items</h2>
+
+        <p th:each="lineItem,loop : ${order.lineItems}">
+            <span th:text="${lineItem.product.name}"></span> - <span th:text="${lineItem.quantity}"></span> - <span th:text="${lineItem.price}"></span>
+        </p>
+    </body>
+</html>
