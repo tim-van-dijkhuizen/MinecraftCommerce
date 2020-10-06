@@ -42,7 +42,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public void setValue(OptionConfig config, ConfigOption<StorageType> option, StorageType value) {
-        config.set(option.getPath(), value.getHandle());
+        config.set(option.getPath(), value != null ? value.getHandle() : null);
     }
 
     @Override

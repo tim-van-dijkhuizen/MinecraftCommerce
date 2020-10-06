@@ -43,7 +43,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
     @Override
     public void setValue(OptionConfig config, ConfigOption<StoreCurrency> option, StoreCurrency value) {
-        config.set(option.getPath(), value.getCode());
+        config.set(option.getPath(), value != null ? value.getCode() : null);
     }
 
     @Override

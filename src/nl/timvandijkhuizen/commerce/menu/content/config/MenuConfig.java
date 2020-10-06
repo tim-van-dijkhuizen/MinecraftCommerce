@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
@@ -57,18 +58,26 @@ public class MenuConfig implements PredefinedMenu {
                 
                 lore.add("");
                 lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Right-click to reset this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 
                 return lore;
             });
             
             // Set click listener
             item.setClickListener(event -> {
-                UI.playSound(player, UI.SOUND_CLICK);
+                ClickType type = event.getClickType();
                 
-                option.getValueInput(config, event, value -> {
-                    option.setValue(config, value);
-                    menu.open(player);
-                });
+                if(type == ClickType.LEFT) {
+                    UI.playSound(player, UI.SOUND_CLICK);
+                    
+                    option.getValueInput(config, event, value -> {
+                        option.setValue(config, value);
+                        menu.open(player);
+                    });
+                } else if(type == ClickType.RIGHT) {
+                    UI.playSound(player, UI.SOUND_DELETE);
+                    option.resetValue(config);
+                }
             });
             
             menu.addPagedButton(item);
