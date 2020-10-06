@@ -11,7 +11,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
-import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -54,14 +53,14 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         
         if(uniqueId != null) {
         	Order order = storage.getOrderByUniqueId(uniqueId);
-        	Gateway gateway = order != null ? order.getGateway() : null;
         	
-        	if(order == null || gateway == null) {
+        	// Make sure we've got a valid order
+        	if(order == null || !order.isValid(Order.SCENARIO_PAY)) {
         		return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Invalid order.");
         	}
         	
         	// Let gateway handle the response
-        	return gateway.getClient().handleWebRequest(order, request);
+        	return order.getGateway().getClient().handleWebRequest(order, request);
         } else {
         	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required order parameter.");
         }

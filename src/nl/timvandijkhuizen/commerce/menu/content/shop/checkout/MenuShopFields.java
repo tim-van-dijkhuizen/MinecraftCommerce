@@ -132,7 +132,7 @@ public class MenuShopFields implements PredefinedMenu {
             
             lore.add(UI.color("Gateway", UI.COLOR_TEXT));
             
-            if(!isValid(cart)) {
+            if(!cart.isValid(Order.SCENARIO_FIELDS)) {
                 lore.add("");
                 lore.add(UI.color("Errors: ", UI.COLOR_ERROR, ChatColor.BOLD));
                 lore.add(UI.color(UI.TAB + Icon.SQUARE + " One or more fields have invalid values.", UI.COLOR_ERROR));
@@ -142,7 +142,7 @@ public class MenuShopFields implements PredefinedMenu {
         });
         
         nextButton.setClickListener(event -> {
-            if(isValid(cart)) {
+            if(cart.isValid(Order.SCENARIO_FIELDS)) {
                 new ActionShopGateways().onClick(event);
             } else {
                 UI.playSound(player, UI.SOUND_ERROR);
@@ -153,15 +153,6 @@ public class MenuShopFields implements PredefinedMenu {
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
         return menu;
-    }
-    
-    private boolean isValid(Order cart) {
-        String oldScenario = cart.getScenario();
-        cart.setScenario(Order.SCENARIO_FIELDS);
-        boolean isValid = cart.isValid();
-        cart.setScenario(oldScenario);
-        
-        return isValid;
     }
 
 }

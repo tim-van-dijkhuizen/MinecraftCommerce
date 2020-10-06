@@ -6,24 +6,20 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class Model implements ModelInterface {
-
-    public static final String SCENARIO_DEFAULT = "default";
     
-    private String scenario = "default";
     private Map<String, Set<String>> errors = new HashMap<>();
+    
+    protected abstract boolean validate(String scenario);
     
     @Override
     public boolean isValid() {
+        return isValid("default");
+    }
+    
+    @Override
+    public boolean isValid(String scenario) {
         errors.clear();
         return validate(scenario);
-    }
-    
-    public String getScenario() {
-        return scenario;
-    }
-    
-    public void setScenario(String scenario) {
-        this.scenario = scenario;
     }
 
     @Override

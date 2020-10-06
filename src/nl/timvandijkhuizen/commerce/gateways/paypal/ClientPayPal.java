@@ -30,6 +30,7 @@ import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
+import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -129,13 +130,19 @@ public class ClientPayPal implements GatewayClient {
 
     @Override
     public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Exception {
+        OrderService orderService = Commerce.getInstance().getService("orders");
     	URL url = WebHelper.createWebUrl(request.uri());
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
         
+        // Return success if the order has already been completed
+        if(order.isCompleted()) {
+            return successResponse(order);
+        }
+        
         // Check if token parameter exists
         if(paypalOrderId == null) {
-        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required token parameter.");
+        	return errorResponse(HttpResponseStatus.BAD_REQUEST, "Missing required token parameter.");
         }
         
         // Try to capture payment
@@ -148,17 +155,27 @@ public class ClientPayPal implements GatewayClient {
 			// Check if the order was completed
 			if(!paypalOrder.status().equals("COMPLETED")) {
 				ConsoleHelper.printError(paypalOrder.toString());
-				return WebHelper.createResponse("Failed to capture payment, please try again.");
+				return errorResponse(HttpResponseStatus.OK, "Failed to capture payment, please try again.");
 			}
 			
 			// Complete order
-			order.setCompleted(true);
-			
-			return WebHelper.createResponse("OK");
+			if(orderService.completeOrder(order)) {
+			    return successResponse(order);
+			} else {
+			    return errorResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, "An error occurred while completing your order, please contact an administrator.");
+			}
 		} catch(Exception e) {
 			ConsoleHelper.printError("Failed to capture payment", e);
-			return WebHelper.createResponse("Failed to capture payment, please try again.");
+			return errorResponse(HttpResponseStatus.OK, "Failed to capture payment, an internal error occurred.");
 		}
+    }
+    
+    private FullHttpResponse successResponse(nl.timvandijkhuizen.commerce.elements.Order order) {
+        return WebHelper.createResponse("OK");
+    }
+    
+    private FullHttpResponse errorResponse(HttpResponseStatus status, String error) {
+        return WebHelper.createResponse(status, error);
     }
 
 }

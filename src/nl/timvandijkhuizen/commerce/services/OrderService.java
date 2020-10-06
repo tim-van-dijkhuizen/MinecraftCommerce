@@ -80,7 +80,7 @@ public class OrderService extends BaseService {
     }
 
     /**
-     * Saves a order.
+     * Saves an order.
      * 
      * @param order
      * @param callback
@@ -140,6 +140,24 @@ public class OrderService extends BaseService {
         });
     }
 
+    /**
+     * Completes an order.
+     * 
+     * @param order
+     * @return
+     */
+    public boolean completeOrder(Order order) {
+        Storage storage = Commerce.getInstance().getStorage();
+        
+        try {
+            storage.completeOrder(order);
+            return true;
+        } catch(Exception e) {
+            ConsoleHelper.printError("Failed to complete order", e);
+            return false;
+        }
+    }
+    
     /**
      * Deletes a order.
      * 

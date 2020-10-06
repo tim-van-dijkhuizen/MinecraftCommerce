@@ -102,7 +102,13 @@
 
 		<dependency>
 			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
+			<artifactId>netty-codec-http</artifactId>
+			<version>4.1.52.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-transport-native-epoll</artifactId>
 			<version>4.1.52.Final</version>
 		</dependency>
 	</dependencies>

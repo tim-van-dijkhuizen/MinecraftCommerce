@@ -22,7 +22,7 @@ public class LineItem extends Element {
     }
     
     @Override
-    public boolean validate(String scenario) {
+    protected boolean validate(String scenario) {
         return true;
     }
     

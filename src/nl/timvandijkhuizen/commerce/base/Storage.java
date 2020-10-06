@@ -181,6 +181,14 @@ public abstract class Storage implements Service {
      * @throws Exception
      */
     public abstract void updateOrder(Order order) throws Exception;
+    
+    /**
+     * Completes an order.
+     * 
+     * @param order
+     * @throws Exception
+     */
+    public abstract void completeOrder(Order order) throws Exception;
 
     /**
      * Deletes an order.

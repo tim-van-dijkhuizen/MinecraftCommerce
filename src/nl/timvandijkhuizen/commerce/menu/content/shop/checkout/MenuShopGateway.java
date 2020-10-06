@@ -108,7 +108,7 @@ public class MenuShopGateway implements PredefinedMenu {
 
             lore.add(UI.color("Payment", UI.COLOR_TEXT));
             
-            if(!isValid(cart)) {
+            if(!cart.isValid(Order.SCENARIO_GATEWAYS)) {
                 lore.add("");
                 lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
                 
@@ -121,7 +121,7 @@ public class MenuShopGateway implements PredefinedMenu {
         });
         
         nextButton.setClickListener(event -> {
-            if(isValid(cart)) {
+            if(cart.isValid(Order.SCENARIO_GATEWAYS)) {
                 new ActionShopPayment().onClick(event);
             } else {
                 UI.playSound(player, UI.SOUND_ERROR);
@@ -131,15 +131,6 @@ public class MenuShopGateway implements PredefinedMenu {
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
         return menu;
-    }
-    
-    private boolean isValid(Order cart) {
-        String oldScenario = cart.getScenario();
-        cart.setScenario(Order.SCENARIO_GATEWAYS);
-        boolean isValid = cart.isValid();
-        cart.setScenario(oldScenario);
-        
-        return isValid;
     }
 
 }

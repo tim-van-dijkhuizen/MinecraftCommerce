@@ -40,12 +40,6 @@ public class MenuShopPayment implements PredefinedMenu {
         Order cart = args.get(0);
         Gateway gateway = cart.getGateway();
         
-        // Validate cart
-        String oldScenario = cart.getScenario();
-        cart.setScenario(Order.SCENARIO_PAY);
-        boolean cartValid = cart.isValid();
-        cart.setScenario(oldScenario);
-        
         // Pay button
         MenuItemBuilder acceptButton = new MenuItemBuilder(Material.BOOK);
 
@@ -89,7 +83,7 @@ public class MenuShopPayment implements PredefinedMenu {
         	
         	if(payActionLore.get() != null) {
         	    lore.add(payActionLore.get());
-        	} else if (!cartValid) {
+        	} else if (!cart.isValid(Order.SCENARIO_PAY)) {
         	    lore.add("");
         	    lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
         	    
@@ -104,7 +98,7 @@ public class MenuShopPayment implements PredefinedMenu {
         });
 
         payButton.setClickListener(event -> {
-            if(cartValid && accepted.get()) {
+            if(cart.isValid(Order.SCENARIO_PAY) && accepted.get()) {
                 PaymentUrl cachedUrl = cart.getPaymentUrl();
                 
                 // Return cached URL if we've got one

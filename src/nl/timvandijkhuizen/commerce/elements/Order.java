@@ -53,7 +53,7 @@ public class Order extends Element {
     }
     
     @Override
-    public boolean validate(String scenario) {
+    protected boolean validate(String scenario) {
         if (uniqueId == null) {
             addError("uniqueId", "Unique ID is required");
             return false;
@@ -125,10 +125,6 @@ public class Order extends Element {
 
     public boolean isCompleted() {
         return completed;
-    }
-    
-    public void setCompleted(boolean completed) {
-    	this.completed = completed;
     }
     
     public float getTotal() {

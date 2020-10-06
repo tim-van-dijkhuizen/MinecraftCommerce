@@ -31,7 +31,7 @@ public class Field extends Element {
     }
     
     @Override
-    public boolean validate(String scenario) {
+    protected boolean validate(String scenario) {
         if (icon == null) {
             addError("icon", "Icon is required");
             return false;

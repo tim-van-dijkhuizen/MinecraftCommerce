@@ -784,6 +784,26 @@ public class StorageMysql extends Storage {
         statement.close();
         connection.close();
     }
+    
+    @Override
+    public void completeOrder(Order order) throws Exception {
+        Connection connection = getConnection();
+        String sql = "UPDATE orders SET completed=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setBoolean(1, true);
+        statement.setNull(2, Types.VARCHAR);
+        statement.setNull(3, Types.BIGINT);
+        statement.setInt(4, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
 
     @Override
     public void deleteOrder(Order order) throws Exception {
