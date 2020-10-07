@@ -9,11 +9,9 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.spigotutils.config.ConfigObject;
+import nl.timvandijkhuizen.spigotutils.config.ConfigObjectData;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class StoreCurrency implements ConfigObject {
@@ -31,17 +29,17 @@ public class StoreCurrency implements ConfigObject {
     public StoreCurrency() { }
     
     @Override
-    public void serialize(ByteArrayDataOutput output) {
-        output.writeUTF(code);
-        output.writeFloat(conversionRate);
-        output.writeUTF(format.toPattern());
+    public void serialize(ConfigObjectData output) {
+        output.set("code", code);
+        output.set("conversionRate", conversionRate);
+        output.set("format", format.toPattern());
     }
 
     @Override
-    public void deserialize(ByteArrayDataInput input) {
-        code = input.readUTF();
-        conversionRate = input.readFloat();
-        format = new DecimalFormat(input.readUTF());
+    public void deserialize(ConfigObjectData input) {
+        code = input.getString("code");
+        conversionRate = input.getFloat("conversionRate");
+        format = new DecimalFormat(input.getString("format"));
     }
 
     @Override
