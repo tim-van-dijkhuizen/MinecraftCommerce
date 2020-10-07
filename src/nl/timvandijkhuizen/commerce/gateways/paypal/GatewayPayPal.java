@@ -1,26 +1,37 @@
 package nl.timvandijkhuizen.commerce.gateways.paypal;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 import org.bukkit.Material;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
+import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeFile;
 
 public class GatewayPayPal implements GatewayType {
 
 	private ConfigOption<String> configClientId;
 	private ConfigOption<String> configClientSecret;
 	private ConfigOption<Boolean> configTestMode;
+	private ConfigOption<File> configTemplate;
 	
 	public GatewayPayPal() {
+	    File pluginRoot = Commerce.getInstance().getDataFolder();
+	    
 		configClientId = new ConfigOption<>("clientId", "Client Id", Material.NAME_TAG, ConfigTypes.STRING).setRequired(true);
 		configClientSecret = new ConfigOption<>("clientSecret", "Client Secret", Material.TRIPWIRE_HOOK, ConfigTypes.PASSWORD).setRequired(true);
 		configTestMode = new ConfigOption<>("testMode", "Test Mode", Material.COMMAND_BLOCK, ConfigTypes.BOOLEAN);
+		
+		configTemplate = new ConfigOption<>("template", "Template", Material.MAP, new ConfigTypeFile(pluginRoot, new Pattern[] {
+	        Pattern.compile("^.*\\.html$")
+        }));
 	}
 	
     @Override
@@ -40,7 +51,7 @@ public class GatewayPayPal implements GatewayType {
 
     @Override
     public Collection<ConfigOption<?>> getOptions() {
-        return Arrays.asList(configClientId, configClientSecret, configTestMode);
+        return Arrays.asList(configClientId, configClientSecret, configTestMode, configTemplate);
     }
 
 	@Override
@@ -48,8 +59,9 @@ public class GatewayPayPal implements GatewayType {
     	String clientId = configClientId.getValue(config);
     	String clientSecret = configClientSecret.getValue(config);
     	boolean testMode = configTestMode.getValue(config);
+    	File template = configTemplate.getValue(config);
     	
-    	return new ClientPayPal(clientId, clientSecret, testMode);
+    	return new ClientPayPal(clientId, clientSecret, testMode, template);
 	}
 
 }

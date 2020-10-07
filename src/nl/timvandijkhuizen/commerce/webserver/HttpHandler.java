@@ -13,6 +13,8 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
+import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
+import nl.timvandijkhuizen.commerce.webserver.errors.HttpException;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -24,6 +26,8 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         // Handle request and catch any errors
         try {
         	response = handleRequest(request);
+        } catch(HttpException e) {
+            response = WebHelper.createResponse(e.getStatus(), e.getMessage());
         } catch(Exception e) {
         	ConsoleHelper.printError("An error occurred while handling a web request.", e);
         	response = WebHelper.createResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, "An internal error occurred.");
@@ -56,13 +60,13 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         	
         	// Make sure we've got a valid order
         	if(order == null || !order.isValid(Order.SCENARIO_PAY)) {
-        		return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Invalid order.");
+        	    throw new BadRequestHttpException("Invalid order.");
         	}
         	
         	// Let gateway handle the response
         	return order.getGateway().getClient().handleWebRequest(order, request);
         } else {
-        	return WebHelper.createResponse(HttpResponseStatus.BAD_REQUEST, "Missing required order parameter.");
+        	throw new BadRequestHttpException("Missing required order parameter.");
         }
     }
     

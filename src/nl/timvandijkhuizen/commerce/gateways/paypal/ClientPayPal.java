@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.gateways.paypal;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ import com.paypal.orders.PurchaseUnitRequest;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
@@ -35,18 +35,25 @@ import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
+import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
+import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
+import nl.timvandijkhuizen.commerce.webserver.errors.ServerErrorHttpException;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class ClientPayPal implements GatewayClient {
 
+    public static final String COMPLETE_PATH = "/orders/complete";
+    public static final String CONFIRMATION_PATH = "/orders/confirmation";
 	public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
+	
+	private File template;
 	
 	private PayPalEnvironment environment;
 	private PayPalHttpClient client;
 	
-	public ClientPayPal(String clientId, String clientSecret, boolean testMode) {		
+	public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {		
 	    if(testMode) {
 	    	environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
 	    } else {
@@ -55,6 +62,9 @@ public class ClientPayPal implements GatewayClient {
 		
 	    // Create client
 	    client = new PayPalHttpClient(environment);
+	    
+	    // Set template
+	    this.template = template;
 	}
     
     @Override
@@ -103,7 +113,7 @@ public class ClientPayPal implements GatewayClient {
 		// Set application context
 		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
 		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
-		URL returnUrl = WebHelper.createWebUrl("/order/confirmation?order=" + order.getUniqueId());
+		URL returnUrl = WebHelper.createWebUrl(COMPLETE_PATH + "?order=" + order.getUniqueId());
 		
 	    ApplicationContext context = new ApplicationContext()
 			.brandName(optionServerName.getValue(pluginConfig))
@@ -133,47 +143,59 @@ public class ClientPayPal implements GatewayClient {
 
     @Override
     public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Exception {
+        URL url = WebHelper.createWebUrl(request.uri());
+        String path = url.getPath();
+        
+        if(path.equals(COMPLETE_PATH)) {
+            return handleOrderComplete(order, url);
+        } else if(path.equals(CONFIRMATION_PATH)) {
+            return handleOrderConfirmation(order);
+        } else {
+            throw new NotFoundHttpException("Page not found");
+        }
+    }
+    
+    private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Exception {
         OrderService orderService = Commerce.getInstance().getService("orders");
-    	URL url = WebHelper.createWebUrl(request.uri());
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
         
         // Return success if the order has already been completed
         if(order.isCompleted()) {
-            return successResponse(order);
+            return WebHelper.createRedirect(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         }
         
         // Check if token parameter exists
         if(paypalOrderId == null) {
-        	return errorResponse(HttpResponseStatus.BAD_REQUEST, "Missing required token parameter.");
+            throw new BadRequestHttpException("Missing required token parameter.");
         }
         
         // Try to capture payment
-		OrdersCaptureRequest catureRequest = new OrdersCaptureRequest(paypalOrderId);
-		
-		try {
-			HttpResponse<Order> captureResponse = client.execute(catureRequest);
-			Order paypalOrder = captureResponse.result();
-			
-			// Check if the order was completed
-			if(!paypalOrder.status().equals("COMPLETED")) {
-				ConsoleHelper.printError(paypalOrder.toString());
-				return errorResponse(HttpResponseStatus.OK, "Failed to capture payment, please try again.");
-			}
-			
-			// Complete order
-			if(orderService.completeOrder(order)) {
-			    return successResponse(order);
-			} else {
-			    return errorResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, "An error occurred while completing your order, please contact an administrator.");
-			}
-		} catch(Exception e) {
-			ConsoleHelper.printError("Failed to capture payment", e);
-			return errorResponse(HttpResponseStatus.OK, "Failed to capture payment, an internal error occurred.");
-		}
+        OrdersCaptureRequest catureRequest = new OrdersCaptureRequest(paypalOrderId);
+        
+        try {
+            HttpResponse<Order> captureResponse = client.execute(catureRequest);
+            Order paypalOrder = captureResponse.result();
+            
+            // Check if the order was completed
+            if(!paypalOrder.status().equals("COMPLETED")) {
+                ConsoleHelper.printError(paypalOrder.toString());
+                throw new ServerErrorHttpException("Failed to capture payment, please try again.");
+            }
+            
+            // Complete order
+            if(!orderService.completeOrder(order)) {
+                throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
+            }
+            
+            return WebHelper.createRedirect(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
+        } catch(Exception e) {
+            ConsoleHelper.printError("Failed to capture payment", e);
+            throw new ServerErrorHttpException("Failed to capture payment, an internal error occurred.");
+        }
     }
     
-    private FullHttpResponse successResponse(nl.timvandijkhuizen.commerce.elements.Order order) {
+    private FullHttpResponse handleOrderConfirmation(nl.timvandijkhuizen.commerce.elements.Order order) {
         WebService webService = Commerce.getInstance().getService("web");
         
         // Create map with variables
@@ -182,13 +204,16 @@ public class ClientPayPal implements GatewayClient {
         variables.put("order", order);
         
         // Render template
-        String content = webService.renderTemplate("gateways/paypal/confirmation.html", variables);
+        String content = null;
         
+        if(template != null) {
+            content = webService.renderTemplate(template, variables);
+        } else {
+            content = webService.renderTemplate("gateways/paypal/confirmation.html", variables);
+        }
+        
+        // Return response
         return WebHelper.createResponse(content);
-    }
-    
-    private FullHttpResponse errorResponse(HttpResponseStatus status, String error) {
-        return WebHelper.createResponse(status, error);
     }
 
 }

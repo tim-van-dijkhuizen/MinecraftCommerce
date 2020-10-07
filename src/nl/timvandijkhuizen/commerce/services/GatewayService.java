@@ -71,6 +71,8 @@ public class GatewayService extends BaseService {
             } else {
                 storage.updateGateway(gateway);
             }
+            
+            gateway.clearClientCache();
         }, () -> callback.accept(true), error -> {
             callback.accept(false);
             ConsoleHelper.printError("Failed to create/update gateway: " + error.getMessage(), error);

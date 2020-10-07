@@ -90,7 +90,7 @@ public class WebService extends BaseService {
         FileTemplateResolver fileResolver = new FileTemplateResolver();
         
         fileResolver.setCheckExistence(true);
-        fileResolver.setPrefix(Commerce.getInstance().getDataFolder().getAbsolutePath() + File.separatorChar);
+        fileResolver.setPrefix(new File(".").getPath() + File.separatorChar);
         fileResolver.setSuffix(".html");
         fileResolver.setCharacterEncoding("UTF-8");
         fileResolver.setTemplateMode(TemplateMode.HTML);

@@ -58,6 +58,17 @@ public class WebHelper {
     		protocol += "s";
     	}
     	
+    	// Parse action
+    	action.replace('\\', '/');
+    	
+    	if(!action.startsWith("/")) {
+    	    action = "/" + action;
+    	}
+    	
+    	if(action.endsWith("/")) {
+    	    action = action.substring(0, action.length() - 1);
+    	}
+    	
     	try {
     		return new URL(protocol, host, port, action);
     	} catch(MalformedURLException e) {
@@ -84,6 +95,20 @@ public class WebHelper {
         }
         
         return new QueryParameters(map);
+    }
+    
+    /**
+     * Creates a redirect response.
+     * 
+     * @param url The URL to redirect to.
+     * @return
+     */
+    public static FullHttpResponse createRedirect(String url) {
+        FullHttpResponse response = createResponse(HttpResponseStatus.TEMPORARY_REDIRECT, TYPE_PLAIN, "");
+        
+        response.headers().set(HttpHeaderNames.LOCATION, url);
+        
+        return response;
     }
     
     /**

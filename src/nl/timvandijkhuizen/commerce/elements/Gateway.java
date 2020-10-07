@@ -88,5 +88,9 @@ public class Gateway extends Element {
     	
     	return client;
     }
+    
+    public void clearClientCache() {
+        client = null;
+    }
 
 }
