@@ -38,8 +38,8 @@ public class MenuOrderList implements PredefinedMenu {
             item.addLore(UI.color("Username: ", UI.COLOR_TEXT) + UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Currency: ", UI.COLOR_TEXT) + UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
 
-            item.addLore("", UI.color("Use left-click to view.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            item.addLore(UI.color("Use right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore("", UI.color("Left-click to view.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore(UI.color("Right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             // Set click listener
             item.setClickListener(event -> {

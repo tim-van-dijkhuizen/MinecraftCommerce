@@ -47,7 +47,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             displayNameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        displayNameButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        displayNameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("displayName")) {
@@ -97,7 +97,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        typeButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        typeButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("type")) {
@@ -144,7 +144,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             optionButton.addLore(UI.color("Select a gateway type first.", UI.COLOR_ERROR, ChatColor.ITALIC));
         }
         
-        optionButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        optionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (gateway.hasErrors("config")) {

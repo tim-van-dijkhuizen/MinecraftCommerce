@@ -46,8 +46,8 @@ public class MenuShopPayment implements PredefinedMenu {
         acceptButton.setName(UI.color("Terms & Conditions", UI.COLOR_PRIMARY, ChatColor.BOLD));
         
         acceptButton.addLore("");
-        acceptButton.addLore(UI.color("Use left-click to accept the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        acceptButton.addLore(UI.color("Use right-click to view the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        acceptButton.addLore(UI.color("Left-click to accept the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        acceptButton.addLore(UI.color("Right-click to view the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         acceptButton.setClickListener(event -> {
         	ClickType type = event.getClickType();

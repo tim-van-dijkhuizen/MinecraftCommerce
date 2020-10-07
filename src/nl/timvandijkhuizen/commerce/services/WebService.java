@@ -19,6 +19,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.HttpInitializer;
+import nl.timvandijkhuizen.commerce.webserver.templating.TemplateFunctions;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -29,7 +30,9 @@ public class WebService extends BaseService {
 	private static final EventLoopGroup THREAD_GROUP = new NioEventLoopGroup(4);
 	
 	private ServerBootstrap bootstrap;
+	
 	private TemplateEngine templateEngine;
+	private TemplateFunctions templateFunctions;
 	
     @Override
     public String getHandle() {
@@ -81,6 +84,7 @@ public class WebService extends BaseService {
         // Setup template engine
         // =================================================
         templateEngine = new TemplateEngine();
+        templateFunctions = new TemplateFunctions();
         
         // Add file resolver
         FileTemplateResolver fileResolver = new FileTemplateResolver();
@@ -91,7 +95,6 @@ public class WebService extends BaseService {
         fileResolver.setCharacterEncoding("UTF-8");
         fileResolver.setTemplateMode(TemplateMode.HTML);
         fileResolver.setOrder(1);
-        fileResolver.setCacheable(true);
         
         templateEngine.addTemplateResolver(fileResolver);
         
@@ -104,14 +107,25 @@ public class WebService extends BaseService {
         resourceResolver.setCharacterEncoding("UTF-8");
         resourceResolver.setTemplateMode(TemplateMode.HTML);
         resourceResolver.setOrder(2);
-        resourceResolver.setCacheable(true);
         
         templateEngine.addTemplateResolver(resourceResolver);
     }
     
     public String renderTemplate(String templateName, Map<String, Object> variables) {
+        YamlConfig config = Commerce.getInstance().getConfig();
         Context context = new Context();
         
+        // Add server name
+        ConfigOption<String> serverName = config.getOption("general.serverName");
+        
+        if(serverName != null) {
+            context.setVariable("serverName", serverName.getValue(config));
+        }
+        
+        // Add functions
+        context.setVariable("functions", templateFunctions);
+        
+        // Add custom variables
         context.setVariables(variables);
         
         return templateEngine.process(templateName, context);

@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
@@ -77,34 +78,43 @@ public class MenuShopFields implements PredefinedMenu {
                 
                 lore.add("");
                 lore.add(UI.color("Left-click to edit this field.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Right-click to reset this field.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 
                 return lore;
             });
             
             // Set click listener
             item.setClickListener(event -> {
-                UI.playSound(player, UI.SOUND_CLICK);
+                ClickType type = event.getClickType();
+                
+                if(type == ClickType.LEFT) {
+                    UI.playSound(player, UI.SOUND_CLICK);
 
-                option.getValueInput(fieldData, event, value -> {
-                    option.setValue(fieldData, value);
-                    
-                    actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
-                    menu.disableButtons();
-                    menu.open(player);
-                    
-                    orderService.saveOrder(cart, success -> {
-                        if(success) {
-                            UI.playSound(player, UI.SOUND_SUCCESS);
-                            actionLore.set(null);
-                        } else {
-                            UI.playSound(player, UI.SOUND_ERROR);
-                            actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
-                        }
+                    option.getValueInput(fieldData, event, value -> {
+                        option.setValue(fieldData, value);
                         
-                        menu.enableButtons();
-                        menu.refresh();
+                        actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
+                        menu.disableButtons();
+                        menu.open(player);
+                        
+                        orderService.saveOrder(cart, success -> {
+                            if(success) {
+                                UI.playSound(player, UI.SOUND_SUCCESS);
+                                actionLore.set(null);
+                            } else {
+                                UI.playSound(player, UI.SOUND_ERROR);
+                                actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
+                            }
+                            
+                            menu.enableButtons();
+                            menu.refresh();
+                        });
                     });
-                });
+                } else if(type == ClickType.RIGHT) {
+                    UI.playSound(player, UI.SOUND_DELETE);
+                    option.resetValue(fieldData);
+                    menu.refresh();
+                }
             });
             
             menu.addPagedButton(item);

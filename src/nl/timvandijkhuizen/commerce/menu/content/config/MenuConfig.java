@@ -77,6 +77,7 @@ public class MenuConfig implements PredefinedMenu {
                 } else if(type == ClickType.RIGHT) {
                     UI.playSound(player, UI.SOUND_DELETE);
                     option.resetValue(config);
+                    menu.refresh();
                 }
             });
             

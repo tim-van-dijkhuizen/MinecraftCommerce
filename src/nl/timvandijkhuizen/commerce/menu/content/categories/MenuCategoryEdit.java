@@ -48,7 +48,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             }
         }
         
-        iconButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
         iconButton.setClickListener(event -> {
@@ -70,7 +70,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
 
-        nameButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         
         // Add validation errors to lore
         if (category.hasErrors("name")) {
@@ -124,7 +124,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (category.hasErrors("description")) {

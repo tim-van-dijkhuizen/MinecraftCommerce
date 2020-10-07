@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
@@ -43,19 +44,28 @@ public class MenuGatewayOptions implements PredefinedMenu {
                 }
                 
                 lore.add("");
-                lore.add(UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Right-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 
                 return lore;
             });
             
             // Set click listener
             item.setClickListener(event -> {
-                UI.playSound(player, UI.SOUND_CLICK);
+                ClickType type = event.getClickType();
                 
-                option.getValueInput(config, event, value -> {
-                    option.setValue(config, value);
-                    menu.open(player);
-                });
+                if(type == ClickType.LEFT) {
+                    UI.playSound(player, UI.SOUND_CLICK);
+                    
+                    option.getValueInput(config, event, value -> {
+                        option.setValue(config, value);
+                        menu.open(player);
+                    });
+                } else if(type == ClickType.RIGHT) {
+                    UI.playSound(player, UI.SOUND_DELETE);
+                    option.resetValue(config);
+                    menu.refresh();
+                }
             });
             
             menu.addPagedButton(item);

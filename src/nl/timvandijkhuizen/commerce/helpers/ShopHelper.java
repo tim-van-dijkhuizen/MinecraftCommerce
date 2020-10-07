@@ -69,8 +69,8 @@ public class ShopHelper {
             lore.add("");
             
             // Add instructions
-            lore.add(UI.color("Use left-click to view your cart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            lore.add(UI.color("Use right-click to set your currency.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Left-click to view your cart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Right-click to set your currency.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             return lore;
         });

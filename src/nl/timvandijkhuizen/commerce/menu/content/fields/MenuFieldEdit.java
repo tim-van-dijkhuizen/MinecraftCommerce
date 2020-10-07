@@ -48,7 +48,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             }
         }
         
-        iconButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
         iconButton.setClickListener(event -> {
@@ -70,7 +70,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
 
-        nameButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         
         // Add validation errors to lore
         if (field.hasErrors("name")) {
@@ -124,7 +124,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        descriptionButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (field.hasErrors("description")) {
@@ -174,7 +174,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
-        typeButton.addLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        typeButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
         if (field.hasErrors("type")) {
@@ -200,7 +200,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         MenuItemBuilder requiredButton = new MenuItemBuilder(requiredIcon);
 
         requiredButton.setName(UI.color("Required", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        requiredButton.setLore("", UI.color("Use left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        requiredButton.setLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
         requiredButton.setClickListener(event -> {

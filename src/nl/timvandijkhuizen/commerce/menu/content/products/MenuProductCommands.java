@@ -38,7 +38,7 @@ public class MenuProductCommands implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(Material.COMMAND_BLOCK);
 
             item.setName(UI.color(command.getCommand(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.setLore("", UI.color("Use right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.setLore("", UI.color("Right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             item.setClickListener(event -> {
                 ClickType clickType = event.getClickType();

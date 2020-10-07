@@ -1,15 +1,103 @@
-<html>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+        <title th:text="${serverName}">Page Title</title>
+    </head>
     <body>
-        <h1 th:text="${order.uniqueId}"></h1>
+        <style>
+            body {
+                background-color: #394756;
+                font-family: 'Roboto Slab', serif;
+                font-size: 1.2rem;
+                color: #394756;
+            }
 
-        <p>Player name: <span th:text="${order.playerName}"></span></p>
-        <p>Gateway: <span th:text="${order.gateway.displayName}"></span></p>
-        <p>Total: <span th:text="${order.total}"></span></p>
+            h1 {
+                color: #85FFC7;
+                font-weight: 700;
+            }
 
-        <h2>Items</h2>
+            h2 {
+                background-color: #85FFC7;
+                font-size: 1.3rem;
+            }
 
-        <p th:each="lineItem,loop : ${order.lineItems}">
-            <span th:text="${lineItem.product.name}"></span> - <span th:text="${lineItem.quantity}"></span> - <span th:text="${lineItem.price}"></span>
-        </p>
+            h3 {
+                font-weight: 700;
+            }
+
+            main {
+                background-color: #FAFAFA;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+            }
+
+            main ul {
+                list-style: none;
+            }
+        </style>
+
+        <div class="container">
+            <div class="row">    
+                <div class="col-md-12">
+                    <h1 class="py-5" th:text="${serverName}">Minecraft Commerce</h1>
+                </div>
+            </div>
+
+            <main class="p-5">
+                <div class="row">
+                    <!-- Order ID -->
+                    <div class="col-md-12 mb-5">
+                        <h2 class="m-0 p-3" th:text="'Order ID: ' + ${order.uniqueId}">Order ID: 4e7eb7e5-9331-4884-bf02-223ac05496d9</h2>
+                    </div>
+
+                    <!-- Thank you message -->
+                    <div class="col-md-9 mb-5">
+                        <p class="mb-0">Thank you for your donation! We’ve successfully added the products to your account. You can now close this window.</p>
+                    </div>
+
+                    <!-- Order information -->
+                    <div class="col-md-12 mb-5">
+                        <h3>Order information</h3>
+
+                        <ul class="mb-0 pl-3">
+                            <li>UUID: <span th:text="${order.playerUniqueId}">f19bf717-78f0-4f33-bce9-129dcad2a252</span></li>
+                            <li>Username: <span th:text="${order.playerName}">TestPlayer</span></li>
+                            <li>Currency: <span th:text="${order.currency.code}">USD</span></li>
+                            <li th:if="${order.gateway != null}">Gateway: <span th:text="${order.gateway.displayName}">TestGateway</span></li>
+                            <li>Payment reference: <span th:text="${'36G551236X13GF23F'}">36G551236X13GF23F</span></li>
+                            <li>Total: <span th:text="${functions.formatPrice(order.total, order.currency)}">$10.50</span></p>
+                        </ul>
+                    </div>
+
+                    <!-- Order products -->
+                    <div class="col-md-12 mb-5">
+                        <h3>Order products</h3>
+
+                        <ul class="mb-0 pl-3">
+                            <li th:each="lineItem,loop : ${order.lineItems}" th:text="${lineItem.quantity} + 'x ' + ${lineItem.product.name} + ' &rarr; ' + ${functions.formatPrice(lineItem.price, order.currency)}">
+                                1x Test Rank &rarr; $10.50
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Order fields -->
+                    <div class="col-md-12">
+                        <h3>Order fields</h3>
+
+                        <ul class="mb-0 pl-3" th:with="fieldData=${order.fieldData}">
+                            <li th:each="option,loop : ${fieldData.options}" th:text="${option.name} + ' &rarr; ' + (${option.isValueEmpty(fieldData)} ? 'None' : ${option.getValueLore(fieldData)})">
+                                Key &rarr; Value
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
+        </div>
     </body>
 </html>

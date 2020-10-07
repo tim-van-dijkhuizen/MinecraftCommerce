@@ -52,8 +52,8 @@ public class MenuShopCart implements PredefinedMenu {
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY), "");
             
-            item.addLore("", UI.color("Use left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            item.addLore(UI.color("Use right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore("", UI.color("Left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore(UI.color("Right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             item.setClickListener(event -> {
                ClickType type = event.getClickType();
