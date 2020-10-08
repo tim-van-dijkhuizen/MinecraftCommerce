@@ -49,23 +49,23 @@
                 </div>
             </div>
 
-            <main class="p-5">
+            <main class="p-4 p-lg-5">
                 <div class="row">
                     <!-- Order ID -->
-                    <div class="col-md-12 mb-5">
+                    <div class="col-md-12 mb-4 mb-lg-5">
                         <h2 class="m-0 p-3" th:text="'Order ID: ' + ${order.uniqueId}">Order ID: 4e7eb7e5-9331-4884-bf02-223ac05496d9</h2>
                     </div>
 
                     <!-- Thank you message -->
-                    <div class="col-md-9 mb-5">
+                    <div class="col-md-9 mb-4 mb-lg-5">
                         <p class="mb-0">Thank you for your donation! We’ve successfully added the products to your account. You can now close this window.</p>
                     </div>
 
                     <!-- Order information -->
-                    <div class="col-md-12 mb-5">
+                    <div class="col-md-12 mb-4 mb-lg-5">
                         <h3>Order information</h3>
 
-                        <ul class="mb-0 pl-3">
+                        <ul class="mb-0 pl-2 pl-lg-3">
                             <li>UUID: <span th:text="${order.playerUniqueId}">f19bf717-78f0-4f33-bce9-129dcad2a252</span></li>
                             <li>Username: <span th:text="${order.playerName}">TestPlayer</span></li>
                             <li>Currency: <span th:text="${order.currency.code}">USD</span></li>
@@ -76,10 +76,10 @@
                     </div>
 
                     <!-- Order products -->
-                    <div class="col-md-12 mb-5">
+                    <div class="col-md-12 mb-4 mb-lg-5">
                         <h3>Order products</h3>
 
-                        <ul class="mb-0 pl-3">
+                        <ul class="mb-0 pl-2 pl-lg-3">
                             <li th:each="lineItem,loop : ${order.lineItems}" th:text="${lineItem.quantity} + 'x ' + ${lineItem.product.name} + ' &rarr; ' + ${functions.formatPrice(lineItem.price, order.currency)}">
                                 1x Test Rank &rarr; $10.50
                             </li>
@@ -90,7 +90,7 @@
                     <div class="col-md-12">
                         <h3>Order fields</h3>
 
-                        <ul class="mb-0 pl-3" th:with="fieldData=${order.fieldData}">
+                        <ul class="mb-0 pl-2 pl-lg-3" th:with="fieldData=${order.fieldData}">
                             <li th:each="option,loop : ${fieldData.options}" th:text="${option.name} + ' &rarr; ' + (${option.isValueEmpty(fieldData)} ? 'None' : ${option.getValueLore(fieldData)})">
                                 Key &rarr; Value
                             </li>
