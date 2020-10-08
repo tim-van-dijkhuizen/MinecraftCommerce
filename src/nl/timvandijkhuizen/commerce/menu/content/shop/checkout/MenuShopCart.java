@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
@@ -113,8 +114,28 @@ public class MenuShopCart implements PredefinedMenu {
         MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_SIGN);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        nextButton.setLore(UI.color("Fields", UI.COLOR_TEXT));
-        nextButton.setClickListener(new ActionShopFields());
+        
+        nextButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+
+            lore.add(UI.color("Fields", UI.COLOR_TEXT));
+            
+            if(cart.getLineItems().size() == 0) {
+                lore.add("");
+                lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
+                lore.add(UI.color(UI.TAB + Icon.SQUARE + " Add at least one item to your cart.", UI.COLOR_ERROR));
+            }
+            
+            return lore;
+        });
+        
+        nextButton.setClickListener(event -> {
+            if(cart.getLineItems().size() > 0) {
+                new ActionShopFields().onClick(event);
+            } else {
+                UI.playSound(player, UI.SOUND_ERROR);
+            }
+        });
 
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
         
