@@ -1,6 +1,8 @@
 package nl.timvandijkhuizen.commerce.webserver;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import io.netty.channel.ChannelFutureListener;
@@ -13,6 +15,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Storage;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
+import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
 import nl.timvandijkhuizen.commerce.webserver.errors.HttpException;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -27,10 +30,10 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         try {
         	response = handleRequest(request);
         } catch(HttpException e) {
-            response = WebHelper.createResponse(e.getStatus(), e.getMessage());
+            response = handleError(e.getStatus(), e);
         } catch(Exception e) {
         	ConsoleHelper.printError("An error occurred while handling a web request.", e);
-        	response = WebHelper.createResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR, "An internal error occurred.");
+        	response = handleError(HttpResponseStatus.INTERNAL_SERVER_ERROR, e);
         }
         
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
@@ -68,6 +71,24 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         } else {
         	throw new BadRequestHttpException("Missing required order parameter.");
         }
+    }
+    
+    private FullHttpResponse handleError(HttpResponseStatus statusCode, Exception error) {
+        WebService webService = Commerce.getInstance().getService("web");
+        String content;
+        
+        try {
+            Map<String, Object> variables = new HashMap<>();
+            
+            variables.put("statusCode", statusCode);
+            variables.put("error", error);
+            
+            content = webService.renderTemplate("error.html", variables);
+        } catch(Exception e) {
+            content = "Failed to render error template: " + e.getMessage();
+        }
+        
+        return WebHelper.createResponse(statusCode, content);
     }
     
 }

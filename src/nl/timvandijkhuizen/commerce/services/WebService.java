@@ -116,12 +116,12 @@ public class WebService extends BaseService {
         YamlConfig config = Commerce.getInstance().getConfig();
         Context context = new Context();
         
-        // Add server name
+        // Add globals
         ConfigOption<String> serverName = config.getOption("general.serverName");
+        ConfigOption<Boolean> devMode = config.getOption("general.devMode");
         
-        if(serverName != null) {
-            context.setVariable("serverName", serverName.getValue(config));
-        }
+        context.setVariable("serverName", serverName.getValue(config));
+        context.setVariable("devMode", devMode.getValue(config));
         
         // Add functions
         context.setVariable("functions", templateFunctions);
