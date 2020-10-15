@@ -27,6 +27,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class WebService extends BaseService {
 
+    public static final String BRANDING_HTML = "<!-- Powered by MinecraftCommerce -->";
 	private static final EventLoopGroup THREAD_GROUP = new NioEventLoopGroup(4);
 	
 	private ServerBootstrap bootstrap;
@@ -128,7 +129,7 @@ public class WebService extends BaseService {
         // Add custom variables
         context.setVariables(variables);
         
-        return templateEngine.process(templateName, context);
+        return BRANDING_HTML + templateEngine.process(templateName, context);
     }
     
     public String renderTemplate(File templateFile, Map<String, Object> variables) {
