@@ -167,6 +167,15 @@ public abstract class Storage implements Service {
     public abstract Set<Order> getOrders() throws Exception;
 
     /**
+     * Returns all orders that belong to a player.
+     * 
+     * @param playerUniqueId
+     * @return
+     * @throws Exception
+     */
+    public abstract Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Exception;
+    
+    /**
      * Creates an order.
      * 
      * @param order

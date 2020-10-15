@@ -698,6 +698,36 @@ public class StorageMysql extends Storage {
 
         return orders;
     }
+    
+    @Override
+    public Set<Order> getOrdersByPlayer(UUID uuid) throws Exception {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1 AND orders.playerUniqueId=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        
+        statement.setString(1, uuid.toString());
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<Order> orders = new LinkedHashSet<>();
+
+        while (result.next()) {
+            Order order = parseOrder(result);
+            
+            if(order != null) {
+                orders.add(order);
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return orders;
+    }
 
     @Override
     public void createOrder(Order order) throws Exception {

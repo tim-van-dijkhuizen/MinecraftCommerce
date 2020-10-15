@@ -78,6 +78,21 @@ public class OrderService extends BaseService {
             ConsoleHelper.printError("Failed to load orders: " + error.getMessage(), error);
         });
     }
+    
+    /**
+     * Returns all orders that belong to a player.
+     * 
+     * @param playerUniqueId
+     * @param callback
+     */
+    public void getOrdersByPlayer(UUID playerUniqueId, Consumer<Set<Order>> callback) {
+        Storage storage = Commerce.getInstance().getStorage();
+
+        ThreadHelper.getAsync(() -> storage.getOrdersByPlayer(playerUniqueId), callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to load orders: " + error.getMessage(), error);
+        });
+    }
 
     /**
      * Saves an order.

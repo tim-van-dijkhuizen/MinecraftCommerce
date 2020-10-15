@@ -26,6 +26,7 @@ import nl.timvandijkhuizen.commerce.menu.content.products.MenuProductIcon;
 import nl.timvandijkhuizen.commerce.menu.content.products.MenuProductList;
 import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopCategories;
 import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopCurrency;
+import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopOrderHistory;
 import nl.timvandijkhuizen.commerce.menu.content.shop.MenuShopProducts;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopCart;
 import nl.timvandijkhuizen.commerce.menu.content.shop.checkout.MenuShopFields;
@@ -72,6 +73,7 @@ public enum Menus {
     SHOP_CATEGORIES(new MenuShopCategories()),
     SHOP_PRODUCTS(new MenuShopProducts()),
     SHOP_CURRENCY(new MenuShopCurrency()),
+    SHOP_ORDER_HISTORY(new MenuShopOrderHistory()),
     
     SHOP_CART(new MenuShopCart()),
     SHOP_FIELDS(new MenuShopFields()),
