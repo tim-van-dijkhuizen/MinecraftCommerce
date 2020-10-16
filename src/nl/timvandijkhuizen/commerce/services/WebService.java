@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.services;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.thymeleaf.TemplateEngine;
@@ -19,6 +20,8 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.HttpInitializer;
+import nl.timvandijkhuizen.commerce.webserver.StaticRoute;
+import nl.timvandijkhuizen.commerce.webserver.routes.RouteFavicon;
 import nl.timvandijkhuizen.commerce.webserver.templating.TemplateFunctions;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -31,6 +34,7 @@ public class WebService extends BaseService {
 	private static final EventLoopGroup THREAD_GROUP = new NioEventLoopGroup(4);
 	
 	private ServerBootstrap bootstrap;
+	private Map<String, StaticRoute> routes;
 	
 	private TemplateEngine templateEngine;
 	private TemplateFunctions templateFunctions;
@@ -82,6 +86,12 @@ public class WebService extends BaseService {
             ConsoleHelper.printError("Failed to start webserver on port " + port, e);
         }
         
+        // Setup routes
+        // =================================================
+        routes = new HashMap<>();
+        
+        routes.put("/favicon.ico", new RouteFavicon());
+        
         // Setup template engine
         // =================================================
         templateEngine = new TemplateEngine();
@@ -112,6 +122,22 @@ public class WebService extends BaseService {
         templateEngine.addTemplateResolver(resourceResolver);
     }
     
+    /**
+     * Returns all registered routes.
+     * 
+     * @return
+     */
+    public Map<String, StaticRoute> getRoutes() {
+    	return routes;
+    }
+    
+    /**
+     * Renders a Thymeleaf template.
+     * 
+     * @param templateName
+     * @param variables
+     * @return
+     */
     public String renderTemplate(String templateName, Map<String, Object> variables) {
         YamlConfig config = Commerce.getInstance().getConfig();
         Context context = new Context();
@@ -132,6 +158,13 @@ public class WebService extends BaseService {
         return BRANDING_HTML + templateEngine.process(templateName, context);
     }
     
+    /**
+     * Renders a Thymeleaf template.
+     * 
+     * @param templateFile
+     * @param variables
+     * @return
+     */
     public String renderTemplate(File templateFile, Map<String, Object> variables) {
         return renderTemplate(templateFile.getPath(), variables);
     }

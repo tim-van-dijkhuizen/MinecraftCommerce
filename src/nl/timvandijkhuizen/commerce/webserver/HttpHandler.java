@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -18,6 +17,7 @@ import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
 import nl.timvandijkhuizen.commerce.webserver.errors.HttpException;
+import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -25,32 +25,84 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         FullHttpResponse response;
-        
+
         // Handle request and catch any errors
         try {
+            if(request.decoderResult().isFailure()) {
+            	throw new BadRequestHttpException("Invalid HTTP request.");
+            }
+            
         	response = handleRequest(request);
         } catch(HttpException e) {
             response = handleError(e.getStatus(), e);
         } catch(Exception e) {
-        	ConsoleHelper.printError("An error occurred while handling a web request.", e);
+        	ConsoleHelper.printError("An error occurred while handling HTTP request.", e);
         	response = handleError(HttpResponseStatus.INTERNAL_SERVER_ERROR, e);
         }
         
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        WebHelper.sendResponse(ctx, request, response);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ConsoleHelper.printError("HTTP request exception", cause);
-        ctx.close();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
+    	FullHttpResponse response = handleError(HttpResponseStatus.INTERNAL_SERVER_ERROR, e);
+    	
+        ConsoleHelper.printError("Uncaught exception while handling HTTP request.", e);
+
+        if (ctx.channel().isActive()) {
+        	WebHelper.sendResponse(ctx, response);
+        }
     }
 
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
-    }
-
+    /**
+     * Handle all incoming requests.
+     * 
+     * @param request
+     * @return
+     * @throws Exception
+     */
     private FullHttpResponse handleRequest(FullHttpRequest request) throws Exception {
+    	FullHttpResponse response;
+    	
+    	// Handle any matching route requests
+    	if((response = handleRouteRequest(request)) != null) {
+    		return response;
+    	}
+    	
+    	// Handle any matching gateway requests
+    	if((response = handleGatewayRequest(request)) != null) {
+    		return response;
+    	}
+    	
+    	throw new NotFoundHttpException("Page not found");
+    }
+    
+    /**
+     * Handle route requests.
+     * 
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    private FullHttpResponse handleRouteRequest(FullHttpRequest request) throws Exception {
+    	WebService webService = Commerce.getInstance().getService("web");
+    	StaticRoute route = webService.getRoutes().get(request.uri());
+    	
+    	if(route != null) {
+    		return route.handleRequest(request);
+    	}
+    	
+    	return null;
+    }
+    
+    /**
+     * Handle gateway requests.
+     * 
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    private FullHttpResponse handleGatewayRequest(FullHttpRequest request) throws Exception {
     	URL url = WebHelper.createWebUrl(request.uri());
         QueryParameters queryParams = WebHelper.parseQuery(url);
         
@@ -69,14 +121,22 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         	// Let gateway handle the response
         	return order.getGateway().getClient().handleWebRequest(order, request);
         } else {
-        	throw new BadRequestHttpException("Missing required order parameter.");
+        	return null;
         }
     }
     
-    private FullHttpResponse handleError(HttpResponseStatus statusCode, Exception error) {
+    /**
+     * Handle request errors.
+     * 
+     * @param statusCode
+     * @param error
+     * @return
+     */
+    private FullHttpResponse handleError(HttpResponseStatus statusCode, Throwable error) {
         WebService webService = Commerce.getInstance().getService("web");
         String content;
         
+        // Try to render error template
         try {
             Map<String, Object> variables = new HashMap<>();
             

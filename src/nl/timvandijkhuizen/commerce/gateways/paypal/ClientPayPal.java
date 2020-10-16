@@ -162,7 +162,7 @@ public class ClientPayPal implements GatewayClient {
         
         // Return success if the order has already been completed
         if(order.isCompleted()) {
-            return WebHelper.createRedirect(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
+            return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         }
         
         // Check if token parameter exists
@@ -188,7 +188,7 @@ public class ClientPayPal implements GatewayClient {
                 throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
             }
             
-            return WebHelper.createRedirect(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
+            return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         } catch(Exception e) {
             ConsoleHelper.printError("Failed to capture payment", e);
             throw new ServerErrorHttpException("Failed to capture payment, an internal error occurred.");

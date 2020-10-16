@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.helpers;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,11 +14,17 @@ import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
@@ -103,12 +110,22 @@ public class WebHelper {
      * @param url The URL to redirect to.
      * @return
      */
-    public static FullHttpResponse createRedirect(String url) {
+    public static FullHttpResponse createRedirectRequest(String url) {
         FullHttpResponse response = createResponse(HttpResponseStatus.TEMPORARY_REDIRECT, TYPE_PLAIN, "");
         
         response.headers().set(HttpHeaderNames.LOCATION, url);
         
         return response;
+    }
+    
+    /**
+     * Creates a file request.
+     * 
+     * @param file
+     * @return
+     */
+    public static FullHttpResponse createFileRequest(InputStream file) {
+    	return createResponse("favicon!");
     }
     
     /**
@@ -170,4 +187,40 @@ public class WebHelper {
         return response;
     }
 
+    /**
+     * Sends the response and closes the connection.
+     * 
+     * @param ctx
+     * @param response
+     */
+    public static void sendResponse(ChannelHandlerContext ctx, FullHttpResponse response) {
+    	sendResponse(ctx, null, response);
+    }
+    
+    /**
+     * If Keep-Alive is disabled, attaches "Connection: close" header to the response
+     * and closes the connection after the response being sent.
+     * 
+     * @param ctx
+     * @param request
+     * @param response
+     */
+    public static void sendResponse(ChannelHandlerContext ctx, FullHttpRequest request, FullHttpResponse response) {
+        boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
+        
+        // Add connection header
+        if (!keepAlive) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+        } else if (request != null && request.protocolVersion() == HttpVersion.HTTP_1_0) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        }
+
+        // Close if not keep alive
+        ChannelFuture flushPromise = ctx.writeAndFlush(response);
+
+        if (!keepAlive) {
+            flushPromise.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+    
 }
