@@ -22,6 +22,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.HttpInitializer;
 import nl.timvandijkhuizen.commerce.webserver.StaticRoute;
 import nl.timvandijkhuizen.commerce.webserver.routes.RouteFavicon;
+import nl.timvandijkhuizen.commerce.webserver.routes.RouteRobots;
 import nl.timvandijkhuizen.commerce.webserver.templating.TemplateFunctions;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -91,6 +92,7 @@ public class WebService extends BaseService {
         routes = new HashMap<>();
         
         routes.put("/favicon.ico", new RouteFavicon());
+        routes.put("/robots.txt", new RouteRobots());
         
         // Setup template engine
         // =================================================

@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.OptionalSslHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class HttpInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -30,6 +31,7 @@ public class HttpInitializer extends ChannelInitializer<SocketChannel> {
 		pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
 		pipeline.addLast("aggregator", new HttpObjectAggregator(100 * 1024 * 1024));
 		pipeline.addLast("encoder", new HttpResponseEncoder());
+		pipeline.addLast("chunked", new ChunkedWriteHandler());
 		pipeline.addLast("handler", new HttpHandler());
 	}
 

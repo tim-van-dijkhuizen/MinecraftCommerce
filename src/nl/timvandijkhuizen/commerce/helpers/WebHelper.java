@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce.helpers;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,16 +26,13 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import nl.timvandijkhuizen.commerce.Commerce;
+import nl.timvandijkhuizen.commerce.webserver.ContentType;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class WebHelper {
-
-    public static final String TYPE_PLAIN = "text/plain; charset=UTF-8";
-    public static final String TYPE_HTML = "text/html; charset=UTF-8";
-    public static final String TYPE_JSON = "application/json; charset=UTF-8";
-
+    
 	/**
 	 * Creates a formatted URL from the specified action.
 	 * Uses the configured webUrl and webPort as base 
@@ -111,21 +107,11 @@ public class WebHelper {
      * @return
      */
     public static FullHttpResponse createRedirectRequest(String url) {
-        FullHttpResponse response = createResponse(HttpResponseStatus.TEMPORARY_REDIRECT, TYPE_PLAIN, "");
+        FullHttpResponse response = createResponse(HttpResponseStatus.TEMPORARY_REDIRECT, ContentType.TEXT_HTML, "");
         
         response.headers().set(HttpHeaderNames.LOCATION, url);
         
         return response;
-    }
-    
-    /**
-     * Creates a file request.
-     * 
-     * @param file
-     * @return
-     */
-    public static FullHttpResponse createFileRequest(InputStream file) {
-    	return createResponse("favicon!");
     }
     
     /**
@@ -135,7 +121,7 @@ public class WebHelper {
      * @return
      */
     public static FullHttpResponse createResponse(String content) {
-        return createResponse(HttpResponseStatus.OK, TYPE_HTML, content);
+        return createResponse(HttpResponseStatus.OK, ContentType.TEXT_HTML, content);
     }
     
     /**
@@ -146,7 +132,7 @@ public class WebHelper {
      * @return
      */
     public static FullHttpResponse createResponse(HttpResponseStatus status, String content) {
-        return createResponse(status, TYPE_HTML, content);
+        return createResponse(status, ContentType.TEXT_HTML, content);
     }
     
     /**
@@ -209,10 +195,10 @@ public class WebHelper {
         boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
         
         // Add connection header
-        if (!keepAlive) {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
-        } else if (request != null && request.protocolVersion() == HttpVersion.HTTP_1_0) {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        if (keepAlive) {
+        	response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        } else {
+        	response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
         }
 
         // Close if not keep alive
