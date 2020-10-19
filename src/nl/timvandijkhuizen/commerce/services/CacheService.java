@@ -12,7 +12,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
@@ -28,7 +28,7 @@ public class CacheService extends BaseService implements Listener {
     
     @EventHandler(ignoreCancelled=true, priority=EventPriority.MONITOR)
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         UUID uuid = event.getUniqueId();
         
         // Load preferences

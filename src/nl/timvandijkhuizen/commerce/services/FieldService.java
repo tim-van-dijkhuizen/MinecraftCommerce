@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.FieldType;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.events.RegisterFieldTypesEvent;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeBoolean;
@@ -59,7 +59,7 @@ public class FieldService extends BaseService {
     }
     
     public void getFields(Consumer<Set<Field>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> storage.getFields(), callback, error -> {
             callback.accept(null);
@@ -74,7 +74,7 @@ public class FieldService extends BaseService {
      * @param callback
      */
     public void saveField(Field field, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         boolean isNew = field.getId() == null;
 
         // Validate the model
@@ -108,7 +108,7 @@ public class FieldService extends BaseService {
      * @param callback
      */
     public void deleteField(Field field, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         // Delete field
         ThreadHelper.executeAsync(() -> {

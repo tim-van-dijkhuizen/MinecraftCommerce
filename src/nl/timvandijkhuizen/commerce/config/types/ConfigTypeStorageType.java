@@ -5,9 +5,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
@@ -19,21 +19,16 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
-    private Set<StorageType> availableTypes;
-    
-    public ConfigTypeStorageType(Set<StorageType> availableTypes) {
-        this.availableTypes = availableTypes;
-    }
-    
     @Override
     public StorageType getValue(OptionConfig config, ConfigOption<StorageType> option) {
+    	Set<StorageType> types = Commerce.getInstance().getStorageTypes();
         String handle = config.getString(option.getPath());
         
         if(handle == null) {
             return null;
         }
         
-        Optional<StorageType> type = availableTypes.stream()
+        Optional<StorageType> type = types.stream()
             .filter(i -> i.getHandle().equals(handle))
             .findFirst();
 
@@ -57,14 +52,15 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuItemClick event, Consumer<StorageType> callback) {
-        PagedMenu menu = new PagedMenu("Select StorageType", 3, 7, 1, 1);
+    	Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        PagedMenu menu = new PagedMenu("Choose a storage type", 3, 7, 1, 1);
         StorageType selected = getValue(config, option);
         Player player = event.getPlayer();
 
-        for (StorageType type : availableTypes) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.BARREL);
+        for (StorageType type : types) {
+            MenuItemBuilder item = new MenuItemBuilder(type.getIcon());
 
-            item.setName(UI.color(type.getHandle(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             if(selected != null && selected.getHandle().equals(type.getHandle())) {
                 item.addEnchantGlow();

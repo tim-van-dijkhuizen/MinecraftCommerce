@@ -12,13 +12,15 @@ import java.util.stream.Stream;
 
 import org.bukkit.Material;
 
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.OrderEffect;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.commands.CommandCommerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.commerce.config.types.ConfigTypeOrderEffect;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypePort;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
+import nl.timvandijkhuizen.commerce.effects.EffectFirework;
 import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.commerce.services.CacheService;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
@@ -52,8 +54,8 @@ public class Commerce extends PluginBase {
     public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
     
     private static Commerce instance;
-    private Set<StorageType> storageTypes;
     private YamlConfig config;
+    private Set<StorageType> storageTypes;
     
     // Configuration options
     private ConfigOption<String> configServerName;
@@ -64,6 +66,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<Integer> configWebserverPort;
     private ConfigOption<File> configSslCertificate;
     private ConfigOption<File> configSslPrivateKey;
+    private ConfigOption<OrderEffect> configOrderEffect;
     private ConfigOption<StorageType> configStorageType;
 
     @Override
@@ -72,13 +75,12 @@ public class Commerce extends PluginBase {
         ThreadHelper.setPlugin(this);
         
         // Register storage types
-        RegisterStorageTypesEvent event = new RegisterStorageTypesEvent();
-        StorageType typeMysql = new StorageType("mysql", StorageMysql.class);
+        RegisterStorageTypesEvent storageEvent = new RegisterStorageTypesEvent();
         
-        event.addStorageType(typeMysql);
+        storageEvent.addStorageType(new StorageMysql());
         
-        getServer().getPluginManager().callEvent(event);
-        storageTypes = event.getStorageTypes();
+        getServer().getPluginManager().callEvent(storageEvent);
+        storageTypes = storageEvent.getStorageTypes();
         
         // Setup configuration options
         config = new YamlConfig(this);
@@ -117,9 +119,13 @@ public class Commerce extends PluginBase {
         configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", Material.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
         
-        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType(storageTypes))
+        configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", Material.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
-            .setDefaultValue(typeMysql)
+            .setDefaultValue(new EffectFirework());
+        
+        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType())
+            .setRequired(true)
+            .setDefaultValue(new StorageMysql())
             .setMeta(new DataArguments(true));
         
         // Add options
@@ -131,17 +137,16 @@ public class Commerce extends PluginBase {
         config.addOption(configWebserverPort);
         config.addOption(configSslCertificate);
         config.addOption(configSslPrivateKey);
+        config.addOption(configOrderEffect);
         config.addOption(configStorageType);
-        
-        // Make sure all options exist
-        config.setDefaultOptions();
-        config.save();
     }
     
     @Override
     public void load() throws Exception {
+        config.setDefaultOptions();
+        config.save();
+    	
         ConsoleHelper.showStacktraces(configDevMode.getValue(config));
-        ConsoleHelper.printInfo("Commerce has been loaded.");
     }
     
     @Override
@@ -164,11 +169,6 @@ public class Commerce extends PluginBase {
     }
 
     @Override
-    public void unload() throws Exception {
-        ConsoleHelper.printInfo("Commerce has been unloaded.");
-    }
-
-    @Override
     public Service[] registerServices() throws Exception {
         CommandService commandService = new CommandService(this);
 
@@ -177,10 +177,9 @@ public class Commerce extends PluginBase {
 
         // Get storage driver
         StorageType storageType = configStorageType.getValue(config);
-        Class<? extends Storage> storageDriver = storageType.getDriver();
         
         return new Service[] {
-            storageDriver.newInstance(),
+    		storageType,
             new CacheService(),
             new MenuService(),
             new CategoryService(),
@@ -202,8 +201,12 @@ public class Commerce extends PluginBase {
     public YamlConfig getConfig() {
         return config;
     }
+    
+    public Set<StorageType> getStorageTypes() {
+    	return storageTypes;
+    }
 
-    public Storage getStorage() {
+    public StorageType getStorage() {
         return getService("storage");
     }
 

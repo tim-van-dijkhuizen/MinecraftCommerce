@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
@@ -61,7 +61,7 @@ public class UserService extends BaseService {
     }
     
     public void savePreferences(Player player, UserPreferences preferences, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.executeAsync(() -> {
         	storage.saveUserPreferences(player.getUniqueId(), preferences);

@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
@@ -23,7 +23,7 @@ public class CategoryService extends BaseService {
      * @param callback
      */
     public void getCategories(Consumer<Set<Category>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> storage.getCategories(), callback, error -> {
             callback.accept(null);
@@ -38,7 +38,7 @@ public class CategoryService extends BaseService {
      * @param callback
      */
     public void saveCategory(Category category, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         boolean isNew = category.getId() == null;
 
         // Validate the model
@@ -67,7 +67,7 @@ public class CategoryService extends BaseService {
      * @param callback
      */
     public void deleteCategory(Category category, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         // Delete category
         ThreadHelper.executeAsync(() -> storage.deleteCategory(category), () -> callback.accept(true), error -> {

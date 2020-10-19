@@ -1,18 +1,32 @@
 package nl.timvandijkhuizen.commerce.services;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.OrderEffect;
+import nl.timvandijkhuizen.commerce.base.OrderVariable;
+import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
+import nl.timvandijkhuizen.commerce.effects.EffectFirework;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
+import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
+import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
+import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
+import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -21,9 +35,33 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class OrderService extends BaseService {
 
+    private Set<OrderVariable> orderVariables;
+    private Set<OrderEffect> orderEffects;
+    
     @Override
     public String getHandle() {
         return "orders";
+    }
+    
+    @Override
+    public void init() throws Exception {
+        RegisterOrderVariablesEvent variableEvent = new RegisterOrderVariablesEvent();
+        RegisterOrderEffectsEvent effectEvent = new RegisterOrderEffectsEvent();
+
+        // Add core variables
+        variableEvent.addVariable(new VariableUniqueId());
+        variableEvent.addVariable(new VariablePlayerUsername());
+        variableEvent.addVariable(new VariablePlayerUniqueId());
+        
+        // Add core effects
+        effectEvent.addEffect(new EffectFirework());
+        
+        // Register custom variables and effects
+        Bukkit.getServer().getPluginManager().callEvent(variableEvent);
+        Bukkit.getServer().getPluginManager().callEvent(effectEvent);
+        
+        orderVariables = variableEvent.getVariables();
+        orderEffects = effectEvent.getEffects();
     }
     
     /**
@@ -33,7 +71,7 @@ public class OrderService extends BaseService {
      * @return
      */
     public void getCart(Player player, Consumer<Order> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> {
             Order cart = storage.getCart(player.getUniqueId());
@@ -71,7 +109,7 @@ public class OrderService extends BaseService {
      * @param callback
      */
     public void getOrders(Consumer<Set<Order>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> storage.getOrders(), callback, error -> {
             callback.accept(null);
@@ -86,7 +124,7 @@ public class OrderService extends BaseService {
      * @param callback
      */
     public void getOrdersByPlayer(UUID playerUniqueId, Consumer<Set<Order>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> storage.getOrdersByPlayer(playerUniqueId), callback, error -> {
             callback.accept(null);
@@ -101,7 +139,7 @@ public class OrderService extends BaseService {
      * @param callback
      */
     public void saveOrder(Order order, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         boolean isNew = order.getId() == null;
 
         // Validate the model
@@ -162,10 +200,38 @@ public class OrderService extends BaseService {
      * @return
      */
     public boolean completeOrder(Order order) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         
         try {
             storage.completeOrder(order);
+            
+            // Perform commands and play effect
+            ThreadHelper.execute(() -> {
+            	YamlConfig config = Commerce.getInstance().getConfig();
+            	
+            	// Execute product commands
+            	// =============================================
+                for(LineItem lineItem : order.getLineItems()) {
+                	ProductSnapshot product = lineItem.getProduct();
+                	List<String> commands = product.getCommands();
+                	
+                	for(String rawCommand : commands) {
+                		String command = replaceVariables(rawCommand, order);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                	}
+                }
+                
+                // Play effect
+                // =============================================
+                ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
+                OrderEffect effect = optionEffect.getValue(config);
+                Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
+                
+                if(player != null) {
+                	effect.playEffect(player, order);
+                }
+            });
+            
             return true;
         } catch(Exception e) {
             ConsoleHelper.printError("Failed to complete order", e);
@@ -180,13 +246,47 @@ public class OrderService extends BaseService {
      * @param callback
      */
     public void deleteOrder(Order order, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         // Delete order
         ThreadHelper.executeAsync(() -> storage.deleteOrder(order), () -> callback.accept(true), error -> {
             callback.accept(false);
             ConsoleHelper.printError("Failed to delete order: " + error.getMessage(), error);
         });
+    }
+    
+    /**
+     * Replaces all variable placeholder with the
+     * variable values and returns the parsed string.
+     * 
+     * @param value
+     * @param order
+     * @return
+     */
+    public String replaceVariables(String value, Order order) {
+        for (OrderVariable variable : orderVariables) {
+        	value = value.replace("{" + variable.getKey() + "}", variable.getValue(order));
+        }
+        
+        return value;
+    }
+
+    /**
+     * Returns all available order variables.
+     * 
+     * @return
+     */
+    public Collection<OrderVariable> getOrderVariables() {
+        return Collections.unmodifiableSet(orderVariables);
+    }
+    
+    /**
+     * Returns all available order effects.
+     * 
+     * @return
+     */
+    public Collection<OrderEffect> getOrderEffects() {
+        return Collections.unmodifiableSet(orderEffects);
     }
 
 }

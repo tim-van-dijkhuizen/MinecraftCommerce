@@ -7,7 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import nl.timvandijkhuizen.commerce.base.GatewayType;
-import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class RegisterGatewayTypesEvent extends Event {
 
@@ -24,13 +23,8 @@ public class RegisterGatewayTypesEvent extends Event {
      * 
      * @param type
      */
-    public void addType(Class<? extends GatewayType> type) {
-        try {
-            GatewayType instance = type.newInstance();
-            types.add(instance);
-        } catch (InstantiationException | IllegalAccessException e) {
-            ConsoleHelper.printError("Failed to register gateway type", e);
-        }
+    public void addType(GatewayType type) {
+        types.add(type);
     }
 
     /**

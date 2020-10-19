@@ -22,7 +22,7 @@ import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
@@ -43,7 +43,7 @@ import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
-public class StorageMysql extends Storage {
+public class StorageMysql implements StorageType {
     
     // MySQL source
     private HikariDataSource dbSource;
@@ -55,6 +55,21 @@ public class StorageMysql extends Storage {
     ConfigOption<String> configUsername;
     ConfigOption<String> configPassword;
 
+	@Override
+	public String getType() {
+		return "mysql";
+	}
+
+	@Override
+	public Material getIcon() {
+		return Material.CHEST;
+	}
+
+	@Override
+	public String getName() {
+		return "MySQL";
+	}
+    
     @Override
     public void init() throws Exception {
         YamlConfig config = Commerce.getInstance().getConfig();

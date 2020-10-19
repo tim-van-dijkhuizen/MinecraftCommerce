@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.WebService;
@@ -107,7 +107,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         QueryParameters queryParams = WebHelper.parseQuery(url);
         
         // Get gatewayId parameter
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         UUID uniqueId = queryParams.getUUID("order");
         
         if(uniqueId != null) {

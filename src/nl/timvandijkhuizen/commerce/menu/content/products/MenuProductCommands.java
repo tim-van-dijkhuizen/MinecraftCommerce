@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.CommandVariable;
+import nl.timvandijkhuizen.commerce.base.OrderVariable;
 import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.menu.Menus;
-import nl.timvandijkhuizen.commerce.services.ProductService;
+import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -29,7 +29,7 @@ public class MenuProductCommands implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        ProductService productService = Commerce.getInstance().getService("products");
+        OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1);
         Product product = args.get(0);
 
@@ -75,7 +75,7 @@ public class MenuProductCommands implements PredefinedMenu {
         // Add variables to lore
         createButton.addLore("", UI.color("Available variables:", UI.COLOR_TEXT));
 
-        for (CommandVariable variable : productService.getCommandVariables()) {
+        for (OrderVariable variable : orderService.getOrderVariables()) {
             createButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + UI.color(" {" + variable.getKey() + "}", UI.COLOR_SECONDARY));
         }
 

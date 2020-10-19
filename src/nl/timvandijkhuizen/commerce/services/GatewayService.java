@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
-import nl.timvandijkhuizen.commerce.base.Storage;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
 import nl.timvandijkhuizen.commerce.gateways.paypal.GatewayPayPal;
@@ -28,9 +28,10 @@ public class GatewayService extends BaseService {
     public void init() throws Exception {
         RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
 
-        event.addType(GatewayPayPal.class);
+        // Add core gateways
+        event.addType(new GatewayPayPal());
+        
         Bukkit.getServer().getPluginManager().callEvent(event);
-
         types = event.getTypes();
     }
     
@@ -40,7 +41,7 @@ public class GatewayService extends BaseService {
      * @param callback
      */
     public void getGateways(Consumer<Set<Gateway>> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         ThreadHelper.getAsync(() -> storage.getGateways(), callback, error -> {
             callback.accept(null);
@@ -55,7 +56,7 @@ public class GatewayService extends BaseService {
      * @param callback
      */
     public void saveGateway(Gateway gateway, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
         boolean isNew = gateway.getId() == null;
 
         // Validate the model
@@ -86,7 +87,7 @@ public class GatewayService extends BaseService {
      * @param callback
      */
     public void deleteGateway(Gateway gateway, Consumer<Boolean> callback) {
-        Storage storage = Commerce.getInstance().getStorage();
+        StorageType storage = Commerce.getInstance().getStorage();
 
         // Delete gateway
         ThreadHelper.executeAsync(() -> storage.deleteGateway(gateway), () -> callback.accept(true), error -> {

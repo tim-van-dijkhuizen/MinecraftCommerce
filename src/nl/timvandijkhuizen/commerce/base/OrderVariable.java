@@ -2,7 +2,7 @@ package nl.timvandijkhuizen.commerce.base;
 
 import nl.timvandijkhuizen.commerce.elements.Order;
 
-public interface CommandVariable {
+public interface OrderVariable {
 
     /**
      * Returns the variable key. The key is what the user adds between the
