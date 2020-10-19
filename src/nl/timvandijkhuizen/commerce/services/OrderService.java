@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
@@ -240,19 +239,7 @@ public class OrderService extends BaseService {
                 if(player != null) {
                 	effect.playEffect(player, order);
                 	player.sendTitle(title, subtitle, 10, 100, 20);
-                	
-                    new BukkitRunnable() {
-						double pitch = 5.0D;
-						  
-						public void run() {
-							if (pitch < 7.5D) {
-								player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, (float) pitch);
-								pitch += 0.5D;
-							} else {
-								cancel();
-							}
-						}
-                    }.runTaskTimer(Commerce.getInstance(), 1L, 4L);
+                	player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 2.0F);
                 }
             });
             
