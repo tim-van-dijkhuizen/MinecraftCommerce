@@ -8,7 +8,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
@@ -222,15 +224,35 @@ public class OrderService extends BaseService {
                         ConsoleHelper.printInfo("Performed command for order with id " + order.getId() + ": " + command);
                 	}
                 }
-                
-                // Play effect
+                  
+                // Play effect & show title
                 // =============================================
-                ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
-                OrderEffect effect = optionEffect.getValue(config);
                 Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
+                
+                ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
+                ConfigOption<String> optionTitle = config.getOption("general.completeTitle");
+                ConfigOption<String> optionSubtitle = config.getOption("general.completeSubtitle");
+                
+                OrderEffect effect = optionEffect.getValue(config);
+                String title = replaceVariables(optionTitle.getValue(config), order);
+                String subtitle = replaceVariables(optionSubtitle.getValue(config), order);
                 
                 if(player != null) {
                 	effect.playEffect(player, order);
+                	player.sendTitle(title, subtitle, 10, 100, 20);
+                	
+                    new BukkitRunnable() {
+						double pitch = 5.0D;
+						  
+						public void run() {
+							if (pitch < 7.5D) {
+								player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, (float) pitch);
+								pitch += 0.5D;
+							} else {
+								cancel();
+							}
+						}
+                    }.runTaskTimer(Commerce.getInstance(), 1L, 4L);
                 }
             });
             

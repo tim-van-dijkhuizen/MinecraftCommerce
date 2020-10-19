@@ -3,7 +3,9 @@ package nl.timvandijkhuizen.commerce.effects;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
 import nl.timvandijkhuizen.commerce.elements.Order;
 
@@ -26,7 +28,18 @@ public class EffectFirework implements OrderEffect {
 	
 	@Override
 	public void playEffect(Player player, Order order) {
-		player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
+        new BukkitRunnable() {
+			int count = 0;
+			  
+			public void run() {
+				if (count <= 4) {
+					player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
+					count += 1;
+				} else {
+					cancel();
+				}
+			}
+        }.runTaskTimer(Commerce.getInstance(), 0, 20);
 	}
 
 }

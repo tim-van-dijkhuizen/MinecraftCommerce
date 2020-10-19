@@ -39,7 +39,6 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeFile;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
-import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeString;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
@@ -67,6 +66,8 @@ public class Commerce extends PluginBase {
     private ConfigOption<File> configSslCertificate;
     private ConfigOption<File> configSslPrivateKey;
     private ConfigOption<OrderEffect> configOrderEffect;
+    private ConfigOption<String> configOrderTitle;
+    private ConfigOption<String> configOrderSubtitle;
     private ConfigOption<StorageType> configStorageType;
 
     @Override
@@ -88,7 +89,7 @@ public class Commerce extends PluginBase {
         // Create options
         ConfigTypeFile configTypeCert = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.pem$") });
         
-        configServerName = new ConfigOption<>("general.serverName", "Server Name", Material.PAPER, new ConfigTypeString())
+        configServerName = new ConfigOption<>("general.serverName", "Server Name", Material.PAPER, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue("Minecraft Commerce");
         
@@ -123,6 +124,12 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(new EffectFirework());
         
+        configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", Material.OAK_SIGN, ConfigTypes.MESSAGE)
+            .setDefaultValue("&a&lOrder Completed");
+        
+        configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", Material.OAK_SIGN, ConfigTypes.MESSAGE)
+            .setDefaultValue("&7Thanks for your order {playerUsername}");
+        
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
             .setDefaultValue(new StorageMysql())
@@ -138,6 +145,8 @@ public class Commerce extends PluginBase {
         config.addOption(configSslCertificate);
         config.addOption(configSslPrivateKey);
         config.addOption(configOrderEffect);
+        config.addOption(configOrderTitle);
+        config.addOption(configOrderSubtitle);
         config.addOption(configStorageType);
     }
     
