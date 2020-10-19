@@ -209,7 +209,7 @@ public class OrderService extends BaseService {
             ThreadHelper.execute(() -> {
             	YamlConfig config = Commerce.getInstance().getConfig();
             	
-            	// Execute product commands
+            	// Perform product commands
             	// =============================================
                 for(LineItem lineItem : order.getLineItems()) {
                 	ProductSnapshot product = lineItem.getProduct();
@@ -217,7 +217,9 @@ public class OrderService extends BaseService {
                 	
                 	for(String rawCommand : commands) {
                 		String command = replaceVariables(rawCommand, order);
+                		
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                        ConsoleHelper.printInfo("Performed command for order with id " + order.getId() + ": " + command);
                 	}
                 }
                 
