@@ -54,6 +54,7 @@ public class StorageMysql implements StorageType {
     ConfigOption<String> configDatabase;
     ConfigOption<String> configUsername;
     ConfigOption<String> configPassword;
+    ConfigOption<Integer> configMaxLifetime;
 
 	@Override
 	public String getType() {
@@ -90,12 +91,17 @@ public class StorageMysql implements StorageType {
         configPassword = new ConfigOption<>("storage.password", "Storage Password", Material.BARREL, ConfigTypes.PASSWORD)
             .setRequired(true);
         
+        configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", Material.CLOCK, ConfigTypes.INTEGER)
+            .setRequired(true)
+            .setDefaultValue(600);
+        
         // Add configuration options
         config.addOption(configHost);
         config.addOption(configPort);
         config.addOption(configDatabase);
         config.addOption(configUsername);
         config.addOption(configPassword);
+        config.addOption(configMaxLifetime);
     }
     
     @Override
@@ -106,6 +112,7 @@ public class StorageMysql implements StorageType {
         String database = configDatabase.getValue(config);
         String username = configUsername.getValue(config);
         String password = configPassword.getValue(config);
+        int maxLifetime = configMaxLifetime.getValue(config);
         
         // Create data pool
         HikariConfig dbConfig = new HikariConfig();
@@ -117,6 +124,7 @@ public class StorageMysql implements StorageType {
         dbConfig.addDataSourceProperty("cachePrepStmts", "true");
         dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
         dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        dbConfig.addDataSourceProperty("maxLifetime", maxLifetime);
 
         // Create source
         dbSource = new HikariDataSource(dbConfig);
