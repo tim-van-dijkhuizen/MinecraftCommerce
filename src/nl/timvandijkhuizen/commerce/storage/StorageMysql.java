@@ -92,7 +92,7 @@ public class StorageMysql implements StorageType {
         configPassword = new ConfigOption<>("storage.password", "Storage Password", XMaterial.BARREL, ConfigTypes.PASSWORD)
             .setRequired(true);
         
-        configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", XMaterial.CLOCK, ConfigTypes.INTEGER)
+        configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", XMaterial.BARREL, ConfigTypes.INTEGER)
             .setRequired(true)
             .setDefaultValue(600);
         
