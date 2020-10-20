@@ -1,8 +1,9 @@
 package nl.timvandijkhuizen.commerce.menu.content.fields;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.FieldType;
@@ -27,7 +28,7 @@ public class MenuFieldType implements PredefinedMenu {
         FieldType<?> selected = field.getType();
 
         for (FieldType<?> type : fieldService.getFieldTypes()) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.CAULDRON);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.CAULDRON);
 
             item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 

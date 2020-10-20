@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.menu.content.products;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -10,6 +9,8 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Command;
@@ -64,7 +65,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Name button
         // ===========================
-        MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
+        MenuItemBuilder nameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         nameButton.setName(UI.color("Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -114,7 +115,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Description button
         // ===========================
-        MenuItemBuilder descriptionButton = new MenuItemBuilder(Material.PAPER);
+        MenuItemBuilder descriptionButton = new MenuItemBuilder(XMaterial.PAPER);
 
         descriptionButton.setName(UI.color("Description", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -168,7 +169,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Category button
         // ===========================
-        MenuItemBuilder categoryButton = new MenuItemBuilder(Material.CHEST_MINECART);
+        MenuItemBuilder categoryButton = new MenuItemBuilder(XMaterial.CHEST_MINECART);
 
         categoryButton.setName(UI.color("Category", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -218,7 +219,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Price button
         // ===========================
-        MenuItemBuilder priceButton = new MenuItemBuilder(Material.SUNFLOWER);
+        MenuItemBuilder priceButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         priceButton.setName(UI.color("Price", UI.COLOR_PRIMARY, ChatColor.BOLD));
         priceButton.setLore(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY));
@@ -263,7 +264,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Commands button
         // ===========================
-        MenuItemBuilder commandsButton = new MenuItemBuilder(Material.COMMAND_BLOCK);
+        MenuItemBuilder commandsButton = new MenuItemBuilder(XMaterial.COMMAND_BLOCK);
 
         commandsButton.setName(UI.color("Commands", UI.COLOR_PRIMARY, ChatColor.BOLD));
 

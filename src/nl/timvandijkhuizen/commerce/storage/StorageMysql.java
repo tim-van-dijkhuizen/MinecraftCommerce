@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -62,8 +63,8 @@ public class StorageMysql implements StorageType {
 	}
 
 	@Override
-	public Material getIcon() {
-		return Material.CHEST;
+	public XMaterial getIcon() {
+		return XMaterial.CHEST;
 	}
 
 	@Override
@@ -76,22 +77,22 @@ public class StorageMysql implements StorageType {
         YamlConfig config = Commerce.getInstance().getConfig();
 
         // Create configuration options
-        configHost = new ConfigOption<>("storage.host", "Storage Host", Material.BARREL, ConfigTypes.STRING)
+        configHost = new ConfigOption<>("storage.host", "Storage Host", XMaterial.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPort = new ConfigOption<>("storage.port", "Storage Port", Material.BARREL, ConfigTypes.INTEGER)
+        configPort = new ConfigOption<>("storage.port", "Storage Port", XMaterial.BARREL, ConfigTypes.INTEGER)
             .setRequired(true);
         
-        configDatabase = new ConfigOption<>("storage.database", "Storage Database", Material.BARREL, ConfigTypes.STRING)
+        configDatabase = new ConfigOption<>("storage.database", "Storage Database", XMaterial.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configUsername = new ConfigOption<>("storage.username", "Storage Username", Material.BARREL, ConfigTypes.STRING)
+        configUsername = new ConfigOption<>("storage.username", "Storage Username", XMaterial.BARREL, ConfigTypes.STRING)
             .setRequired(true);
         
-        configPassword = new ConfigOption<>("storage.password", "Storage Password", Material.BARREL, ConfigTypes.PASSWORD)
+        configPassword = new ConfigOption<>("storage.password", "Storage Password", XMaterial.BARREL, ConfigTypes.PASSWORD)
             .setRequired(true);
         
-        configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", Material.CLOCK, ConfigTypes.INTEGER)
+        configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", XMaterial.CLOCK, ConfigTypes.INTEGER)
             .setRequired(true)
             .setDefaultValue(600);
         

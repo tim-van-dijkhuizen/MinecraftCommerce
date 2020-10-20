@@ -3,13 +3,14 @@ package nl.timvandijkhuizen.commerce.menu.content.gateways;
 import java.util.Collection;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
@@ -37,7 +38,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
 
         // Display name button
         // ===========================
-        MenuItemBuilder displayNameButton = new MenuItemBuilder(Material.NAME_TAG);
+        MenuItemBuilder displayNameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         displayNameButton.setName(UI.color("Display Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -87,7 +88,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         
         // Type button
         // ===========================
-        MenuItemBuilder typeButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+        MenuItemBuilder typeButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
 
         typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -119,7 +120,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         
         // Option button
         // ===========================
-        MenuItemBuilder optionButton = new MenuItemBuilder(Material.COMPARATOR);
+        MenuItemBuilder optionButton = new MenuItemBuilder(XMaterial.COMPARATOR);
 
         optionButton.setName(UI.color("Options", UI.COLOR_PRIMARY, ChatColor.BOLD));
 

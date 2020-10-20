@@ -5,8 +5,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
@@ -68,7 +69,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
         
         for (StoreCurrency currency : currencies) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.SUNFLOWER);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
             item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             item.setLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + currency.getConversionRate(), UI.COLOR_SECONDARY));

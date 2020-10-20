@@ -3,7 +3,7 @@ package nl.timvandijkhuizen.commerce.base;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Material;
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.elements.Category;
@@ -22,7 +22,7 @@ public interface StorageType extends Service {
 	}
 	
     public String getType();
-    public Material getIcon();
+    public XMaterial getIcon();
     public String getName();
     
     /**

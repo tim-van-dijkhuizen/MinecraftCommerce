@@ -3,8 +3,9 @@ package nl.timvandijkhuizen.commerce.menu.content.shop;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
@@ -38,7 +39,7 @@ public class MenuShopCurrency implements PredefinedMenu {
         List<StoreCurrency> currencies = currenciesOption.getValue(config);
 
         for (StoreCurrency currency : currencies) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.SUNFLOWER);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
             // Set category name
             item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));

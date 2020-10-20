@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
@@ -34,7 +35,7 @@ public class MenuShopOrderHistory implements PredefinedMenu {
         Menu returnMenu = args.get(1);
 
         for (Order order : orders) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 
             // Set order name
             item.setName(UI.color(order.getUniqueId().toString(), UI.COLOR_PRIMARY, ChatColor.BOLD));

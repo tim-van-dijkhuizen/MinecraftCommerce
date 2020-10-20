@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.commands.CommandCommerce;
@@ -89,48 +91,48 @@ public class Commerce extends PluginBase {
         // Create options
         ConfigTypeFile configTypeCert = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.pem$") });
         
-        configServerName = new ConfigOption<>("general.serverName", "Server Name", Material.PAPER, ConfigTypes.STRING)
+        configServerName = new ConfigOption<>("general.serverName", "Server Name", XMaterial.PAPER, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue("Minecraft Commerce");
         
-        configDevMode = new ConfigOption<>("general.devMode", "Dev Mode", Material.REDSTONE, ConfigTypes.BOOLEAN)
+        configDevMode = new ConfigOption<>("general.devMode", "Dev Mode", XMaterial.REDSTONE, ConfigTypes.BOOLEAN)
             .setRequired(true)
             .setDefaultValue(false);
         
-        configCurrencies = new ConfigOption<>("general.currencies", "Currencies", Material.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", Material.SUNFLOWER))
+        configCurrencies = new ConfigOption<>("general.currencies", "Currencies", XMaterial.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", XMaterial.SUNFLOWER))
             .setRequired(true)
             .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
         
-        configBaseCurrency = new ConfigOption<>("general.baseCurrency", "Base Currency", Material.SUNFLOWER, new ConfigTypeStoreCurrency())
+        configBaseCurrency = new ConfigOption<>("general.baseCurrency", "Base Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
         
-        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", Material.COBWEB, ConfigTypes.DOMAIN)
+        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
         
-        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", Material.COBWEB, new ConfigTypePort())
+        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", XMaterial.COBWEB, new ConfigTypePort())
             .setRequired(true)
             .setDefaultValue(8080)
             .setMeta(new DataArguments(true));
         
-        configSslCertificate = new ConfigOption<>("general.sslCertificate", "SSL Certificate", Material.TRIPWIRE_HOOK, configTypeCert)
+        configSslCertificate = new ConfigOption<>("general.sslCertificate", "SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
         
-        configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", Material.TRIPWIRE_HOOK, configTypeCert)
+        configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
         
-        configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", Material.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
+        configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", XMaterial.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
             .setDefaultValue(new EffectFirework());
         
-        configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", Material.OAK_SIGN, ConfigTypes.MESSAGE)
+        configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&a&lOrder Completed");
         
-        configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", Material.OAK_SIGN, ConfigTypes.MESSAGE)
+        configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&7Thanks for your order {playerUsername}");
         
-        configStorageType = new ConfigOption<>("storage.type", "Storage Type", Material.BARREL, new ConfigTypeStorageType())
+        configStorageType = new ConfigOption<>("storage.type", "Storage Type", XMaterial.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
             .setDefaultValue(new StorageMysql())
             .setMeta(new DataArguments(true));

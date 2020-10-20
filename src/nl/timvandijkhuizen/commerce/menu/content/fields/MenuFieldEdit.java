@@ -2,13 +2,14 @@ package nl.timvandijkhuizen.commerce.menu.content.fields;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Field;
@@ -60,7 +61,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         
         // Name button
         // ===========================
-        MenuItemBuilder nameButton = new MenuItemBuilder(Material.NAME_TAG);
+        MenuItemBuilder nameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         nameButton.setName(UI.color("Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -110,7 +111,7 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         // Description button
         // ===========================
-        MenuItemBuilder descriptionButton = new MenuItemBuilder(Material.PAPER);
+        MenuItemBuilder descriptionButton = new MenuItemBuilder(XMaterial.PAPER);
 
         descriptionButton.setName(UI.color("Description", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -164,7 +165,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         
         // Type button
         // ===========================
-        MenuItemBuilder typeButton = new MenuItemBuilder(Material.CAULDRON);
+        MenuItemBuilder typeButton = new MenuItemBuilder(XMaterial.CAULDRON);
 
         typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -196,7 +197,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         
         // Required button
         // ===========================
-        Material requiredIcon = field.isRequired() ? Material.LIME_TERRACOTTA : Material.LIGHT_GRAY_TERRACOTTA;
+        XMaterial requiredIcon = field.isRequired() ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA;
         MenuItemBuilder requiredButton = new MenuItemBuilder(requiredIcon);
 
         requiredButton.setName(UI.color("Required", UI.COLOR_PRIMARY, ChatColor.BOLD));
@@ -211,9 +212,9 @@ public class MenuFieldEdit implements PredefinedMenu {
             
             // Update button material
             if(field.isRequired()) {
-                requiredButton.setType(Material.LIME_TERRACOTTA);
+                requiredButton.setType(XMaterial.LIME_TERRACOTTA);
             } else {
-                requiredButton.setType(Material.LIGHT_GRAY_TERRACOTTA);
+                requiredButton.setType(XMaterial.LIGHT_GRAY_TERRACOTTA);
             }
             
             menu.refresh();

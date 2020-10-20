@@ -2,6 +2,8 @@ package nl.timvandijkhuizen.commerce.elements;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import nl.timvandijkhuizen.commerce.base.Element;
 
 public class Category extends Element {
@@ -11,7 +13,7 @@ public class Category extends Element {
     private String description;
 
     public Category() {
-        this.icon = Material.CHEST_MINECART;
+        this.icon = XMaterial.CHEST_MINECART.parseMaterial(true);
         this.name = "";
         this.description = "";
     }

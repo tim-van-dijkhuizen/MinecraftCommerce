@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import org.bukkit.Material;
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
@@ -25,11 +25,11 @@ public class GatewayPayPal implements GatewayType {
 	public GatewayPayPal() {
 	    File pluginRoot = Commerce.getInstance().getDataFolder();
 	    
-		configClientId = new ConfigOption<>("clientId", "Client Id", Material.NAME_TAG, ConfigTypes.STRING).setRequired(true);
-		configClientSecret = new ConfigOption<>("clientSecret", "Client Secret", Material.TRIPWIRE_HOOK, ConfigTypes.PASSWORD).setRequired(true);
-		configTestMode = new ConfigOption<>("testMode", "Test Mode", Material.COMMAND_BLOCK, ConfigTypes.BOOLEAN);
+		configClientId = new ConfigOption<>("clientId", "Client Id", XMaterial.NAME_TAG, ConfigTypes.STRING).setRequired(true);
+		configClientSecret = new ConfigOption<>("clientSecret", "Client Secret", XMaterial.TRIPWIRE_HOOK, ConfigTypes.PASSWORD).setRequired(true);
+		configTestMode = new ConfigOption<>("testMode", "Test Mode", XMaterial.COMMAND_BLOCK, ConfigTypes.BOOLEAN);
 		
-		configTemplate = new ConfigOption<>("template", "Template", Material.MAP, new ConfigTypeFile(pluginRoot, new Pattern[] {
+		configTemplate = new ConfigOption<>("template", "Template", XMaterial.MAP, new ConfigTypeFile(pluginRoot, new Pattern[] {
 	        Pattern.compile("^.*\\.html$")
         }));
 	}
@@ -45,8 +45,8 @@ public class GatewayPayPal implements GatewayType {
     }
     
     @Override
-    public Material getIcon() {
-        return Material.LIGHT_BLUE_TERRACOTTA;
+    public XMaterial getIcon() {
+        return XMaterial.LIGHT_BLUE_TERRACOTTA;
     }
 
     @Override

@@ -2,6 +2,8 @@ package nl.timvandijkhuizen.commerce.elements;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
@@ -16,7 +18,7 @@ public class Product extends Element {
     private DataList<Command> commands;
 
     public Product() {
-        this.icon = Material.CHEST;
+        this.icon = XMaterial.CHEST.parseMaterial(true);
         this.name = "";
         this.description = "";
         this.category = null;

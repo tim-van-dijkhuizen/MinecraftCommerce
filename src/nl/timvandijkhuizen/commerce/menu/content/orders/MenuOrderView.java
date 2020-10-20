@@ -3,8 +3,9 @@ package nl.timvandijkhuizen.commerce.menu.content.orders;
 import java.util.Collection;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
@@ -33,7 +34,7 @@ public class MenuOrderView implements PredefinedMenu {
 
         // UniqueId button
         // ===========================
-        MenuItemBuilder uniqueIdButton = new MenuItemBuilder(Material.PLAYER_HEAD);
+        MenuItemBuilder uniqueIdButton = new MenuItemBuilder(XMaterial.PLAYER_HEAD);
 
         uniqueIdButton.setSkullOwner(order.getPlayerUniqueId());
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
@@ -43,7 +44,7 @@ public class MenuOrderView implements PredefinedMenu {
         
         // Username button
         // ===========================
-        MenuItemBuilder usernameButton = new MenuItemBuilder(Material.NAME_TAG);
+        MenuItemBuilder usernameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
         usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
@@ -52,7 +53,7 @@ public class MenuOrderView implements PredefinedMenu {
         
         // Currency button
         // ===========================
-        MenuItemBuilder currencyButton = new MenuItemBuilder(Material.SUNFLOWER);
+        MenuItemBuilder currencyButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
         currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
@@ -61,7 +62,7 @@ public class MenuOrderView implements PredefinedMenu {
         
         // Products button
         // ===========================
-        MenuItemBuilder itemsButton = new MenuItemBuilder(Material.CHEST);
+        MenuItemBuilder itemsButton = new MenuItemBuilder(XMaterial.CHEST);
 
         itemsButton.setName(UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
         
@@ -91,7 +92,7 @@ public class MenuOrderView implements PredefinedMenu {
         
         // Fields button
         // ===========================
-        MenuItemBuilder fieldsButton = new MenuItemBuilder(Material.OAK_SIGN);
+        MenuItemBuilder fieldsButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
         fieldsButton.setName(UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
 

@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
+import nl.timvandijkhuizen.commerce.helpers.DbHelper;
 
 public class ProductSnapshot {
 
@@ -52,7 +53,7 @@ public class ProductSnapshot {
     public ProductSnapshot(JsonObject json) throws JsonParseException {
         try {
             id = json.get("id").getAsInt();
-            icon = Material.valueOf(json.get("icon").getAsString());
+            icon = DbHelper.parseMaterial(json.get("icon").getAsString());
             name = json.get("name").getAsString();
             description = json.get("description").getAsString();
             price = json.get("price").getAsFloat();
@@ -65,7 +66,7 @@ public class ProductSnapshot {
             }
             
             // Set category
-            categoryIcon = Material.valueOf(json.get("categoryIcon").getAsString());
+            categoryIcon = DbHelper.parseMaterial(json.get("categoryIcon").getAsString());
             categoryName = json.get("categoryName").getAsString();
             categoryDescription = json.get("categoryDescription").getAsString();
         } catch(Exception e) {

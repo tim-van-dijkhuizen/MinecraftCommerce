@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.commerce.helpers;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonObject;
 
 import nl.timvandijkhuizen.commerce.base.GatewayType;
@@ -12,8 +13,6 @@ import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 
 public class DbHelper {
 
-    
-    
     public static String prepareMaterial(Material material) {
         return material.name();
     }
@@ -22,7 +21,7 @@ public class DbHelper {
         try {
             return Material.valueOf(raw);
         } catch (IllegalArgumentException e) {
-            return Material.CHEST;
+            return XMaterial.BARRIER.parseMaterial(true);
         }
     }
     

@@ -8,8 +8,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XSound;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
@@ -239,7 +240,7 @@ public class OrderService extends BaseService {
                 if(player != null) {
                 	effect.playEffect(player, order);
                 	player.sendTitle(title, subtitle, 10, 100, 20);
-                	player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 2.0F);
+                	player.playSound(player.getLocation(), XSound.ENTITY_PLAYER_LEVELUP.parseSound(), 1.0F, 2.0F);
                 }
             });
             

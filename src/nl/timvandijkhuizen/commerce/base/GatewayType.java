@@ -2,7 +2,7 @@ package nl.timvandijkhuizen.commerce.base;
 
 import java.util.Collection;
 
-import org.bukkit.Material;
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -28,7 +28,7 @@ public interface GatewayType {
      * 
      * @return
      */
-    public Material getIcon();
+    public XMaterial getIcon();
     
     /**
      * Returns all configuration options.

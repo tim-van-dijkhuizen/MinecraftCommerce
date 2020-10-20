@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.PaymentUrl;
@@ -41,7 +42,7 @@ public class MenuShopPayment implements PredefinedMenu {
         Gateway gateway = cart.getGateway();
         
         // Pay button
-        MenuItemBuilder acceptButton = new MenuItemBuilder(Material.BOOK);
+        MenuItemBuilder acceptButton = new MenuItemBuilder(XMaterial.BOOK);
 
         acceptButton.setName(UI.color("Terms & Conditions", UI.COLOR_PRIMARY, ChatColor.BOLD));
         
@@ -72,7 +73,7 @@ public class MenuShopPayment implements PredefinedMenu {
         menu.setButton(acceptButton, 11);
         
         // Pay button
-        MenuItemBuilder payButton = new MenuItemBuilder(Material.COMPARATOR);
+        MenuItemBuilder payButton = new MenuItemBuilder(XMaterial.COMPARATOR);
         TypedValue<String> payActionLore = new TypedValue<>();
         String gatewayName = gateway != null ? gateway.getDisplayName() : "";
 
@@ -148,7 +149,7 @@ public class MenuShopPayment implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
         
         // Previous (gateway) button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+        MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Gateways", UI.COLOR_TEXT));

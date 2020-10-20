@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce.menu.content.products;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -9,6 +8,8 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderVariable;
@@ -35,7 +36,7 @@ public class MenuProductCommands implements PredefinedMenu {
 
         // Add command buttons
         for (Command command : product.getCommands()) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.COMMAND_BLOCK);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.COMMAND_BLOCK);
 
             item.setName(UI.color(command.getCommand(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             item.setLore("", UI.color("Right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -65,7 +66,7 @@ public class MenuProductCommands implements PredefinedMenu {
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new command button
-        MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
+        MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
 
         createButton.setName(UI.color("Create Command", UI.COLOR_SECONDARY, ChatColor.BOLD));
         createButton.setLore(UI.color("Add a command to be executed when this product", UI.COLOR_TEXT));

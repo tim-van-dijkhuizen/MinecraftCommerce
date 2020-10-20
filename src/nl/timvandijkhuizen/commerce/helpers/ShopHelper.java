@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
@@ -40,7 +41,7 @@ public class ShopHelper {
         DataList<LineItem> lineItems = cart.getLineItems();
         
         // Create cart item
-        MenuItemBuilder item = new MenuItemBuilder(Material.MINECART);
+        MenuItemBuilder item = new MenuItemBuilder(XMaterial.MINECART);
         
         item.setName(UI.color("Cart", UI.COLOR_PRIMARY, ChatColor.BOLD));
         

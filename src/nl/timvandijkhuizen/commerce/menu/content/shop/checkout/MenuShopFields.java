@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
@@ -121,7 +122,7 @@ public class MenuShopFields implements PredefinedMenu {
         }
         
         // Previous (cart) button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.MINECART);
+        MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.MINECART);
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Cart", UI.COLOR_TEXT));
@@ -133,7 +134,7 @@ public class MenuShopFields implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         // Next (gateway) button
-        MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+        MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         

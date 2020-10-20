@@ -3,9 +3,10 @@ package nl.timvandijkhuizen.commerce.menu.content.orders;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Order;
@@ -30,7 +31,7 @@ public class MenuOrderList implements PredefinedMenu {
         Set<Order> orders = args.getSet(0);
 
         for (Order order : orders) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.WRITABLE_BOOK);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 
             // Set order name
             item.setName(UI.color(order.getUniqueId().toString(), UI.COLOR_PRIMARY, ChatColor.BOLD));

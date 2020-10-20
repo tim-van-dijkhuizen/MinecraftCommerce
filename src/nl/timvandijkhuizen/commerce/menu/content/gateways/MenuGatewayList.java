@@ -4,9 +4,10 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
@@ -34,7 +35,7 @@ public class MenuGatewayList implements PredefinedMenu {
         Set<Gateway> gateways = args.getSet(0);
 
         for (Gateway gateway : gateways) {
-            MenuItemBuilder item = new MenuItemBuilder(Material.OAK_FENCE_GATE);
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
             Collection<ConfigOption<?>> options = gateway.getType().getOptions();
 
             // Set gateway name
@@ -101,7 +102,7 @@ public class MenuGatewayList implements PredefinedMenu {
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new gateway button
-        MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
+        MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
 
         createButton.setName(UI.color("Create Gateway", UI.COLOR_SECONDARY, ChatColor.BOLD));
 

@@ -4,8 +4,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
@@ -34,7 +35,7 @@ public class UserService extends BaseService {
         StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
         
         // Create user options
-        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", Material.SUNFLOWER, new ConfigTypeStoreCurrency())
+        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(baseCurrency);
         

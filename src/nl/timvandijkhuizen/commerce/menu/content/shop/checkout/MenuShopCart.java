@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
@@ -21,6 +22,7 @@ import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -102,7 +104,7 @@ public class MenuShopCart implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
 
         // Previous button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.RED_BED);
+        MenuItemBuilder previousButton = MenuItems.BACK.clone();
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Shop Home", UI.COLOR_TEXT)); 
@@ -111,7 +113,7 @@ public class MenuShopCart implements PredefinedMenu {
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
         
         // Next (fields) button
-        MenuItemBuilder nextButton = new MenuItemBuilder(Material.OAK_SIGN);
+        MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         

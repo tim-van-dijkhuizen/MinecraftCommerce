@@ -1,9 +1,10 @@
 package nl.timvandijkhuizen.commerce.effects;
 
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
@@ -17,8 +18,8 @@ public class EffectFirework implements OrderEffect {
 	}
 
 	@Override
-	public Material getIcon() {
-		return Material.FIREWORK_ROCKET;
+	public XMaterial getIcon() {
+		return XMaterial.FIREWORK_ROCKET;
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package nl.timvandijkhuizen.commerce.elements;
 
 import org.bukkit.Material;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -16,7 +18,7 @@ public class Field extends Element {
     private boolean required;
     
     public Field() {
-        this.icon = Material.OAK_SIGN;
+        this.icon = XMaterial.OAK_SIGN.parseMaterial(true);
         this.name = "";
         this.description = "";
     }

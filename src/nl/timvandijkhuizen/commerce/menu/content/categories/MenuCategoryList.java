@@ -4,9 +4,10 @@ import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
@@ -86,7 +87,7 @@ public class MenuCategoryList implements PredefinedMenu {
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new category button
-        MenuItemBuilder createButton = new MenuItemBuilder(Material.NETHER_STAR);
+        MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
 
         createButton.setName(UI.color("Create Category", UI.COLOR_SECONDARY, ChatColor.BOLD));
 

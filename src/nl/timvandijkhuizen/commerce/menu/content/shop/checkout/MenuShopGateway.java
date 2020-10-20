@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
@@ -87,7 +88,7 @@ public class MenuShopGateway implements PredefinedMenu {
         }
         
         // Previous (fields) button
-        MenuItemBuilder previousButton = new MenuItemBuilder(Material.OAK_SIGN);
+        MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         previousButton.setLore(UI.color("Fields", UI.COLOR_TEXT));
@@ -99,7 +100,7 @@ public class MenuShopGateway implements PredefinedMenu {
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
         
         // Next (payment) button
-        MenuItemBuilder nextButton = new MenuItemBuilder(Material.EMERALD);
+        MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.EMERALD);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
         
