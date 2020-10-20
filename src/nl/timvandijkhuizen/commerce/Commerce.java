@@ -22,7 +22,7 @@ import nl.timvandijkhuizen.commerce.config.types.ConfigTypeOrderEffect;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypePort;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
-import nl.timvandijkhuizen.commerce.effects.EffectFirework;
+import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.commerce.services.CacheService;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
@@ -124,7 +124,7 @@ public class Commerce extends PluginBase {
         
         configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", XMaterial.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
-            .setDefaultValue(new EffectFirework());
+            .setDefaultValue(new OrderEffectDefault());
         
         configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&a&lOrder Completed");

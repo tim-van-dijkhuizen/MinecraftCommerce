@@ -10,8 +10,6 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.cryptomorin.xseries.XSound;
-
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
 import nl.timvandijkhuizen.commerce.base.OrderVariable;
@@ -19,7 +17,7 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
-import nl.timvandijkhuizen.commerce.effects.EffectFirework;
+import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
@@ -56,7 +54,7 @@ public class OrderService extends BaseService {
         variableEvent.addVariable(new VariablePlayerUniqueId());
         
         // Add core effects
-        effectEvent.addEffect(new EffectFirework());
+        effectEvent.addEffect(new OrderEffectDefault());
         
         // Register custom variables and effects
         Bukkit.getServer().getPluginManager().callEvent(variableEvent);
@@ -228,19 +226,11 @@ public class OrderService extends BaseService {
                 // Play effect & show title
                 // =============================================
                 Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
-                
                 ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
-                ConfigOption<String> optionTitle = config.getOption("general.completeTitle");
-                ConfigOption<String> optionSubtitle = config.getOption("general.completeSubtitle");
-                
                 OrderEffect effect = optionEffect.getValue(config);
-                String title = replaceVariables(optionTitle.getValue(config), order);
-                String subtitle = replaceVariables(optionSubtitle.getValue(config), order);
                 
                 if(player != null) {
                 	effect.playEffect(player, order);
-                	player.sendTitle(title, subtitle, 10, 100, 20);
-                	player.playSound(player.getLocation(), XSound.ENTITY_PLAYER_LEVELUP.parseSound(), 1.0F, 2.0F);
                 }
             });
             
