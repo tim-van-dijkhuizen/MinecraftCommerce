@@ -1,6 +1,9 @@
 package nl.timvandijkhuizen.commerce.helpers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,15 +19,20 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.DefaultFileRegion;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpChunkedInput;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.stream.ChunkedFile;
+import io.netty.handler.stream.ChunkedStream;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.ContentType;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
@@ -206,6 +214,44 @@ public class WebHelper {
 
         if (!keepAlive) {
             flushPromise.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+    
+    public static void sendFileResponse(ChannelHandlerContext ctx, FullHttpRequest request, String contentType, InputStream stream) throws IOException {
+        boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        
+        // Add headers
+        ZonedDateTime dateTime = ZonedDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
+
+        DefaultHttpHeaders headers = (DefaultHttpHeaders) response.headers();
+        headers.set(HttpHeaderNames.DATE, dateTime.format(formatter));
+        headers.set(HttpHeaderNames.CONTENT_TYPE, contentType);
+        headers.set(HttpHeaderNames.CONTENT_LENGTH, Integer.toString(stream.available()));
+
+        if (keepAlive) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        } else {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+        }
+
+        // Write the initial response
+        ctx.write(response);
+
+        // Write the content
+        ChannelFuture future;
+        
+        if (ctx.pipeline().get("ssl") == null) {
+            ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
+            future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        } else {
+            future = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)), ctx.newProgressivePromise());
+        }
+
+        // Close after we've sent all content
+        if (!keepAlive) {
+            future.addListener(ChannelFutureListener.CLOSE);
         }
     }
     
