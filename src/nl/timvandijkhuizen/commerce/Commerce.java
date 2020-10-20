@@ -49,7 +49,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class Commerce extends PluginBase {
     
-    public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && !icon.isAir()).toArray(Material[]::new);
+    public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && icon != Material.AIR).toArray(Material[]::new);
     public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
     
     private static Commerce instance;
@@ -71,7 +71,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<StorageType> configStorageType;
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         instance = this;
         ThreadHelper.setPlugin(this);
         
@@ -151,7 +151,7 @@ public class Commerce extends PluginBase {
     }
     
     @Override
-    public void load() throws Exception {
+    public void load() throws Throwable {
         config.setDefaultOptions();
         config.save();
     	
@@ -159,7 +159,7 @@ public class Commerce extends PluginBase {
     }
     
     @Override
-    public void ready() throws Exception {
+    public void ready() throws Throwable {
         Map<String, String> setupErrors = getServiceErrors();
         
         if(!setupErrors.isEmpty()) {
@@ -178,7 +178,7 @@ public class Commerce extends PluginBase {
     }
 
     @Override
-    public Service[] registerServices() throws Exception {
+    public Service[] registerServices() throws Throwable {
         CommandService commandService = new CommandService(this);
 
         // Register command

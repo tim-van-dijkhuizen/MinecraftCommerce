@@ -31,7 +31,7 @@ public class FieldService extends BaseService {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         RegisterFieldTypesEvent event = new RegisterFieldTypesEvent();
 
         // Register field types
@@ -44,7 +44,7 @@ public class FieldService extends BaseService {
     }
     
     @Override
-    public void load() throws Exception {
+    public void load() throws Throwable {
         getFields(fields -> {
             if(fields == null) {
                 ConsoleHelper.printError("Failed to cache options, fields cannot be loaded.");

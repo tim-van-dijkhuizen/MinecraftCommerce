@@ -25,7 +25,7 @@ public class GatewayService extends BaseService {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
 
         // Add core gateways

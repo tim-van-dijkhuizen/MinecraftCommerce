@@ -45,7 +45,7 @@ public class OrderService extends BaseService {
     }
     
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         RegisterOrderVariablesEvent variableEvent = new RegisterOrderVariablesEvent();
         RegisterOrderEffectsEvent effectEvent = new RegisterOrderEffectsEvent();
 

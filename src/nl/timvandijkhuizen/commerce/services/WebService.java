@@ -46,7 +46,7 @@ public class WebService extends BaseService {
     }
 	
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
     	YamlConfig config = Commerce.getInstance().getConfig();
         
         // Create SSL context

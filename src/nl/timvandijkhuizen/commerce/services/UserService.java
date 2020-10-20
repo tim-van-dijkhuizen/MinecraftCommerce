@@ -28,7 +28,7 @@ public class UserService extends BaseService {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
         ConfigOption<StoreCurrency> optionBaseCurrency = config.getOption("general.baseCurrency");
         StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
