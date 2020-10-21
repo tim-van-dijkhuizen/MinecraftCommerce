@@ -121,11 +121,11 @@ public class StorageMysql implements StorageType {
         dbConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         dbConfig.setUsername(username);
         dbConfig.setPassword(password);
+        dbConfig.setMaxLifetime(maxLifetime);
 
         dbConfig.addDataSourceProperty("cachePrepStmts", "true");
         dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
         dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        dbConfig.addDataSourceProperty("maxLifetime", maxLifetime);
 
         // Create source
         dbSource = new HikariDataSource(dbConfig);
