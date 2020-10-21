@@ -14,13 +14,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class ActionFieldList implements MenuItemAction {
 
     private boolean clickSound = true;
-    
+
     public ActionFieldList(boolean clickSound) {
         this.clickSound = clickSound;
     }
-    
-    public ActionFieldList() { }
-    
+
+    public ActionFieldList() {
+    }
+
     @Override
     public void onClick(MenuItemClick event) {
         FieldService fieldService = Commerce.getInstance().getService("fields");
@@ -28,10 +29,10 @@ public class ActionFieldList implements MenuItemAction {
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
-        if(clickSound) {
+        if (clickSound) {
             UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -39,7 +40,7 @@ public class ActionFieldList implements MenuItemAction {
         // Create menu
         fieldService.getFields(fields -> {
             activeMenu.enableButtons();
-            
+
             if (fields == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load fields.", UI.COLOR_ERROR));

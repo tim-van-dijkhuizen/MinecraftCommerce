@@ -32,7 +32,7 @@ public class MenuShopCurrency implements PredefinedMenu {
         // Get cart & return menu
         Order cart = args.get(0);
         Menu returnMenu = args.get(1);
-        
+
         // Get available currencies
         YamlConfig config = Commerce.getInstance().getConfig();
         ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
@@ -45,18 +45,18 @@ public class MenuShopCurrency implements PredefinedMenu {
             item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             item.addLore("", UI.color("Left-click to select.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
-            // Add glow if selected 
-            if(currency.equals(cart.getCurrency())) {
+            // Add glow if selected
+            if (currency.equals(cart.getCurrency())) {
                 item.addEnchantGlow();
             }
-            
+
             // Set click listener
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 // Update order
                 cart.setCurrency(currency);
-                
+
                 // Update UI
                 item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
                 menu.disableButtons();
@@ -65,7 +65,7 @@ public class MenuShopCurrency implements PredefinedMenu {
                 // Save cart
                 orderService.saveOrder(cart, success -> {
                     menu.enableButtons();
-                    
+
                     if (success) {
                         UI.playSound(player, UI.SOUND_SUCCESS);
                         returnMenu.open(player);

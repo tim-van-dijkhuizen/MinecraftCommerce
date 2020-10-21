@@ -52,7 +52,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
-        
+
         iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
@@ -74,7 +74,7 @@ public class MenuProductEdit implements PredefinedMenu {
         } else {
             nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -128,7 +128,7 @@ public class MenuProductEdit implements PredefinedMenu {
         } else {
             descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -178,7 +178,7 @@ public class MenuProductEdit implements PredefinedMenu {
         } else {
             categoryButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         categoryButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -203,7 +203,7 @@ public class MenuProductEdit implements PredefinedMenu {
             // Create menu
             categoryService.getCategories(categories -> {
                 menu.enableButtons();
-                
+
                 if (categories == null) {
                     UI.playSound(player, UI.SOUND_ERROR);
                     categoryButton.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));
@@ -225,7 +225,7 @@ public class MenuProductEdit implements PredefinedMenu {
         priceButton.setLore(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY));
 
         priceButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
+
         // Add validation errors to lore
         if (product.hasErrors("price")) {
             priceButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
@@ -275,7 +275,7 @@ public class MenuProductEdit implements PredefinedMenu {
         } else {
             commandsButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         commandsButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         commandsButton.setClickListener(event -> {
@@ -320,7 +320,7 @@ public class MenuProductEdit implements PredefinedMenu {
             // Save product
             productService.saveProduct(product, success -> {
                 menu.enableButtons();
-                
+
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");

@@ -24,7 +24,7 @@ public class DbHelper {
             return XMaterial.BARRIER.parseMaterial(true);
         }
     }
-    
+
     public static String prepareJson(JsonObject object) {
         return JsonHelper.toJson(object);
     }
@@ -32,7 +32,7 @@ public class DbHelper {
     public static JsonObject parseJson(String json) {
         return JsonHelper.fromJson(json);
     }
-    
+
     public static String prepareJsonConfig(JsonConfig config) {
         return prepareJson(config.getJson());
     }
@@ -40,11 +40,11 @@ public class DbHelper {
     public static UserPreferences parseUserPreferences(String json) {
         return new UserPreferences(parseJson(json));
     }
-    
+
     public static GatewayConfig parseGatewayConfig(String json, GatewayType type) {
         return new GatewayConfig(type, parseJson(json));
     }
-    
+
     public static OrderFieldData parseOrderFields(String json) {
         return new OrderFieldData(parseJson(json));
     }

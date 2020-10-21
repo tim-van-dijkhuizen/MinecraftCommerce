@@ -9,5 +9,5 @@ public class ServerErrorHttpException extends HttpException {
     public ServerErrorHttpException(String message) {
         super(HttpResponseStatus.INTERNAL_SERVER_ERROR, message);
     }
-    
+
 }

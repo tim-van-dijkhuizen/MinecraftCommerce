@@ -16,13 +16,13 @@ public class Field extends Element {
     private String description;
     private FieldType<?> type;
     private boolean required;
-    
+
     public Field() {
         this.icon = XMaterial.OAK_SIGN.parseMaterial(true);
         this.name = "";
         this.description = "";
     }
-    
+
     public Field(int id, Material icon, String name, String description, FieldType<?> type, boolean required) {
         this.setId(id);
         this.icon = icon;
@@ -31,7 +31,7 @@ public class Field extends Element {
         this.type = type;
         this.required = required;
     }
-    
+
     @Override
     protected boolean validate(String scenario) {
         if (icon == null) {
@@ -58,62 +58,62 @@ public class Field extends Element {
             addError("description", "Description cannot be longer than 500 characters");
             return false;
         }
-        
+
         if (type == null) {
             addError("type", "Type is required");
             return false;
         }
-        
+
         return true;
     }
-    
+
     public Material getIcon() {
         return icon;
     }
-    
+
     public void setIcon(Material icon) {
         this.icon = icon;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public FieldType<?> getType() {
         return type;
     }
-    
+
     public void setType(FieldType<?> type) {
         this.type = type;
     }
-    
+
     public boolean isRequired() {
         return required;
     }
-    
+
     public void setRequired(boolean required) {
         this.required = required;
     }
-    
+
     public ConfigOption<?> getOption() {
         Integer id = getId();
-        
-        if(id == null) {
+
+        if (id == null) {
             throw new RuntimeException("Fields must be saved before an option can be created");
         }
-        
+
         return new ConfigOption<>("field-" + id, name, icon, type)
             .setRequired(required)
             .setMeta(new DataArguments(description));

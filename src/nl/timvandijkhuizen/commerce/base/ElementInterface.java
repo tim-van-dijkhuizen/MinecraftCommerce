@@ -15,5 +15,5 @@ public interface ElementInterface extends ModelInterface {
      * @param id
      */
     void setId(int id);
-    
+
 }

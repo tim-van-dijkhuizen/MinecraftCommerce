@@ -14,13 +14,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class ActionOrderList implements MenuItemAction {
 
     private boolean clickSound = true;
-    
+
     public ActionOrderList(boolean clickSound) {
         this.clickSound = clickSound;
     }
-    
-    public ActionOrderList() { }
-    
+
+    public ActionOrderList() {
+    }
+
     @Override
     public void onClick(MenuItemClick event) {
         OrderService orderService = Commerce.getInstance().getService("orders");
@@ -28,10 +29,10 @@ public class ActionOrderList implements MenuItemAction {
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
-        if(clickSound) {
+        if (clickSound) {
             UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -39,7 +40,7 @@ public class ActionOrderList implements MenuItemAction {
         // Create menu
         orderService.getOrders(orders -> {
             activeMenu.enableButtons();
-            
+
             if (orders == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load orders.", UI.COLOR_ERROR));

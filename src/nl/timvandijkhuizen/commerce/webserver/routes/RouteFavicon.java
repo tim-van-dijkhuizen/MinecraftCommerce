@@ -12,16 +12,16 @@ import nl.timvandijkhuizen.spigotutils.helpers.ResourceHelper;
 
 public class RouteFavicon implements StaticRoute {
 
-	@Override
-	public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-	    InputStream favicon = ResourceHelper.getStream("assets/favicon.ico");
-	    
-		if(favicon == null) {
-			throw new ServerErrorHttpException("Favicon file is missing.");
-		}
-		
-		// Send file
-		WebHelper.sendFileResponse(ctx, request, ContentType.IMAGE_ICO, favicon);
-	}
+    @Override
+    public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
+        InputStream favicon = ResourceHelper.getStream("assets/favicon.ico");
+
+        if (favicon == null) {
+            throw new ServerErrorHttpException("Favicon file is missing.");
+        }
+
+        // Send file
+        WebHelper.sendFileResponse(ctx, request, ContentType.IMAGE_ICO, favicon);
+    }
 
 }

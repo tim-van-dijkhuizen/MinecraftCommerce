@@ -37,12 +37,12 @@ public class OrderService extends BaseService {
 
     private Set<OrderVariable> orderVariables;
     private Set<OrderEffect> orderEffects;
-    
+
     @Override
     public String getHandle() {
         return "orders";
     }
-    
+
     @Override
     public void init() throws Throwable {
         RegisterOrderVariablesEvent variableEvent = new RegisterOrderVariablesEvent();
@@ -52,18 +52,18 @@ public class OrderService extends BaseService {
         variableEvent.addVariable(new VariableUniqueId());
         variableEvent.addVariable(new VariablePlayerUsername());
         variableEvent.addVariable(new VariablePlayerUniqueId());
-        
+
         // Add core effects
         effectEvent.addEffect(new OrderEffectDefault());
-        
+
         // Register custom variables and effects
         Bukkit.getServer().getPluginManager().callEvent(variableEvent);
         Bukkit.getServer().getPluginManager().callEvent(effectEvent);
-        
+
         orderVariables = variableEvent.getVariables();
         orderEffects = effectEvent.getEffects();
     }
-    
+
     /**
      * Returns the cart of the specified user.
      * 
@@ -75,19 +75,19 @@ public class OrderService extends BaseService {
 
         ThreadHelper.getAsync(() -> {
             Order cart = storage.getCart(player.getUniqueId());
-            
+
             // Create cart if we didn't find one
-            if(cart == null) {
+            if (cart == null) {
                 return createCart(player);
             }
-            
+
             return cart;
         }, callback, error -> {
             callback.accept(null);
             ConsoleHelper.printError("Failed to load cart: " + error.getMessage(), error);
         });
     }
-    
+
     /**
      * Creates a new cart for the specified player.
      * 
@@ -102,7 +102,7 @@ public class OrderService extends BaseService {
 
         return new Order(UUID.randomUUID(), player.getUniqueId(), player.getName(), currency);
     }
-    
+
     /**
      * Returns all orders.
      * 
@@ -116,7 +116,7 @@ public class OrderService extends BaseService {
             ConsoleHelper.printError("Failed to load orders: " + error.getMessage(), error);
         });
     }
-    
+
     /**
      * Returns all orders that belong to a player.
      * 
@@ -147,16 +147,16 @@ public class OrderService extends BaseService {
             callback.accept(false);
             return;
         }
-        
+
         // Clear payment URL if order changed
-        if(!order.updatePaymentUrl()) {
+        if (!order.updatePaymentUrl()) {
             order.setPaymentUrl(null);
         }
-        
+
         // Create or edit order
         ThreadHelper.executeAsync(() -> {
-        	DataList<LineItem> lineItems = order.getLineItems();
-        	
+            DataList<LineItem> lineItems = order.getLineItems();
+
             if (isNew) {
                 storage.createOrder(order);
             } else {
@@ -166,17 +166,17 @@ public class OrderService extends BaseService {
             // Set order id and remove if quantity <= 0
             for (LineItem lineItem : lineItems) {
                 lineItem.setOrderId(order.getId());
-                
-                if(lineItem.getQuantity() <= 0) {
+
+                if (lineItem.getQuantity() <= 0) {
                     order.getLineItems().remove(lineItem);
                 }
             }
-            
+
             // Update line items
             for (LineItem lineItem : lineItems.getByAction(DataAction.CREATE)) {
                 storage.createLineItem(lineItem);
             }
-            
+
             for (LineItem lineItem : lineItems.getByAction(DataAction.UPDATE)) {
                 storage.updateLineItem(lineItem);
             }
@@ -201,46 +201,46 @@ public class OrderService extends BaseService {
      */
     public boolean completeOrder(Order order) {
         StorageType storage = Commerce.getInstance().getStorage();
-        
+
         try {
             storage.completeOrder(order);
-            
+
             // Perform commands and play effect
             ThreadHelper.execute(() -> {
-            	YamlConfig config = Commerce.getInstance().getConfig();
-            	
-            	// Perform product commands
-            	// =============================================
-                for(LineItem lineItem : order.getLineItems()) {
-                	ProductSnapshot product = lineItem.getProduct();
-                	List<String> commands = product.getCommands();
-                	
-                	for(String rawCommand : commands) {
-                		String command = replaceVariables(rawCommand, order);
-                		
+                YamlConfig config = Commerce.getInstance().getConfig();
+
+                // Perform product commands
+                // =============================================
+                for (LineItem lineItem : order.getLineItems()) {
+                    ProductSnapshot product = lineItem.getProduct();
+                    List<String> commands = product.getCommands();
+
+                    for (String rawCommand : commands) {
+                        String command = replaceVariables(rawCommand, order);
+
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                         ConsoleHelper.printInfo("Performed command for order with id " + order.getId() + ": " + command);
-                	}
+                    }
                 }
-                  
+
                 // Play effect & show title
                 // =============================================
                 Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
                 ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
                 OrderEffect effect = optionEffect.getValue(config);
-                
-                if(player != null) {
-                	effect.playEffect(player, order);
+
+                if (player != null) {
+                    effect.playEffect(player, order);
                 }
             });
-            
+
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             ConsoleHelper.printError("Failed to complete order", e);
             return false;
         }
     }
-    
+
     /**
      * Deletes a order.
      * 
@@ -256,10 +256,10 @@ public class OrderService extends BaseService {
             ConsoleHelper.printError("Failed to delete order: " + error.getMessage(), error);
         });
     }
-    
+
     /**
-     * Replaces all variable placeholder with the
-     * variable values and returns the parsed string.
+     * Replaces all variable placeholder with the variable values and returns
+     * the parsed string.
      * 
      * @param value
      * @param order
@@ -267,9 +267,9 @@ public class OrderService extends BaseService {
      */
     public String replaceVariables(String value, Order order) {
         for (OrderVariable variable : orderVariables) {
-        	value = value.replace("{" + variable.getKey() + "}", variable.getValue(order));
+            value = value.replace("{" + variable.getKey() + "}", variable.getValue(order));
         }
-        
+
         return value;
     }
 
@@ -281,7 +281,7 @@ public class OrderService extends BaseService {
     public Collection<OrderVariable> getOrderVariables() {
         return Collections.unmodifiableSet(orderVariables);
     }
-    
+
     /**
      * Returns all available order effects.
      * 

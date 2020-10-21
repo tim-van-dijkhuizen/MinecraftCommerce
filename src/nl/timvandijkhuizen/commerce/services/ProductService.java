@@ -48,7 +48,7 @@ public class ProductService extends BaseService {
             ConsoleHelper.printError("Failed to load products: " + error.getMessage(), error);
         });
     }
-    
+
     /**
      * Saves a product.
      * 
@@ -67,8 +67,8 @@ public class ProductService extends BaseService {
 
         // Create or edit product
         ThreadHelper.executeAsync(() -> {
-        	DataList<Command> commands = product.getCommands();
-        	
+            DataList<Command> commands = product.getCommands();
+
             if (isNew) {
                 storage.createProduct(product);
             } else {

@@ -6,16 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class Model implements ModelInterface {
-    
+
     private Map<String, Set<String>> errors = new HashMap<>();
-    
+
     protected abstract boolean validate(String scenario);
-    
+
     @Override
     public boolean isValid() {
         return isValid("default");
     }
-    
+
     @Override
     public boolean isValid(String scenario) {
         errors.clear();
@@ -33,7 +33,7 @@ public abstract class Model implements ModelInterface {
     @Override
     public Set<String> getErrors() {
         Set<String> all = new LinkedHashSet<>();
-        
+
         for (Set<String> attributeErrors : errors.values()) {
             all.addAll(attributeErrors);
         }

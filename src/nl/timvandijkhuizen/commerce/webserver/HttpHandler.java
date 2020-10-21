@@ -21,20 +21,20 @@ import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         try {
-            if(request.decoderResult().isFailure()) {
-            	throw new BadRequestHttpException("Invalid HTTP request.");
+            if (request.decoderResult().isFailure()) {
+                throw new BadRequestHttpException("Invalid HTTP request.");
             }
-            
-        	handleRequest(ctx, request);
-        } catch(HttpException e) {
+
+            handleRequest(ctx, request);
+        } catch (HttpException e) {
             handleError(ctx, request, e.getStatus(), e);
-        } catch(Throwable e) {
-        	ConsoleHelper.printError("An error occurred while handling HTTP request.", e);
-        	handleError(ctx, request, HttpResponseStatus.INTERNAL_SERVER_ERROR, e);
+        } catch (Throwable e) {
+            ConsoleHelper.printError("An error occurred while handling HTTP request.", e);
+            handleError(ctx, request, HttpResponseStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -53,17 +53,17 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-    	if(handleRouteRequest(ctx, request)) {
-    		return;
-    	}
+        if (handleRouteRequest(ctx, request)) {
+            return;
+        }
 
-    	if(handleGatewayRequest(ctx, request)) {
-    		return;
-    	}
-    	
-    	throw new NotFoundHttpException("Page not found");
+        if (handleGatewayRequest(ctx, request)) {
+            return;
+        }
+
+        throw new NotFoundHttpException("Page not found");
     }
-    
+
     /**
      * Handle route requests.
      * 
@@ -73,17 +73,17 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private boolean handleRouteRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-    	WebService webService = Commerce.getInstance().getService("web");
-    	StaticRoute route = webService.getRoutes().get(request.uri());
-    	
-    	if(route != null) {
-    		route.handleRequest(ctx, request);
-    		return true;
-    	}
-    	
-    	return false;
+        WebService webService = Commerce.getInstance().getService("web");
+        StaticRoute route = webService.getRoutes().get(request.uri());
+
+        if (route != null) {
+            route.handleRequest(ctx, request);
+            return true;
+        }
+
+        return false;
     }
-    
+
     /**
      * Handle gateway requests.
      * 
@@ -93,29 +93,29 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private boolean handleGatewayRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-    	URL url = WebHelper.createWebUrl(request.uri());
+        URL url = WebHelper.createWebUrl(request.uri());
         QueryParameters queryParams = WebHelper.parseQuery(url);
-        
+
         // Get gatewayId parameter
         StorageType storage = Commerce.getInstance().getStorage();
         UUID uniqueId = queryParams.getUUID("order");
-        
-        if(uniqueId != null) {
-        	Order order = storage.getOrderByUniqueId(uniqueId);
-        	
-        	// Make sure we've got a valid order
-        	if(order == null || !order.isValid(Order.SCENARIO_PAY)) {
-        	    throw new BadRequestHttpException("Invalid order.");
-        	}
-        	
-        	// Let gateway handle the response
-        	order.getGateway().getClient().handleWebRequest(order, request);
-        	return true;
+
+        if (uniqueId != null) {
+            Order order = storage.getOrderByUniqueId(uniqueId);
+
+            // Make sure we've got a valid order
+            if (order == null || !order.isValid(Order.SCENARIO_PAY)) {
+                throw new BadRequestHttpException("Invalid order.");
+            }
+
+            // Let gateway handle the response
+            order.getGateway().getClient().handleWebRequest(order, request);
+            return true;
         } else {
-        	return false;
+            return false;
         }
     }
-    
+
     /**
      * Handle request errors.
      *
@@ -128,21 +128,21 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private void handleError(ChannelHandlerContext ctx, FullHttpRequest request, HttpResponseStatus statusCode, Throwable error) {
         WebService webService = Commerce.getInstance().getService("web");
         String content;
-        
+
         // Try to render error template
         try {
             Map<String, Object> variables = new HashMap<>();
-            
+
             variables.put("statusCode", statusCode);
             variables.put("error", error);
-            
+
             content = webService.renderTemplate("error.html", variables);
-        } catch(Exception e) {
+        } catch (Exception e) {
             content = "Failed to render error template: " + e.getMessage();
         }
-        
+
         FullHttpResponse response = WebHelper.createResponse(statusCode, content);
         WebHelper.sendResponse(ctx, request, response);
     }
-    
+
 }

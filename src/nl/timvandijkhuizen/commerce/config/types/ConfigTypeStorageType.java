@@ -21,13 +21,13 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public StorageType getValue(OptionConfig config, ConfigOption<StorageType> option) {
-    	Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
         String handle = config.getString(option.getPath());
-        
-        if(handle == null) {
+
+        if (handle == null) {
             return null;
         }
-        
+
         Optional<StorageType> type = types.stream()
             .filter(i -> i.getHandle().equals(handle))
             .findFirst();
@@ -52,7 +52,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuItemClick event, Consumer<StorageType> callback) {
-    	Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
         PagedMenu menu = new PagedMenu("Choose a storage type", 3, 7, 1, 1);
         StorageType selected = getValue(config, option);
         Player player = event.getPlayer();
@@ -62,10 +62,10 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
             item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            if(selected != null && selected.getHandle().equals(type.getHandle())) {
+            if (selected != null && selected.getHandle().equals(type.getHandle())) {
                 item.addEnchantGlow();
             }
-            
+
             item.setClickListener(itemClick -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(type);
@@ -73,7 +73,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
             menu.addPagedButton(item);
         }
-        
+
         menu.open(player);
     }
 

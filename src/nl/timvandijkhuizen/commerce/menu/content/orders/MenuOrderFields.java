@@ -24,30 +24,30 @@ public class MenuOrderFields implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Order Fields", 3, 7, 1, 1, 2, 5, 6);
-        
+
         // Get order and fields
         Order order = args.get(0);
         OrderFieldData fieldData = order.getFieldData();
         Collection<ConfigOption<?>> options = fieldData.getOptions();
-        
+
         // Add fields
         for (ConfigOption<?> option : options) {
             MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
-            
+
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
+
             item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
-                
-                if(!option.isValueEmpty(fieldData)) {
+
+                if (!option.isValueEmpty(fieldData)) {
                     lore.add(UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
-                
+
                 return lore;
             });
-            
+
             menu.addPagedButton(item);
         }
 

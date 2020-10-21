@@ -21,7 +21,7 @@ public class ActionShopFields implements MenuItemAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -29,7 +29,7 @@ public class ActionShopFields implements MenuItemAction {
         // Create menu
         orderService.getCart(whoClicked, cart -> {
             activeMenu.enableButtons();
-            
+
             if (cart == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load cart.", UI.COLOR_ERROR));
@@ -40,5 +40,5 @@ public class ActionShopFields implements MenuItemAction {
             Menus.SHOP_FIELDS.open(whoClicked, cart);
         });
     }
-    
+
 }

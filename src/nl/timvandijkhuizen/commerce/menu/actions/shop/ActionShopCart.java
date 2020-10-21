@@ -26,17 +26,17 @@ public class ActionShopCart implements MenuItemAction {
         ClickType clickType = event.getClickType();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
 
-        if(clickType == ClickType.LEFT) {
+        if (clickType == ClickType.LEFT) {
             loadCart(event, cart -> Menus.SHOP_CART.open(whoClicked, cart));
-        } else if(clickType == ClickType.MIDDLE) {
+        } else if (clickType == ClickType.MIDDLE) {
             orderService.getOrdersByPlayer(whoClicked.getUniqueId(), orders -> {
                 activeMenu.enableButtons();
-                
+
                 if (orders != null) {
                     Menus.SHOP_ORDER_HISTORY.open(whoClicked, orders, activeMenu);
                 } else {
@@ -45,20 +45,20 @@ public class ActionShopCart implements MenuItemAction {
                     activeMenu.refresh();
                 }
             });
-        } else if(clickType == ClickType.RIGHT) {
+        } else if (clickType == ClickType.RIGHT) {
             loadCart(event, cart -> Menus.SHOP_CURRENCY.open(whoClicked, cart, activeMenu));
         }
     }
-    
+
     private void loadCart(MenuItemClick event, Consumer<Order> callback) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
-        
+
         orderService.getCart(whoClicked, cart -> {
             activeMenu.enableButtons();
-            
+
             if (cart != null) {
                 callback.accept(cart);
             } else {
@@ -68,5 +68,5 @@ public class ActionShopCart implements MenuItemAction {
             }
         });
     }
-    
+
 }

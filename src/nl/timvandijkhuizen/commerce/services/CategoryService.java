@@ -54,7 +54,7 @@ public class CategoryService extends BaseService {
             } else {
                 storage.updateCategory(category);
             }
-        }, () ->  callback.accept(true), error -> {
+        }, () -> callback.accept(true), error -> {
             callback.accept(false);
             ConsoleHelper.printError("Failed to create/update category: " + error.getMessage(), error);
         });

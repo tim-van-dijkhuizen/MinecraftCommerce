@@ -11,10 +11,10 @@ public interface ModelInterface {
      * @return
      */
     boolean isValid();
-    
+
     /**
-     * Returns whether the model is valid under the specified scenario. 
-     * All previous errors will be cleared and any new errors will be added.
+     * Returns whether the model is valid under the specified scenario. All
+     * previous errors will be cleared and any new errors will be added.
      * 
      * @return
      */
@@ -57,5 +57,5 @@ public interface ModelInterface {
      * @return
      */
     boolean hasErrors(String attribute);
-    
+
 }

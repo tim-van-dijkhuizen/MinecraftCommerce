@@ -14,13 +14,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class ActionCategoryList implements MenuItemAction {
 
     private boolean clickSound = true;
-    
+
     public ActionCategoryList(boolean clickSound) {
         this.clickSound = clickSound;
     }
-    
-    public ActionCategoryList() { }
-    
+
+    public ActionCategoryList() {
+    }
+
     @Override
     public void onClick(MenuItemClick event) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
@@ -28,10 +29,10 @@ public class ActionCategoryList implements MenuItemAction {
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
-        if(clickSound) {
+        if (clickSound) {
             UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -39,7 +40,7 @@ public class ActionCategoryList implements MenuItemAction {
         // Create menu
         categoryService.getCategories(categories -> {
             activeMenu.enableButtons();
-            
+
             if (categories == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));

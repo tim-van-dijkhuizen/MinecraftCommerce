@@ -10,15 +10,15 @@ import nl.timvandijkhuizen.commerce.webserver.StaticRoute;
 
 public class RouteRobots implements StaticRoute {
 
-	@Override
-	public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-		FullHttpResponse response = WebHelper.createResponse(
-			HttpResponseStatus.OK,
-			ContentType.TEXT_PLAIN,
-			"User-agent: *\r\nDisallow: /"
-		);
-		
-		WebHelper.sendResponse(ctx, request, response);
-	}
+    @Override
+    public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
+        FullHttpResponse response = WebHelper.createResponse(
+            HttpResponseStatus.OK,
+            ContentType.TEXT_PLAIN,
+            "User-agent: *\r\nDisallow: /"
+        );
+
+        WebHelper.sendResponse(ctx, request, response);
+    }
 
 }

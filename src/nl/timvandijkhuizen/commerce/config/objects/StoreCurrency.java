@@ -19,15 +19,16 @@ public class StoreCurrency implements ConfigObject {
     private String code;
     private float conversionRate;
     private DecimalFormat format;
-    
+
     public StoreCurrency(String code, float conversionRate, DecimalFormat format) {
         this.code = code;
         this.conversionRate = conversionRate;
         this.format = format;
     }
-    
-    public StoreCurrency() { }
-    
+
+    public StoreCurrency() {
+    }
+
     @Override
     public void serialize(ConfigObjectData output) {
         output.set("code", code);
@@ -46,15 +47,14 @@ public class StoreCurrency implements ConfigObject {
     public String getItemName() {
         return code;
     }
-    
+
     @Override
     public String[] getItemLore() {
         return new String[] {
-            UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + conversionRate, UI.COLOR_SECONDARY),
-            UI.color("Format: ", UI.COLOR_TEXT) + UI.color(format.toPattern(), UI.COLOR_SECONDARY)
+            UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + conversionRate, UI.COLOR_SECONDARY), UI.color("Format: ", UI.COLOR_TEXT) + UI.color(format.toPattern(), UI.COLOR_SECONDARY)
         };
     }
-    
+
     @Override
     public void getInput(Player player, Runnable callback) {
         ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
@@ -71,13 +71,13 @@ public class StoreCurrency implements ConfigObject {
                     format = new DecimalFormat(input);
                     callback.run();
                     return null;
-                } catch(IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.COLOR_ERROR));
                     return this;
                 }
             }
         };
-        
+
         NumericPrompt conversionRatePrompt = new NumericPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -90,7 +90,7 @@ public class StoreCurrency implements ConfigObject {
                 return formatPrompt;
             }
         };
-        
+
         StringPrompt namePrompt = new StringPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -99,46 +99,40 @@ public class StoreCurrency implements ConfigObject {
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
-                if(input.length() > 255) {
+                if (input.length() > 255) {
                     context.getForWhom().sendRawMessage(UI.color("The currency code cannot be longer than 255 characters", UI.COLOR_ERROR));
                     UI.playSound(player, UI.SOUND_ERROR);
                     return this;
                 }
-                
+
                 code = input;
                 return conversionRatePrompt;
             }
         };
 
-        factory.withFirstPrompt(namePrompt)
-            .withLocalEcho(false)
-            .buildConversation(player)
-            .begin();
+        factory.withFirstPrompt(namePrompt).withLocalEcho(false).buildConversation(player).begin();
     }
-    
+
     public String getCode() {
         return code;
     }
-    
+
     public float getConversionRate() {
         return conversionRate;
     }
-    
+
     public DecimalFormat getFormat() {
         return format;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof StoreCurrency) {
+        if (obj instanceof StoreCurrency) {
             StoreCurrency currency = (StoreCurrency) obj;
-            
-            return currency.getCode().equals(code)
-                && currency.getConversionRate() == conversionRate
-                && currency.getFormat().equals(format);
+            return currency.getCode().equals(code) && currency.getConversionRate() == conversionRate && currency.getFormat().equals(format);
         } else {
             return false;
         }
     }
-    
+
 }

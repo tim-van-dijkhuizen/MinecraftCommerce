@@ -41,15 +41,15 @@ public class MenuGatewayList implements PredefinedMenu {
             // Set gateway name
             item.setName(UI.color(gateway.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             item.setLore(UI.color("Type: ", UI.COLOR_TEXT) + UI.color(gateway.getType().getName(), UI.COLOR_SECONDARY), "");
-            
+
             // Add configuration to lore
             item.addLore(UI.color("Configuration:", UI.COLOR_TEXT));
-            
-            if(options.size() > 0) {
-                for(ConfigOption<?> option : options) {
+
+            if (options.size() > 0) {
+                for (ConfigOption<?> option : options) {
                     GatewayConfig config = gateway.getConfig();
 
-                    if(!option.isValueEmpty(config)) {
+                    if (!option.isValueEmpty(config)) {
                         item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                     } else {
                         item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -67,7 +67,7 @@ public class MenuGatewayList implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 if (clickType == ClickType.LEFT) {
                     Menus.GATEWAY_EDIT.open(player, gateway);
                 } else if (clickType == ClickType.RIGHT) {

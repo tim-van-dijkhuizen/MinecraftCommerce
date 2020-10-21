@@ -17,14 +17,16 @@ import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public interface StorageType extends Service {
 
-	default public String getHandle() {
-		return "storage";
-	}
-	
+    default public String getHandle() {
+        return "storage";
+    }
+
     public String getType();
+
     public XMaterial getIcon();
+
     public String getName();
-    
+
     /**
      * Returns all categories.
      * 
@@ -56,10 +58,10 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void deleteCategory(Category category) throws Exception;
-    
+
     /**
-     * Returns all products for the specified category.
-     * All products will be returned if the category is null.
+     * Returns all products for the specified category. All products will be
+     * returned if the category is null.
      * 
      * @return
      * @throws Exception
@@ -122,7 +124,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     Set<Field> getFields() throws Exception;
-    
+
     /**
      * Creates a field
      * 
@@ -146,7 +148,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void deleteField(Field field) throws Exception;
-    
+
     /**
      * Returns the cart of the specified user.
      * 
@@ -154,7 +156,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     Order getCart(UUID playerUniqueId) throws Exception;
-    
+
     /**
      * Returns an order by its UUID.
      * 
@@ -162,7 +164,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     Order getOrderByUniqueId(UUID uniqueId) throws Exception;
-    
+
     /**
      * Returns all orders.
      * 
@@ -179,7 +181,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Exception;
-    
+
     /**
      * Creates an order.
      * 
@@ -195,7 +197,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void updateOrder(Order order) throws Exception;
-    
+
     /**
      * Completes an order.
      * 
@@ -211,7 +213,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void deleteOrder(Order order) throws Exception;
-    
+
     /**
      * Returns all LineItems belonging to the specified order.
      * 
@@ -236,7 +238,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void updateLineItem(LineItem lineItem) throws Exception;
-    
+
     /**
      * Deletes a LineItem.
      * 
@@ -244,7 +246,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void deleteLineItem(LineItem lineItem) throws Exception;
-    
+
     /**
      * Returns all gateways.
      * 
@@ -252,7 +254,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     Set<Gateway> getGateways() throws Exception;
-    
+
     /**
      * Creates a gateway.
      * 
@@ -276,7 +278,7 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void deleteGateway(Gateway gateway) throws Exception;
-    
+
     /**
      * Returns the UserPreferences of the specified user.
      * 
@@ -294,5 +296,5 @@ public interface StorageType extends Service {
      * @throws Exception
      */
     void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Exception;
-    
+
 }

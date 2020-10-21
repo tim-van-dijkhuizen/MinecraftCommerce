@@ -47,7 +47,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         } else {
             displayNameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         displayNameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -85,7 +85,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         });
 
         menu.setButton(displayNameButton, 11);
-        
+
         // Type button
         // ===========================
         MenuItemBuilder typeButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
@@ -97,7 +97,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         } else {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         typeButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -117,7 +117,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         });
 
         menu.setButton(typeButton, 13);
-        
+
         // Option button
         // ===========================
         MenuItemBuilder optionButton = new MenuItemBuilder(XMaterial.COMPARATOR);
@@ -125,14 +125,14 @@ public class MenuGatewayEdit implements PredefinedMenu {
         optionButton.setName(UI.color("Options", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         // Add configuration to lore
-        if(gateway.getType() != null) {
+        if (gateway.getType() != null) {
             Collection<ConfigOption<?>> options = gateway.getType().getOptions();
-            
-            if(options.size() > 0) {
-                for(ConfigOption<?> option : options) {
+
+            if (options.size() > 0) {
+                for (ConfigOption<?> option : options) {
                     GatewayConfig config = gateway.getConfig();
 
-                    if(!option.isValueEmpty(config)) {
+                    if (!option.isValueEmpty(config)) {
                         optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                     } else {
                         optionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -144,7 +144,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         } else {
             optionButton.addLore(UI.color("Select a gateway type first.", UI.COLOR_ERROR, ChatColor.ITALIC));
         }
-        
+
         optionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -159,7 +159,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
 
         // Set click listener
         optionButton.setClickListener(event -> {
-            if(gateway.getType() != null) {
+            if (gateway.getType() != null) {
                 UI.playSound(player, UI.SOUND_CLICK);
                 Menus.GATEWAY_OPTIONS.open(player, gateway);
             } else {
@@ -204,7 +204,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             // Save gateway
             gatewayService.saveGateway(gateway, success -> {
                 menu.enableButtons();
-                
+
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");

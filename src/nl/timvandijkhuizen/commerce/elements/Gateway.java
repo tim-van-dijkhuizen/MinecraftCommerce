@@ -11,84 +11,84 @@ public class Gateway extends Element {
     private String displayName;
     private GatewayType type;
     private GatewayConfig config;
-    
+
     private GatewayClient client;
-    
+
     public Gateway() {
         displayName = "";
     }
-    
+
     public Gateway(int id, String displayName, GatewayType type, GatewayConfig config) {
         this.setId(id);
         this.displayName = displayName;
         this.type = type;
         this.config = config;
     }
-    
+
     @Override
     protected boolean validate(String scenario) {
         if (displayName == null || displayName.length() == 0) {
             addError("displayName", "Display name is required");
             return false;
         }
-        
+
         if (displayName.length() > 40) {
             addError("displayName", "Display name cannot be longer than 40 characters");
             return false;
-        } 
-        
+        }
+
         if (type == null) {
             addError("type", "Type is required");
             return false;
         }
-        
+
         if (config == null) {
             addError("config", "Config is required");
             return false;
         }
-        
-        for(ConfigOption<?> option : type.getOptions()) {
-            if(option.isRequired() && option.isValueEmpty(config)) {
+
+        for (ConfigOption<?> option : type.getOptions()) {
+            if (option.isRequired() && option.isValueEmpty(config)) {
                 addError("config", "Option \"" + option.getPath() + "\" is required");
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public String getDisplayName() {
         return displayName;
     }
-    
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
     public GatewayType getType() {
         return type;
     }
-    
+
     public void setType(GatewayType type) {
-        if(this.type != null && this.type.getHandle() != type.getHandle()) {
+        if (this.type != null && this.type.getHandle() != type.getHandle()) {
             this.config = new GatewayConfig(type);
         }
-        
+
         this.type = type;
     }
-    
+
     public GatewayConfig getConfig() {
         return config;
     }
-    
+
     public GatewayClient getClient() {
-    	if(client == null) {
-    		client = type.createClient(config);
-    	}
-    	
-    	return client;
+        if (client == null) {
+            client = type.createClient(config);
+        }
+
+        return client;
     }
-    
+
     public void clearClientCache() {
         client = null;
     }

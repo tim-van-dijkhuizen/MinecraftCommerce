@@ -43,9 +43,9 @@ public enum Menus {
     HOME(new MenuHome()),
 
     CONFIG(new MenuConfig()),
-
+    
     CATEGORY_LIST(new MenuCategoryList()),
-    CATEGORY_EDIT(new MenuCategoryEdit()),
+    CATEGORY_EDIT(new MenuCategoryEdit()), 
     CATEGORY_ICON(new MenuCategoryIcon()),
 
     PRODUCT_LIST(new MenuProductList()),
@@ -63,18 +63,18 @@ public enum Menus {
     GATEWAY_EDIT(new MenuGatewayEdit()),
     GATEWAY_TYPE(new MenuGatewayType()),
     GATEWAY_OPTIONS(new MenuGatewayOptions()),
-    
+
     ORDER_LIST(new MenuOrderList()),
     ORDER_VIEW(new MenuOrderView()),
     ORDER_ITEMS(new MenuOrderItems()),
     ORDER_FIELDS(new MenuOrderFields()),
-    
+
     // User
     SHOP_CATEGORIES(new MenuShopCategories()),
     SHOP_PRODUCTS(new MenuShopProducts()),
     SHOP_CURRENCY(new MenuShopCurrency()),
     SHOP_ORDER_HISTORY(new MenuShopOrderHistory()),
-    
+
     SHOP_CART(new MenuShopCart()),
     SHOP_FIELDS(new MenuShopFields()),
     SHOP_GATEWAY(new MenuShopGateway()),

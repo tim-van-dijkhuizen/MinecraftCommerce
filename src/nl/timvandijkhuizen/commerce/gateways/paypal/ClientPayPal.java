@@ -46,172 +46,170 @@ public class ClientPayPal implements GatewayClient {
 
     public static final String COMPLETE_PATH = "/orders/complete";
     public static final String CONFIRMATION_PATH = "/orders/confirmation";
-	public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
-	
-	private File template;
-	
-	private PayPalEnvironment environment;
-	private PayPalHttpClient client;
-	
-	public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {		
-	    if(testMode) {
-	    	environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
-	    } else {
-	    	environment = new PayPalEnvironment.Live(clientId, clientSecret);
-	    }
-		
-	    // Create client
-	    client = new PayPalHttpClient(environment);
-	    
-	    // Set template
-	    this.template = template;
-	}
-    
+    public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
+
+    private File template;
+
+    private PayPalEnvironment environment;
+    private PayPalHttpClient client;
+
+    public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {
+        if (testMode) {
+            environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
+        } else {
+            environment = new PayPalEnvironment.Live(clientId, clientSecret);
+        }
+
+        // Create client
+        client = new PayPalHttpClient(environment);
+
+        // Set template
+        this.template = template;
+    }
+
     @Override
     public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Exception {
-    	PurchaseUnitRequest unit = new PurchaseUnitRequest();
-    	String currency = order.getCurrency().getCode();
-    	String totalPrice = String.valueOf(order.getTotal());
-    	
-    	// Add amount
-		AmountWithBreakdown amount = new AmountWithBreakdown();
-		
-		amount.currencyCode(currency);
-		amount.value(totalPrice);
-		
-		Money itemTotal = new Money()
-			.currencyCode(currency)
-			.value(totalPrice);
-		
-		amount.amountBreakdown(new AmountBreakdown().itemTotal(itemTotal));
-		unit.amountWithBreakdown(amount);
-		
-		// Add items
-		List<Item> items = new ArrayList<>();
-		
-		for(LineItem lineItem : order.getLineItems()) {
-			ProductSnapshot product = lineItem.getProduct();
-			String price = String.valueOf(product.getPrice());
-			Item item = new Item();
-			
-			item.name(product.getName());
-			item.description(product.getDescription());
-			item.unitAmount(new Money().currencyCode(currency).value(price));
-			item.quantity(String.valueOf(lineItem.getQuantity()));
-			
-			items.add(item);
-		}
-		
-		unit.items(items);
-		
-		// Create body
-		OrderRequest requestBody = new OrderRequest();
-		
-		requestBody.checkoutPaymentIntent("CAPTURE");
-		requestBody.purchaseUnits(Arrays.asList(unit));
-		
-		// Set application context
-		YamlConfig pluginConfig = Commerce.getInstance().getConfig();
-		ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
-		URL returnUrl = WebHelper.createWebUrl(COMPLETE_PATH + "?order=" + order.getUniqueId());
-		
-	    ApplicationContext context = new ApplicationContext()
-			.brandName(optionServerName.getValue(pluginConfig))
-			.returnUrl(returnUrl.toString())
-			.landingPage("LOGIN");
-	    
-	    requestBody.applicationContext(context);
-		
-		// Create request
-		OrdersCreateRequest request = new OrdersCreateRequest();
+        PurchaseUnitRequest unit = new PurchaseUnitRequest();
+        String currency = order.getCurrency().getCode();
+        String totalPrice = String.valueOf(order.getTotal());
 
-		request.requestBody(requestBody);
-		
-		// Handle response
-		HttpResponse<Order> response = client.execute(request);
-		
-		// Get approval link from order
-		Order paypalOrder = response.result();
-		List<LinkDescription> links = paypalOrder.links();
-		
-		return links.stream()
-			.filter(link -> link.rel().equals("approve"))
-			.map(link -> new PaymentUrl(link.href(), System.currentTimeMillis() + URL_TTL))
-			.findFirst()
-			.orElse(null);
+        // Add amount
+        AmountWithBreakdown amount = new AmountWithBreakdown();
+
+        amount.currencyCode(currency);
+        amount.value(totalPrice);
+
+        Money itemTotal = new Money()
+            .currencyCode(currency)
+            .value(totalPrice);
+
+        amount.amountBreakdown(new AmountBreakdown().itemTotal(itemTotal));
+        unit.amountWithBreakdown(amount);
+
+        // Add items
+        List<Item> items = new ArrayList<>();
+
+        for (LineItem lineItem : order.getLineItems()) {
+            ProductSnapshot product = lineItem.getProduct();
+            String price = String.valueOf(product.getPrice());
+            Item item = new Item();
+
+            item.name(product.getName());
+            item.description(product.getDescription());
+            item.unitAmount(new Money().currencyCode(currency).value(price));
+            item.quantity(String.valueOf(lineItem.getQuantity()));
+
+            items.add(item);
+        }
+
+        unit.items(items);
+
+        // Create body
+        OrderRequest requestBody = new OrderRequest();
+
+        requestBody.checkoutPaymentIntent("CAPTURE");
+        requestBody.purchaseUnits(Arrays.asList(unit));
+
+        // Set application context
+        YamlConfig pluginConfig = Commerce.getInstance().getConfig();
+        ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
+        URL returnUrl = WebHelper.createWebUrl(COMPLETE_PATH + "?order=" + order.getUniqueId());
+
+        ApplicationContext context = new ApplicationContext()
+            .brandName(optionServerName.getValue(pluginConfig))
+            .returnUrl(returnUrl.toString()).landingPage("LOGIN");
+
+        requestBody.applicationContext(context);
+
+        // Create request
+        OrdersCreateRequest request = new OrdersCreateRequest();
+
+        request.requestBody(requestBody);
+
+        // Handle response
+        HttpResponse<Order> response = client.execute(request);
+
+        // Get approval link from order
+        Order paypalOrder = response.result();
+        List<LinkDescription> links = paypalOrder.links();
+
+        return links.stream()
+            .filter(link -> link.rel().equals("approve"))
+            .map(link -> new PaymentUrl(link.href(), System.currentTimeMillis() + URL_TTL))
+            .findFirst().orElse(null);
     }
 
     @Override
     public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Exception {
         URL url = WebHelper.createWebUrl(request.uri());
         String path = url.getPath();
-        
-        if(path.equals(COMPLETE_PATH)) {
+
+        if (path.equals(COMPLETE_PATH)) {
             return handleOrderComplete(order, url);
-        } else if(path.equals(CONFIRMATION_PATH)) {
+        } else if (path.equals(CONFIRMATION_PATH)) {
             return handleOrderConfirmation(order);
         } else {
             throw new NotFoundHttpException("Page not found");
         }
     }
-    
+
     private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Exception {
         OrderService orderService = Commerce.getInstance().getService("orders");
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
-        
+
         // Return success if the order has already been completed
-        if(order.isCompleted()) {
+        if (order.isCompleted()) {
             return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         }
-        
+
         // Check if token parameter exists
-        if(paypalOrderId == null) {
+        if (paypalOrderId == null) {
             throw new BadRequestHttpException("Missing required token parameter.");
         }
-        
+
         // Try to capture payment
         OrdersCaptureRequest catureRequest = new OrdersCaptureRequest(paypalOrderId);
-        
+
         try {
             HttpResponse<Order> captureResponse = client.execute(catureRequest);
             Order paypalOrder = captureResponse.result();
-            
+
             // Check if the order was completed
-            if(!paypalOrder.status().equals("COMPLETED")) {
+            if (!paypalOrder.status().equals("COMPLETED")) {
                 ConsoleHelper.printError(paypalOrder.toString());
                 throw new ServerErrorHttpException("Failed to capture payment, please try again.");
             }
-            
+
             // Complete order
-            if(!orderService.completeOrder(order)) {
+            if (!orderService.completeOrder(order)) {
                 throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
             }
-            
+
             return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
-        } catch(Exception e) {
+        } catch (Exception e) {
             ConsoleHelper.printError("Failed to capture payment", e);
             throw new ServerErrorHttpException("Failed to capture payment, an internal error occurred.");
         }
     }
-    
+
     private FullHttpResponse handleOrderConfirmation(nl.timvandijkhuizen.commerce.elements.Order order) {
         WebService webService = Commerce.getInstance().getService("web");
-        
+
         // Create map with variables
         Map<String, Object> variables = new HashMap<>();
-        
+
         variables.put("order", order);
-        
+
         // Render template
         String content = null;
-        
-        if(template != null) {
+
+        if (template != null) {
             content = webService.renderTemplate(template, variables);
         } else {
             content = webService.renderTemplate("gateways/paypal/confirmation.html", variables);
         }
-        
+
         // Return response
         return WebHelper.createResponse(content);
     }

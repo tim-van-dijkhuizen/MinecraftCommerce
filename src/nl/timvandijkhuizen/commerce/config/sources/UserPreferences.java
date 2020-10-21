@@ -14,21 +14,21 @@ public class UserPreferences extends JsonConfig {
     public UserPreferences(JsonObject json) {
         super(json);
     }
-    
+
     public UserPreferences() {
         super();
     }
-    
+
     @Override
     public void addOption(ConfigOption<?> option) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public void addOptions(Collection<ConfigOption<?>> options) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public Collection<ConfigOption<?>> getOptions() {
         UserService userService = Commerce.getInstance().getService("users");

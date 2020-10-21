@@ -33,7 +33,7 @@ public class MenuShopProducts implements PredefinedMenu {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Category category = args.get(0);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " " + category.getName(), 3, 7, 1, 1, 1, 5, 7);
-        
+
         // Add product buttons
         Set<Product> products = args.getSet(1);
         Order cart = args.get(2);
@@ -41,28 +41,28 @@ public class MenuShopProducts implements PredefinedMenu {
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
             TypedValue<String> actionLore = new TypedValue<>();
-            
+
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             item.setLoreGenerator(() -> {
                 String[] description = WordUtils.wrap(product.getDescription(), 40).split("\n");
                 List<String> lore = new ArrayList<>();
-                
+
                 // Add action lore if not null
-                if(actionLore.get() != null) {
+                if (actionLore.get() != null) {
                     lore.add(actionLore.get());
                     return lore;
                 }
-                
+
                 // Create lore
-                for(String line : description) {
+                for (String line : description) {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
-                
+
                 lore.add(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY));
                 lore.add("");
-                
+
                 return lore;
             });
 
@@ -72,19 +72,19 @@ public class MenuShopProducts implements PredefinedMenu {
                 actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
                 menu.disableButtons();
                 menu.refresh();
-                
+
                 // Add item
                 cart.addLineItem(new LineItem(product, 1));
-                
+
                 orderService.saveOrder(cart, success -> {
-                    if(success) {
+                    if (success) {
                         UI.playSound(player, UI.SOUND_SUCCESS);
                         actionLore.set(null);
                     } else {
                         UI.playSound(player, UI.SOUND_ERROR);
                         actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
                     }
-                    
+
                     menu.enableButtons();
                     menu.refresh();
                 });
@@ -102,7 +102,7 @@ public class MenuShopProducts implements PredefinedMenu {
 
         // Cart button
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
-        
+
         return menu;
     }
 

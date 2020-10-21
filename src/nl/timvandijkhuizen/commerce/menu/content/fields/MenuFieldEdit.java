@@ -48,7 +48,7 @@ public class MenuFieldEdit implements PredefinedMenu {
                 iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
-        
+
         iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
@@ -58,7 +58,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         });
 
         menu.setButton(iconButton, 11);
-        
+
         // Name button
         // ===========================
         MenuItemBuilder nameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
@@ -72,7 +72,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         }
 
         nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
+
         // Add validation errors to lore
         if (field.hasErrors("name")) {
             nameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
@@ -124,7 +124,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         } else {
             descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -162,7 +162,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         });
 
         menu.setButton(descriptionButton, 15);
-        
+
         // Type button
         // ===========================
         MenuItemBuilder typeButton = new MenuItemBuilder(XMaterial.CAULDRON);
@@ -174,7 +174,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         } else {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         typeButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -194,7 +194,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         });
 
         menu.setButton(typeButton, 30);
-        
+
         // Required button
         // ===========================
         XMaterial requiredIcon = field.isRequired() ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA;
@@ -206,17 +206,17 @@ public class MenuFieldEdit implements PredefinedMenu {
         // Set click listener
         requiredButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            
+
             // Invert boolean value
             field.setRequired(!field.isRequired());
-            
+
             // Update button material
-            if(field.isRequired()) {
+            if (field.isRequired()) {
                 requiredButton.setType(XMaterial.LIME_TERRACOTTA);
             } else {
                 requiredButton.setType(XMaterial.LIGHT_GRAY_TERRACOTTA);
             }
-            
+
             menu.refresh();
         });
 
@@ -257,7 +257,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             // Save field
             fieldService.saveField(field, success -> {
                 menu.enableButtons();
-                
+
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");

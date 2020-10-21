@@ -9,5 +9,5 @@ public class BadRequestHttpException extends HttpException {
     public BadRequestHttpException(String message) {
         super(HttpResponseStatus.BAD_REQUEST, message);
     }
-    
+
 }

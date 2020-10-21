@@ -41,7 +41,7 @@ public class CommandCommerce extends BaseCommand {
                     player.sendMessage(UI.color("Failed to load cart.", UI.COLOR_ERROR));
                     return;
                 }
-                
+
                 Menus.SHOP_CATEGORIES.open(player, categories, cart);
             });
         });
@@ -53,9 +53,7 @@ public class CommandCommerce extends BaseCommand {
     }
 
     public BaseCommand[] getSubCommands() {
-        return new BaseCommand[] {
-            new CommandAdmin()
-        };
+        return new BaseCommand[] { new CommandAdmin() };
     }
 
 }

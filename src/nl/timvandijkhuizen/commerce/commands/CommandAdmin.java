@@ -23,7 +23,7 @@ public class CommandAdmin extends BaseCommand {
     public String getPermission() {
         return "commerce.admin";
     }
-    
+
     @Override
     public void onPlayerUse(Player player, String[] args) throws Exception {
         Menus.HOME.open(player);

@@ -15,7 +15,7 @@ public interface GatewayType {
      * @return
      */
     public String getName();
-    
+
     /**
      * Returns the type handle.
      * 
@@ -29,17 +29,16 @@ public interface GatewayType {
      * @return
      */
     public XMaterial getIcon();
-    
+
     /**
      * Returns all configuration options.
      * 
      * @return
      */
     public Collection<ConfigOption<?>> getOptions();
-    
+
     /**
-     * Creates and returns a gateway client
-     * for this gateway type.
+     * Creates and returns a gateway client for this gateway type.
      * 
      * @return A new GatewayClient
      */

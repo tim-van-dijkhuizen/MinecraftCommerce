@@ -18,7 +18,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 public class GatewayService extends BaseService {
 
     private Set<GatewayType> types;
-    
+
     @Override
     public String getHandle() {
         return "gateways";
@@ -30,11 +30,11 @@ public class GatewayService extends BaseService {
 
         // Add core gateways
         event.addType(new GatewayPayPal());
-        
+
         Bukkit.getServer().getPluginManager().callEvent(event);
         types = event.getTypes();
     }
-    
+
     /**
      * Returns all gateways.
      * 
@@ -72,7 +72,7 @@ public class GatewayService extends BaseService {
             } else {
                 storage.updateGateway(gateway);
             }
-            
+
             gateway.clearClientCache();
         }, () -> callback.accept(true), error -> {
             callback.accept(false);
@@ -95,7 +95,7 @@ public class GatewayService extends BaseService {
             ConsoleHelper.printError("Failed to delete gateway: " + error.getMessage(), error);
         });
     }
-    
+
     /**
      * Returns all available gateway types.
      * 
@@ -104,7 +104,7 @@ public class GatewayService extends BaseService {
     public Set<GatewayType> getTypes() {
         return types;
     }
-    
+
     /**
      * Returns a gateway type by its handle.
      * 

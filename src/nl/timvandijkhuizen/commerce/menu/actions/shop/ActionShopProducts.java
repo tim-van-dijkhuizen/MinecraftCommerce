@@ -16,11 +16,11 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class ActionShopProducts implements MenuItemAction {
 
     private Category category;
-    
+
     public ActionShopProducts(Category category) {
         this.category = category;
     }
-    
+
     @Override
     public void onClick(MenuItemClick event) {
         ProductService productService = Commerce.getInstance().getService("products");
@@ -30,7 +30,7 @@ public class ActionShopProducts implements MenuItemAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -53,10 +53,10 @@ public class ActionShopProducts implements MenuItemAction {
                     activeMenu.refresh();
                     return;
                 }
-                
+
                 Menus.SHOP_PRODUCTS.open(whoClicked, category, categories, cart);
             });
         });
     }
-    
+
 }

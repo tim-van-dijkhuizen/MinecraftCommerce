@@ -19,7 +19,7 @@ import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MenuGatewayOptions implements PredefinedMenu {
 
     @Override
@@ -31,43 +31,43 @@ public class MenuGatewayOptions implements PredefinedMenu {
         // Add configuration options
         for (ConfigOption option : config.getOptions()) {
             MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
-            
+
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
+
             item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
-                
-                if(!option.isValueEmpty(config)) {
+
+                if (!option.isValueEmpty(config)) {
                     lore.add(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
-                
+
                 lore.add("");
                 lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 lore.add(UI.color("Right-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                
+
                 return lore;
             });
-            
+
             // Set click listener
             item.setClickListener(event -> {
                 ClickType type = event.getClickType();
-                
-                if(type == ClickType.LEFT) {
+
+                if (type == ClickType.LEFT) {
                     UI.playSound(player, UI.SOUND_CLICK);
-                    
+
                     option.getValueInput(config, event, value -> {
                         option.setValue(config, value);
                         menu.open(player);
                     });
-                } else if(type == ClickType.RIGHT) {
+                } else if (type == ClickType.RIGHT) {
                     UI.playSound(player, UI.SOUND_DELETE);
                     option.resetValue(config);
                     menu.refresh();
                 }
             });
-            
+
             menu.addPagedButton(item);
         }
 

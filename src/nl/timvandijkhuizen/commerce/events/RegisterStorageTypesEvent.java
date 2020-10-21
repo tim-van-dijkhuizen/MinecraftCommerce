@@ -17,9 +17,9 @@ public class RegisterStorageTypesEvent extends Event {
     public HandlerList getHandlers() {
         return HANDLERS_LIST;
     }
-    
+
     public void addStorageType(StorageType type) {
-    	types.add(type);
+        types.add(type);
     }
 
     public Set<StorageType> getStorageTypes() {

@@ -24,7 +24,7 @@ public class RegisterOrderEffectsEvent extends Event {
      * @param orderVariable
      */
     public void addEffect(OrderEffect effect) {
-    	effects.add(effect);
+        effects.add(effect);
     }
 
     /**

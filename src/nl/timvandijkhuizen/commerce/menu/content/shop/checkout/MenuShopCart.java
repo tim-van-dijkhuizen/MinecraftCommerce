@@ -33,14 +33,14 @@ public class MenuShopCart implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Cart (1/4)", 3, 7, 1, 1, 2, 5, 6);
-        
+
         // Create LineItem buttons
         Order cart = args.get(0);
-        
+
         for (LineItem lineItem : cart.getLineItems()) {
             ProductSnapshot product = lineItem.getProduct();
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon(), lineItem.getQuantity());
-            
+
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -50,51 +50,51 @@ public class MenuShopCart implements PredefinedMenu {
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
-            
+
             // Category and price
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY), "");
-            
+
             item.addLore("", UI.color("Left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             item.addLore(UI.color("Right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            
+
             item.setClickListener(event -> {
-               ClickType type = event.getClickType();
-               List<String> oldLore = item.getLore();
-               
-               UI.playSound(player, UI.SOUND_CLICK);
-               item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-               menu.refresh();
-               menu.disableButtons();
-               
-               // Update LineItem
-               if(type == ClickType.LEFT) {
-                   lineItem.setQuantity(lineItem.getQuantity() + 1);
-               } else if(type == ClickType.RIGHT) {
-                   lineItem.setQuantity(lineItem.getQuantity() - 1);
-               }
-               
-               // Save cart
-               orderService.saveOrder(cart, success -> {
-                   menu.enableButtons();
-                   
-                   if(success) {
-                       UI.playSound(player, UI.SOUND_SUCCESS);
-                       
-                       if(lineItem.getQuantity() > 0) {
-                           item.setAmount(lineItem.getQuantity());
-                           item.setLore(oldLore);
-                       } else {
-                           menu.removePagedButton(item);
-                       }
-                       
-                       menu.refresh();
-                   } else {
-                       UI.playSound(player, UI.SOUND_ERROR);
-                       item.setLore(UI.color("Failed to save cart.", UI.COLOR_ERROR));
-                       menu.refresh();
-                   }
-               });
+                ClickType type = event.getClickType();
+                List<String> oldLore = item.getLore();
+
+                UI.playSound(player, UI.SOUND_CLICK);
+                item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
+                menu.refresh();
+                menu.disableButtons();
+
+                // Update LineItem
+                if (type == ClickType.LEFT) {
+                    lineItem.setQuantity(lineItem.getQuantity() + 1);
+                } else if (type == ClickType.RIGHT) {
+                    lineItem.setQuantity(lineItem.getQuantity() - 1);
+                }
+
+                // Save cart
+                orderService.saveOrder(cart, success -> {
+                    menu.enableButtons();
+
+                    if (success) {
+                        UI.playSound(player, UI.SOUND_SUCCESS);
+
+                        if (lineItem.getQuantity() > 0) {
+                            item.setAmount(lineItem.getQuantity());
+                            item.setLore(oldLore);
+                        } else {
+                            menu.removePagedButton(item);
+                        }
+
+                        menu.refresh();
+                    } else {
+                        UI.playSound(player, UI.SOUND_ERROR);
+                        item.setLore(UI.color("Failed to save cart.", UI.COLOR_ERROR));
+                        menu.refresh();
+                    }
+                });
             });
 
             menu.addPagedButton(item);
@@ -107,32 +107,32 @@ public class MenuShopCart implements PredefinedMenu {
         MenuItemBuilder previousButton = MenuItems.BACK.clone();
 
         previousButton.setName(UI.color("Previous Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        previousButton.setLore(UI.color("Shop Home", UI.COLOR_TEXT)); 
+        previousButton.setLore(UI.color("Shop Home", UI.COLOR_TEXT));
         previousButton.setClickListener(new ActionShopCategories());
 
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
-        
+
         // Next (fields) button
         MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        
+
         nextButton.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
 
             lore.add(UI.color("Fields", UI.COLOR_TEXT));
-            
-            if(cart.getLineItems().size() == 0) {
+
+            if (cart.getLineItems().size() == 0) {
                 lore.add("");
                 lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
                 lore.add(UI.color(UI.TAB + Icon.SQUARE + " Add at least one item to your cart.", UI.COLOR_ERROR));
             }
-            
+
             return lore;
         });
-        
+
         nextButton.setClickListener(event -> {
-            if(cart.getLineItems().size() > 0) {
+            if (cart.getLineItems().size() > 0) {
                 new ActionShopFields().onClick(event);
             } else {
                 UI.playSound(player, UI.SOUND_ERROR);
@@ -140,7 +140,7 @@ public class MenuShopCart implements PredefinedMenu {
         });
 
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
-        
+
         return menu;
     }
 

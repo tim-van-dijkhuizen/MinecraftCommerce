@@ -13,11 +13,11 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
 public class Order extends Element {
-    
+
     public static final String SCENARIO_FIELDS = "fields";
     public static final String SCENARIO_GATEWAYS = "gateways";
     public static final String SCENARIO_PAY = "pay";
-    
+
     private UUID uniqueId;
     private UUID playerUniqueId;
     private String playerName;
@@ -27,9 +27,9 @@ public class Order extends Element {
     private OrderFieldData fieldData;
     private Gateway gateway;
     private PaymentUrl paymentUrl;
-    
+
     private boolean updatePaymentUrl;
-    
+
     public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
         this.setId(id);
         this.uniqueId = uniqueId;
@@ -42,7 +42,7 @@ public class Order extends Element {
         this.gateway = gateway;
         this.paymentUrl = paymentUrl;
     }
-    
+
     public Order(UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency) {
         this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
@@ -51,58 +51,58 @@ public class Order extends Element {
         this.lineItems = new DataList<>();
         this.fieldData = new OrderFieldData();
     }
-    
+
     @Override
     protected boolean validate(String scenario) {
         if (uniqueId == null) {
             addError("uniqueId", "Unique ID is required");
             return false;
         }
-        
+
         if (playerUniqueId == null) {
             addError("playerUniqueId", "Player unique id is required");
             return false;
         }
-        
+
         if (playerName == null || playerName.length() == 0) {
             addError("playerName", "Player name is required");
             return false;
         }
-        
+
         if (currency == null) {
             addError("currency", "Currency is required");
             return false;
         }
-        
+
         if (fieldData == null) {
             addError("fields", "Fields is required");
             return false;
         }
-        
-        if(scenario.equals(SCENARIO_FIELDS) || scenario.equals(SCENARIO_PAY)) {
+
+        if (scenario.equals(SCENARIO_FIELDS) || scenario.equals(SCENARIO_PAY)) {
             Collection<ConfigOption<?>> options = fieldData.getOptions();
             boolean fieldsValid = true;
-            
-            for(ConfigOption<?> option : options) {
-                if(option.isRequired() && option.isValueEmpty(fieldData)) {
+
+            for (ConfigOption<?> option : options) {
+                if (option.isRequired() && option.isValueEmpty(fieldData)) {
                     addError(option.getPath(), "Field \"" + option.getName() + "\" is required");
                     fieldsValid = false;
                 }
             }
-            
-            if(!fieldsValid) {
+
+            if (!fieldsValid) {
                 return false;
             }
         }
-        
-        if((scenario.equals(SCENARIO_GATEWAYS) || scenario.equals(SCENARIO_PAY)) && gateway == null) {
-        	addError("gateway", "Gateway is required");
-        	return false;
+
+        if ((scenario.equals(SCENARIO_GATEWAYS) || scenario.equals(SCENARIO_PAY)) && gateway == null) {
+            addError("gateway", "Gateway is required");
+            return false;
         }
-        
+
         return true;
     }
-    
+
     public UUID getUniqueId() {
         return uniqueId;
     }
@@ -118,7 +118,7 @@ public class Order extends Element {
     public StoreCurrency getCurrency() {
         return currency;
     }
-    
+
     public void setCurrency(StoreCurrency currency) {
         this.currency = currency;
     }
@@ -126,64 +126,64 @@ public class Order extends Element {
     public boolean isCompleted() {
         return completed;
     }
-    
+
     public float getTotal() {
         float total = 0;
-        
-        for(LineItem item : getLineItems()) {
+
+        for (LineItem item : getLineItems()) {
             total += item.getPrice();
         }
-        
+
         return total;
     }
-    
+
     public void addLineItem(LineItem lineItem) {
         Stream<LineItem> stream = StreamSupport.stream(lineItems.spliterator(), false);
-        
+
         // Merge with existing or create new
         LineItem existing = stream
             .filter(i -> i.getProduct().getId() == lineItem.getProduct().getId())
             .findFirst()
             .orElse(null);
-        
-        if(existing != null) {
+
+        if (existing != null) {
             existing.setQuantity(existing.getQuantity() + lineItem.getQuantity());
         } else {
             lineItems.add(lineItem);
         }
     }
-    
+
     public void removeLineItem(LineItem lineItem) {
         lineItems.remove(lineItem);
     }
-    
+
     public DataList<LineItem> getLineItems() {
         return lineItems;
     }
-    
+
     public OrderFieldData getFieldData() {
         return fieldData;
     }
-    
+
     public Gateway getGateway() {
-    	return gateway;
+        return gateway;
     }
-    
+
     public void setGateway(Gateway gateway) {
-    	this.gateway = gateway;
+        this.gateway = gateway;
     }
-    
+
     public PaymentUrl getPaymentUrl() {
         return paymentUrl;
     }
-    
+
     public void setPaymentUrl(PaymentUrl paymentUrl) {
         this.paymentUrl = paymentUrl;
         this.updatePaymentUrl = true;
     }
-    
+
     public boolean updatePaymentUrl() {
         return updatePaymentUrl;
     }
-    
+
 }

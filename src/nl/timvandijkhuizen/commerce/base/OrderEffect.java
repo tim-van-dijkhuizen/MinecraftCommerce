@@ -8,10 +8,12 @@ import nl.timvandijkhuizen.commerce.elements.Order;
 
 public interface OrderEffect {
 
-	String getHandle();
-	XMaterial getIcon();
-	String getName();
-	
-	void playEffect(Player player, Order order);
-	
+    String getHandle();
+
+    XMaterial getIcon();
+
+    String getName();
+
+    void playEffect(Player player, Order order);
+
 }

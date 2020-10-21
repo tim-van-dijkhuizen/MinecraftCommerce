@@ -50,14 +50,14 @@ import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class Commerce extends PluginBase {
-    
+
     public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && icon != Material.AIR).toArray(Material[]::new);
     public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
-    
+
     private static Commerce instance;
     private YamlConfig config;
     private Set<StorageType> storageTypes;
-    
+
     // Configuration options
     private ConfigOption<String> configServerName;
     private ConfigOption<Boolean> configDevMode;
@@ -76,67 +76,67 @@ public class Commerce extends PluginBase {
     public void init() throws Throwable {
         instance = this;
         ThreadHelper.setPlugin(this);
-        
+
         // Register storage types
         RegisterStorageTypesEvent storageEvent = new RegisterStorageTypesEvent();
-        
+
         storageEvent.addStorageType(new StorageMysql());
-        
+
         getServer().getPluginManager().callEvent(storageEvent);
         storageTypes = storageEvent.getStorageTypes();
-        
+
         // Setup configuration options
         config = new YamlConfig(this);
-        
+
         // Create options
         ConfigTypeFile configTypeCert = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.pem$") });
-        
+
         configServerName = new ConfigOption<>("general.serverName", "Server Name", XMaterial.PAPER, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue("Minecraft Commerce");
-        
+
         configDevMode = new ConfigOption<>("general.devMode", "Dev Mode", XMaterial.REDSTONE, ConfigTypes.BOOLEAN)
             .setRequired(true)
             .setDefaultValue(false);
-        
+
         configCurrencies = new ConfigOption<>("general.currencies", "Currencies", XMaterial.SUNFLOWER, new ConfigTypeList<StoreCurrency>(StoreCurrency.class, "Currencies", XMaterial.SUNFLOWER))
             .setRequired(true)
             .setDefaultValue(Arrays.asList(DEFAULT_CURRENCY));
-        
+
         configBaseCurrency = new ConfigOption<>("general.baseCurrency", "Base Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
-        
+
         configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
-        
+
         configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", XMaterial.COBWEB, new ConfigTypePort())
             .setRequired(true)
             .setDefaultValue(8080)
             .setMeta(new DataArguments(true));
-        
+
         configSslCertificate = new ConfigOption<>("general.sslCertificate", "SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
-        
+
         configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
-        
+
         configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", XMaterial.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
             .setDefaultValue(new OrderEffectDefault());
-        
+
         configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&a&lOrder Completed");
-        
+
         configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&7Thanks for your order {playerUsername}");
-        
+
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", XMaterial.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
             .setDefaultValue(new StorageMysql())
             .setMeta(new DataArguments(true));
-        
+
         // Add options
         config.addOption(configServerName);
         config.addOption(configDevMode);
@@ -151,29 +151,29 @@ public class Commerce extends PluginBase {
         config.addOption(configOrderSubtitle);
         config.addOption(configStorageType);
     }
-    
+
     @Override
     public void load() throws Throwable {
         config.setDefaultOptions();
         config.save();
-    	
+
         ConsoleHelper.showStacktraces(configDevMode.getValue(config));
     }
-    
+
     @Override
     public void ready() throws Throwable {
         Map<String, String> setupErrors = getServiceErrors();
-        
-        if(!setupErrors.isEmpty()) {
+
+        if (!setupErrors.isEmpty()) {
             ConsoleHelper.printError("========================================================");
             ConsoleHelper.printError("Please fix the setup errors below to use Commerce.");
             ConsoleHelper.printError("");
             ConsoleHelper.printError("Errors:");
-            
-            for(Entry<String, String> error : setupErrors.entrySet()) {
+
+            for (Entry<String, String> error : setupErrors.entrySet()) {
                 ConsoleHelper.printError(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue());
             }
-            
+
             ConsoleHelper.printError("");
             ConsoleHelper.printError("========================================================");
         }
@@ -188,9 +188,9 @@ public class Commerce extends PluginBase {
 
         // Get storage driver
         StorageType storageType = configStorageType.getValue(config);
-        
+
         return new Service[] {
-    		storageType,
+            storageType,
             new CacheService(),
             new MenuService(),
             new CategoryService(),
@@ -204,7 +204,7 @@ public class Commerce extends PluginBase {
             new WebService()
         };
     }
-    
+
     public static Commerce getInstance() {
         return instance;
     }
@@ -212,9 +212,9 @@ public class Commerce extends PluginBase {
     public YamlConfig getConfig() {
         return config;
     }
-    
+
     public Set<StorageType> getStorageTypes() {
-    	return storageTypes;
+        return storageTypes;
     }
 
     public StorageType getStorage() {

@@ -31,62 +31,62 @@ public class MenuShopGateway implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Gateways (3/4)", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
-        
+
         // Add gateways buttons
         Set<Gateway> gateways = args.get(0);
         Order cart = args.get(1);
-        
+
         for (Gateway gateway : gateways) {
             MenuItemBuilder item = new MenuItemBuilder(gateway.getType().getIcon());
             TypedValue<String> actionLore = new TypedValue<>();
-            
+
             item.setName(UI.color(gateway.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
+
             item.setLoreGenerator(() -> {
-            	List<String> lore = new ArrayList<>();
-            	
-            	if(actionLore.get() != null) {
-            		lore.add(actionLore.get());
-            		return lore;
-            	}
-            	
-        		lore.add("");
-        		lore.add(UI.color("Left-click to select this gateway.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            		
-        		return lore;
+                List<String> lore = new ArrayList<>();
+
+                if (actionLore.get() != null) {
+                    lore.add(actionLore.get());
+                    return lore;
+                }
+
+                lore.add("");
+                lore.add(UI.color("Left-click to select this gateway.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+
+                return lore;
             });
-            
+
             item.setGlowGenerator(() -> gateway.equals(cart.getGateway()));
-            
+
             // Set click listener
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
-                
-                if(!gateway.equals(cart.getGateway())) {
+
+                if (!gateway.equals(cart.getGateway())) {
                     cart.setGateway(gateway);
-                    
+
                     actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
                     menu.disableButtons();
                     menu.refresh();
-                    
+
                     orderService.saveOrder(cart, success -> {
-                        if(success) {
+                        if (success) {
                             UI.playSound(player, UI.SOUND_SUCCESS);
                             actionLore.set(null);
                         } else {
                             UI.playSound(player, UI.SOUND_ERROR);
                             actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
                         }
-                        
+
                         menu.enableButtons();
                         menu.refresh();
                     });
                 }
             });
-            
+
             menu.addPagedButton(item);
         }
-        
+
         // Previous (fields) button
         MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
@@ -95,42 +95,42 @@ public class MenuShopGateway implements PredefinedMenu {
         previousButton.setClickListener(new ActionShopFields());
 
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
-        
+
         // Cart button
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
-        
+
         // Next (payment) button
         MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.EMERALD);
 
         nextButton.setName(UI.color("Next Step", UI.COLOR_SECONDARY, ChatColor.BOLD));
-        
+
         nextButton.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
 
             lore.add(UI.color("Payment", UI.COLOR_TEXT));
-            
-            if(!cart.isValid(Order.SCENARIO_GATEWAYS)) {
+
+            if (!cart.isValid(Order.SCENARIO_GATEWAYS)) {
                 lore.add("");
                 lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-                
-                for(String error : cart.getErrors("gateway")) {
+
+                for (String error : cart.getErrors("gateway")) {
                     lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
                 }
             }
-            
+
             return lore;
         });
-        
+
         nextButton.setClickListener(event -> {
-            if(cart.isValid(Order.SCENARIO_GATEWAYS)) {
+            if (cart.isValid(Order.SCENARIO_GATEWAYS)) {
                 new ActionShopPayment().onClick(event);
             } else {
                 UI.playSound(player, UI.SOUND_ERROR);
             }
         });
-        
+
         menu.setButton(nextButton, menu.getSize().getSlots() - 1);
-        
+
         return menu;
     }
 

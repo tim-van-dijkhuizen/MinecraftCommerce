@@ -59,7 +59,7 @@ public class MenuShopCategories implements PredefinedMenu {
         });
 
         menu.setButton(closeButton, menu.getSize().getSlots() - 9 + 3);
-        
+
         // Currency button
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
 

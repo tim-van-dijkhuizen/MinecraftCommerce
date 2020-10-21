@@ -27,14 +27,14 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
         ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
         List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
-        
+
         // Get store currency
         String code = config.getString(option.getPath());
-        
-        if(code == null) {
+
+        if (code == null) {
             return null;
         }
-        
+
         Optional<StoreCurrency> currency = currencies.stream()
             .filter(i -> i.getCode().equals(code))
             .findFirst();
@@ -67,7 +67,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
         ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
         List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
-        
+
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
@@ -75,10 +75,10 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
             item.setLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + currency.getConversionRate(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Format: ", UI.COLOR_TEXT) + UI.color(currency.getFormat().toPattern(), UI.COLOR_SECONDARY));
 
-            if(selected != null && selected.getCode().equals(currency.getCode())) {
+            if (selected != null && selected.getCode().equals(currency.getCode())) {
                 item.addEnchantGlow();
             }
-            
+
             item.setClickListener(itemClick -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(currency);
@@ -86,7 +86,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
             menu.addPagedButton(item);
         }
-        
+
         menu.open(player);
     }
 

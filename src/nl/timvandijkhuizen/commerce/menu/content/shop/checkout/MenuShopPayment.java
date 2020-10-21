@@ -30,8 +30,8 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuShopPayment implements PredefinedMenu {
 
-	@Override
-	public Menu create(Player player, DataArguments args) {
+    @Override
+    public Menu create(Player player, DataArguments args) {
         Menu menu = new Menu("Cart " + Icon.ARROW_RIGHT + " Payment (4/4)", MenuSize.LG);
         OrderService orderService = Commerce.getInstance().getService("orders");
         PaymentService paymentService = Commerce.getInstance().getService("payments");
@@ -40,89 +40,89 @@ public class MenuShopPayment implements PredefinedMenu {
         // Get cart
         Order cart = args.get(0);
         Gateway gateway = cart.getGateway();
-        
+
         // Pay button
         MenuItemBuilder acceptButton = new MenuItemBuilder(XMaterial.BOOK);
 
         acceptButton.setName(UI.color("Terms & Conditions", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        
+
         acceptButton.addLore("");
         acceptButton.addLore(UI.color("Left-click to accept the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         acceptButton.addLore(UI.color("Right-click to view the terms & conditions.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         acceptButton.setClickListener(event -> {
-        	ClickType type = event.getClickType();
-        	
-        	UI.playSound(player, UI.SOUND_CLICK);
-        	
-        	if(type == ClickType.LEFT) {
-        		accepted.set(!accepted.get());
-            	
-            	if(accepted.get()) {
-            		acceptButton.addEnchantGlow();
-            	} else {
-            		acceptButton.removeEnchantGlow();
-            	}
-            	
-            	menu.refresh();
-        	} else if(type == ClickType.RIGHT) {
-        		
-        	}
+            ClickType type = event.getClickType();
+
+            UI.playSound(player, UI.SOUND_CLICK);
+
+            if (type == ClickType.LEFT) {
+                accepted.set(!accepted.get());
+
+                if (accepted.get()) {
+                    acceptButton.addEnchantGlow();
+                } else {
+                    acceptButton.removeEnchantGlow();
+                }
+
+                menu.refresh();
+            } else if (type == ClickType.RIGHT) {
+
+            }
         });
 
         menu.setButton(acceptButton, 11);
-        
+
         // Pay button
         MenuItemBuilder payButton = new MenuItemBuilder(XMaterial.COMPARATOR);
         TypedValue<String> payActionLore = new TypedValue<>();
         String gatewayName = gateway != null ? gateway.getDisplayName() : "";
 
         payButton.setName(UI.color("Pay using " + gatewayName, UI.COLOR_PRIMARY, ChatColor.BOLD));
-        
+
         payButton.setLoreGenerator(() -> {
-        	List<String> lore = new ArrayList<>();
-        	
-        	if(payActionLore.get() != null) {
-        	    lore.add(payActionLore.get());
-        	} else if (!cart.isValid(Order.SCENARIO_PAY)) {
-        	    lore.add("");
-        	    lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-        	    
-        	    for(String error : cart.getErrors()) {
-        	        lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-        	    }
-        	} else if(!accepted.get()) {
-        		lore.add(UI.color("You must accept the terms & conditions.", UI.COLOR_ERROR));
-        	}
-        	
-        	return lore;
+            List<String> lore = new ArrayList<>();
+
+            if (payActionLore.get() != null) {
+                lore.add(payActionLore.get());
+            } else if (!cart.isValid(Order.SCENARIO_PAY)) {
+                lore.add("");
+                lore.add(UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
+
+                for (String error : cart.getErrors()) {
+                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+                }
+            } else if (!accepted.get()) {
+                lore.add(UI.color("You must accept the terms & conditions.", UI.COLOR_ERROR));
+            }
+
+            return lore;
         });
 
         payButton.setClickListener(event -> {
-            if(cart.isValid(Order.SCENARIO_PAY) && accepted.get()) {
+            if (cart.isValid(Order.SCENARIO_PAY) && accepted.get()) {
                 PaymentUrl cachedUrl = cart.getPaymentUrl();
-                
+
                 // Return cached URL if we've got one
-                if(cachedUrl != null && !cachedUrl.hasExpired()) {
+                if (cachedUrl != null && !cachedUrl.hasExpired()) {
                     sendPaymentUrl(player, menu, cachedUrl.getUrl());
                     return;
                 }
-                
+
                 // Create URL and cache it
                 UI.playSound(player, UI.SOUND_CLICK);
                 payActionLore.set(UI.color("Loading...", UI.COLOR_TEXT));
                 menu.disableButtons();
                 menu.refresh();
-                
+
                 paymentService.createPaymentUrl(cart, url -> {
-                	if(url != null) {
+                    if (url != null) {
                         cart.setPaymentUrl(url);
-                        
+
                         // Save cart
                         orderService.saveOrder(cart, success -> {
                             menu.enableButtons();
-                            
-                            if(success) {
+
+                            if (success) {
                                 payActionLore.set(null);
                                 sendPaymentUrl(player, menu, url.getUrl());
                             } else {
@@ -131,15 +131,15 @@ public class MenuShopPayment implements PredefinedMenu {
                                 menu.refresh();
                             }
                         });
-                	} else {
+                    } else {
                         UI.playSound(player, UI.SOUND_ERROR);
                         payActionLore.set(UI.color("Failed to create payment url.", UI.COLOR_ERROR));
                         menu.enableButtons();
                         menu.refresh();
-                	}
+                    }
                 });
             } else {
-            	UI.playSound(player, UI.SOUND_ERROR);
+                UI.playSound(player, UI.SOUND_ERROR);
             }
         });
 
@@ -147,7 +147,7 @@ public class MenuShopPayment implements PredefinedMenu {
 
         // Cart button
         menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
-        
+
         // Previous (gateway) button
         MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
 
@@ -156,7 +156,7 @@ public class MenuShopPayment implements PredefinedMenu {
         previousButton.setClickListener(new ActionShopGateways());
 
         menu.setButton(previousButton, menu.getSize().getSlots() - 9);
-        
+
         // Set bottom line
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
@@ -165,14 +165,14 @@ public class MenuShopPayment implements PredefinedMenu {
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
-        
+
         return menu;
-	}
-	
-	private void sendPaymentUrl(Player player, Menu menu, String url) {
-	    UI.playSound(player, UI.SOUND_SUCCESS);
+    }
+
+    private void sendPaymentUrl(Player player, Menu menu, String url) {
+        UI.playSound(player, UI.SOUND_SUCCESS);
         menu.close(player);
-        
+
         // Send message
         player.sendMessage(UI.color(StringUtils.repeat(Icon.SQUARE, 75), UI.COLOR_TEXT, ChatColor.BOLD));
         player.sendMessage("");
@@ -180,6 +180,6 @@ public class MenuShopPayment implements PredefinedMenu {
         player.sendMessage(UI.color(url, UI.COLOR_SECONDARY));
         player.sendMessage("");
         player.sendMessage(UI.color(StringUtils.repeat(Icon.SQUARE, 75), UI.COLOR_TEXT, ChatColor.BOLD));
-	}
+    }
 
 }

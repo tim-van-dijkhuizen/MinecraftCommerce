@@ -73,7 +73,7 @@ public class MenuHome implements PredefinedMenu {
         gatewayButton.setClickListener(new ActionGatewayList());
 
         menu.setButton(gatewayButton, 22);
-        
+
         // Orders button
         MenuItemBuilder orderButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 

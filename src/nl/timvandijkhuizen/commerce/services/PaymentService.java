@@ -16,25 +16,25 @@ public class PaymentService extends BaseService {
     public String getHandle() {
         return "payments";
     }
-    
+
     public void createPaymentUrl(Order order, Consumer<PaymentUrl> callback) {
-    	Gateway gateway = order.getGateway();
-        
-    	// Make sure the gateway was set
-    	if(gateway == null) {
-    		ConsoleHelper.printError("Unable to create payment link: Missing gateway");
-    		callback.accept(null);
-    		return;
-    	}
-        
-    	// Create payment link
-    	ThreadHelper.getAsync(() -> {
-        	GatewayClient client = gateway.getClient();
-        	return client.createPaymentUrl(order);
-    	}, callback, error -> {
+        Gateway gateway = order.getGateway();
+
+        // Make sure the gateway was set
+        if (gateway == null) {
+            ConsoleHelper.printError("Unable to create payment link: Missing gateway");
+            callback.accept(null);
+            return;
+        }
+
+        // Create payment link
+        ThreadHelper.getAsync(() -> {
+            GatewayClient client = gateway.getClient();
+            return client.createPaymentUrl(order);
+        }, callback, error -> {
             callback.accept(null);
             ConsoleHelper.printError("Failed to create payment url", error);
-    	});
+        });
     }
 
 }

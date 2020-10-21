@@ -9,9 +9,9 @@ public class TemplateFunctions {
     public String[] getStackTrace(Exception e) {
         return ExceptionHelper.getStackTrace(e);
     }
-    
+
     public String formatPrice(float price, StoreCurrency currency) {
         return ShopHelper.formatPrice(price, currency);
     }
-    
+
 }

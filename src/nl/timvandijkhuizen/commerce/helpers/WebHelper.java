@@ -37,53 +37,52 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class WebHelper {
-    
-	/**
-	 * Creates a formatted URL from the specified action.
-	 * Uses the configured webUrl and webPort as base 
-	 * and then adds the action at the end.
-	 * 
-	 * @param action
-	 * @return URL The formatted URL.
-	 * @throws RuntimeException
-	 */
+
+    /**
+     * Creates a formatted URL from the specified action. Uses the configured
+     * webUrl and webPort as base and then adds the action at the end.
+     * 
+     * @param action
+     * @return URL The formatted URL.
+     * @throws RuntimeException
+     */
     public static URL createWebUrl(String action) {
-    	Commerce plugin = Commerce.getInstance();
-    	
-    	// Get configuration & options
-    	YamlConfig config = plugin.getConfig();
-    	ConfigOption<String> optionHost = config.getOption("general.webserverHost");
-    	ConfigOption<Integer> optionPort = config.getOption("general.webserverPort");
-    	ConfigOption<File> optionSSLCert = config.getOption("general.sslCertificate");
-    	ConfigOption<File> optionSSLKey = config.getOption("general.sslPrivateKey");
-    	
-    	// Get configuration values
-    	String host = optionHost.getValue(config);
-    	int port = optionPort.getValue(config);
-    	String protocol = "http";
-    	
-    	if(!optionSSLCert.isValueEmpty(config) && !optionSSLKey.isValueEmpty(config)) {
-    		protocol += "s";
-    	}
-    	
-    	// Parse action
-    	action.replace('\\', '/');
-    	
-    	if(!action.startsWith("/")) {
-    	    action = "/" + action;
-    	}
-    	
-    	if(action.endsWith("/")) {
-    	    action = action.substring(0, action.length() - 1);
-    	}
-    	
-    	try {
-    		return new URL(protocol, host, port, action);
-    	} catch(MalformedURLException e) {
-    		throw new RuntimeException(e);
-    	}
+        Commerce plugin = Commerce.getInstance();
+
+        // Get configuration & options
+        YamlConfig config = plugin.getConfig();
+        ConfigOption<String> optionHost = config.getOption("general.webserverHost");
+        ConfigOption<Integer> optionPort = config.getOption("general.webserverPort");
+        ConfigOption<File> optionSSLCert = config.getOption("general.sslCertificate");
+        ConfigOption<File> optionSSLKey = config.getOption("general.sslPrivateKey");
+
+        // Get configuration values
+        String host = optionHost.getValue(config);
+        int port = optionPort.getValue(config);
+        String protocol = "http";
+
+        if (!optionSSLCert.isValueEmpty(config) && !optionSSLKey.isValueEmpty(config)) {
+            protocol += "s";
+        }
+
+        // Parse action
+        action.replace('\\', '/');
+
+        if (!action.startsWith("/")) {
+            action = "/" + action;
+        }
+
+        if (action.endsWith("/")) {
+            action = action.substring(0, action.length() - 1);
+        }
+
+        try {
+            return new URL(protocol, host, port, action);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
-    
+
     /**
      * Parses an URL into a Map of query params.
      * 
@@ -94,31 +93,32 @@ public class WebHelper {
     public static QueryParameters parseQuery(URL url) throws UnsupportedEncodingException {
         Map<String, String> map = new HashMap<String, String>();
         String query = url.getQuery();
-        
-        if(query != null) {
-	        for (String pair : query.split("&")) {
-	            int idx = pair.indexOf("=");
-	            map.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-	        }
+
+        if (query != null) {
+            for (String pair : query.split("&")) {
+                int idx = pair.indexOf("=");
+                map.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+            }
         }
-        
+
         return new QueryParameters(map);
     }
-    
+
     /**
      * Creates a redirect response.
      * 
-     * @param url The URL to redirect to.
+     * @param url
+     *            The URL to redirect to.
      * @return
      */
     public static FullHttpResponse createRedirectRequest(String url) {
         FullHttpResponse response = createResponse(HttpResponseStatus.TEMPORARY_REDIRECT, ContentType.TEXT_HTML, "");
-        
+
         response.headers().set(HttpHeaderNames.LOCATION, url);
-        
+
         return response;
     }
-    
+
     /**
      * Creates an OK response with the specified content.
      * 
@@ -128,7 +128,7 @@ public class WebHelper {
     public static FullHttpResponse createResponse(String content) {
         return createResponse(HttpResponseStatus.OK, ContentType.TEXT_HTML, content);
     }
-    
+
     /**
      * Creates a response with the specified status and content.
      * 
@@ -139,7 +139,7 @@ public class WebHelper {
     public static FullHttpResponse createResponse(HttpResponseStatus status, String content) {
         return createResponse(status, ContentType.TEXT_HTML, content);
     }
-    
+
     /**
      * Creates a response the the specified status, contentType and content.
      * 
@@ -151,7 +151,7 @@ public class WebHelper {
     public static FullHttpResponse createResponse(HttpResponseStatus status, CharSequence contentType, String content) {
         byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
         ByteBuf entity = Unpooled.wrappedBuffer(bytes);
-        
+
         return createResponse(status, entity, contentType, bytes.length);
     }
 
@@ -185,12 +185,12 @@ public class WebHelper {
      * @param response
      */
     public static void sendResponse(ChannelHandlerContext ctx, FullHttpResponse response) {
-    	sendResponse(ctx, null, response);
+        sendResponse(ctx, null, response);
     }
-    
+
     /**
-     * If Keep-Alive is disabled, attaches "Connection: close" header to the response
-     * and closes the connection after the response being sent.
+     * If Keep-Alive is disabled, attaches "Connection: close" header to the
+     * response and closes the connection after the response being sent.
      * 
      * @param ctx
      * @param request
@@ -198,12 +198,12 @@ public class WebHelper {
      */
     public static void sendResponse(ChannelHandlerContext ctx, FullHttpRequest request, FullHttpResponse response) {
         boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
-        
+
         // Add connection header
         if (keepAlive) {
-        	response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         } else {
-        	response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
         }
 
         // Close if not keep alive
@@ -213,11 +213,11 @@ public class WebHelper {
             flushPromise.addListener(ChannelFutureListener.CLOSE);
         }
     }
-    
+
     public static void sendFileResponse(ChannelHandlerContext ctx, FullHttpRequest request, String contentType, InputStream stream) throws IOException {
         boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-        
+
         // Add headers
         ZonedDateTime dateTime = ZonedDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
@@ -239,15 +239,15 @@ public class WebHelper {
 
         // Write content and close
         ChunkedStream chunkedFile = new ChunkedStream(stream, 8192);
-        
+
         ctx.write(new HttpChunkedInput(chunkedFile), ctx.newProgressivePromise());
-        
+
         // Send empty chunk
         ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        
+
         if (!keepAlive) {
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }
-    
+
 }

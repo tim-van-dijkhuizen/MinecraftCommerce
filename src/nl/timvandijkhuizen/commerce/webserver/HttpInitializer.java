@@ -13,26 +13,26 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 public class HttpInitializer extends ChannelInitializer<SocketChannel> {
 
     private SslContext sslContext;
-    
+
     public HttpInitializer(SslContext sslContext) {
         this.sslContext = sslContext;
     }
-    
-	@Override
-	public void initChannel(SocketChannel ch) {
-		ChannelPipeline pipeline = ch.pipeline();
-		
+
+    @Override
+    public void initChannel(SocketChannel ch) {
+        ChannelPipeline pipeline = ch.pipeline();
+
         // Add SSL if its enabled
-		if(sslContext != null) {
-			pipeline.addLast("ssl", new OptionalSslHandler(sslContext));
-		}
-		
-		// Add other handlers
-		pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
-		pipeline.addLast("aggregator", new HttpObjectAggregator(100 * 1024 * 1024));
-		pipeline.addLast("encoder", new HttpResponseEncoder());
-		pipeline.addLast("chunked", new ChunkedWriteHandler());
-		pipeline.addLast("handler", new HttpHandler());
-	}
+        if (sslContext != null) {
+            pipeline.addLast("ssl", new OptionalSslHandler(sslContext));
+        }
+
+        // Add other handlers
+        pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
+        pipeline.addLast("aggregator", new HttpObjectAggregator(100 * 1024 * 1024));
+        pipeline.addLast("encoder", new HttpResponseEncoder());
+        pipeline.addLast("chunked", new ChunkedWriteHandler());
+        pipeline.addLast("handler", new HttpHandler());
+    }
 
 }

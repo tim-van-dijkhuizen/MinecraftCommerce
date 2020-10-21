@@ -23,7 +23,7 @@ import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MenuConfig implements PredefinedMenu {
 
     @Override
@@ -35,52 +35,52 @@ public class MenuConfig implements PredefinedMenu {
         // Add configuration options
         for (ConfigOption option : config.getOptions()) {
             MenuItemBuilder item = new MenuItemBuilder(option.getIcon());
-            
+
             // Get meta and read only
             DataArguments meta = option.getMeta();
             boolean restart = meta.getBoolean(0, false);
-            
+
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();
-                
-                if(!option.isValueEmpty(config)) {
+
+                if (!option.isValueEmpty(config)) {
                     lore.add(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
 
-                if(restart) {
+                if (restart) {
                     lore.add("");
                     lore.add(UI.color("Warning:", UI.COLOR_ERROR, ChatColor.BOLD) + " " + UI.color("This option requires a restart.", UI.COLOR_ERROR));
                 }
-                
+
                 lore.add("");
                 lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 lore.add(UI.color("Right-click to reset this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                
+
                 return lore;
             });
-            
+
             // Set click listener
             item.setClickListener(event -> {
                 ClickType type = event.getClickType();
-                
-                if(type == ClickType.LEFT) {
+
+                if (type == ClickType.LEFT) {
                     UI.playSound(player, UI.SOUND_CLICK);
-                    
+
                     option.getValueInput(config, event, value -> {
                         option.setValue(config, value);
                         menu.open(player);
                     });
-                } else if(type == ClickType.RIGHT) {
+                } else if (type == ClickType.RIGHT) {
                     UI.playSound(player, UI.SOUND_DELETE);
                     option.resetValue(config);
                     menu.refresh();
                 }
             });
-            
+
             menu.addPagedButton(item);
         }
 
@@ -107,30 +107,30 @@ public class MenuConfig implements PredefinedMenu {
             // Save configuration
             ThreadHelper.executeAsync(() -> config.save(), () -> {
                 plugin.reload();
-                
+
                 // Check for errors
                 Map<String, String> errors = plugin.getServiceErrors();
-                
-                if(errors.isEmpty()) {
+
+                if (errors.isEmpty()) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore(UI.color("Successfully saved config.", UI.COLOR_SUCCESS));
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
                     saveButton.setLore(UI.color("Failed to save config.", UI.COLOR_ERROR));
                     saveButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR));
-                    
-                    for(Entry<String, String> error : errors.entrySet()) {
+
+                    for (Entry<String, String> error : errors.entrySet()) {
                         saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue(), UI.COLOR_ERROR));
                     }
                 }
-                
+
                 menu.enableButtons();
                 menu.refresh();
             });
         });
 
         menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 4);
-        
+
         return menu;
     }
 

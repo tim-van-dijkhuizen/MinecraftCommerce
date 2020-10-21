@@ -30,7 +30,7 @@ public class MenuFieldList implements PredefinedMenu {
 
         // Add field buttons
         Set<Field> fields = args.get(0);
-        
+
         for (Field field : fields) {
             MenuItemBuilder item = new MenuItemBuilder(field.getIcon());
 
@@ -43,7 +43,7 @@ public class MenuFieldList implements PredefinedMenu {
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
-            
+
             item.addLore("", UI.color("Type: ", UI.COLOR_TEXT) + UI.color(field.getType().getName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Required: ", UI.COLOR_TEXT) + UI.color(field.isRequired() ? "Yes" : "No", UI.COLOR_SECONDARY), "");
 
@@ -55,7 +55,7 @@ public class MenuFieldList implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 if (clickType == ClickType.LEFT) {
                     Menus.FIELD_EDIT.open(player, field);
                 } else if (clickType == ClickType.RIGHT) {

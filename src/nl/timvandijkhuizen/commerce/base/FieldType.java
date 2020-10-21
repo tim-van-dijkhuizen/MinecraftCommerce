@@ -10,12 +10,12 @@ public interface FieldType<T> extends ConfigType<T> {
      * @return
      */
     public String getName();
-    
+
     /**
      * Returns the handle of the field type.
      * 
      * @return
      */
     public String getHandle();
-    
+
 }

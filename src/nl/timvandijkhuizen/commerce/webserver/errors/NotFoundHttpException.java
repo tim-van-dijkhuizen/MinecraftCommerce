@@ -9,5 +9,5 @@ public class NotFoundHttpException extends HttpException {
     public NotFoundHttpException(String message) {
         super(HttpResponseStatus.NOT_FOUND, message);
     }
-    
+
 }

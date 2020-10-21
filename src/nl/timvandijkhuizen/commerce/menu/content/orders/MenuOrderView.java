@@ -39,57 +39,57 @@ public class MenuOrderView implements PredefinedMenu {
         uniqueIdButton.setSkullOwner(order.getPlayerUniqueId());
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
         uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_SECONDARY));
-        
+
         menu.setButton(uniqueIdButton, 11);
-        
+
         // Username button
         // ===========================
         MenuItemBuilder usernameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
         usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
-        
+
         menu.setButton(usernameButton, 13);
-        
+
         // Currency button
         // ===========================
         MenuItemBuilder currencyButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
         currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
-        
+
         menu.setButton(currencyButton, 15);
-        
+
         // Products button
         // ===========================
         MenuItemBuilder itemsButton = new MenuItemBuilder(XMaterial.CHEST);
 
         itemsButton.setName(UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        
+
         // Add items to lore
         DataList<LineItem> lineItems = order.getLineItems();
 
         if (lineItems.size() > 0) {
-            for(LineItem lineItem : lineItems) {
+            for (LineItem lineItem : lineItems) {
                 ProductSnapshot product = lineItem.getProduct();
                 String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
                 String price = ShopHelper.formatPrice(lineItem.getPrice(), order.getCurrency());
-                
+
                 itemsButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
             }
         } else {
             itemsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         itemsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
+
         itemsButton.setClickListener(event -> {
-           UI.playSound(player, UI.SOUND_CLICK);
-           Menus.ORDER_ITEMS.open(player, order);
+            UI.playSound(player, UI.SOUND_CLICK);
+            Menus.ORDER_ITEMS.open(player, order);
         });
-        
+
         menu.setButton(itemsButton, 30);
-        
+
         // Fields button
         // ===========================
         MenuItemBuilder fieldsButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
@@ -101,26 +101,26 @@ public class MenuOrderView implements PredefinedMenu {
         Collection<ConfigOption<?>> options = fieldData.getOptions();
 
         if (options.size() > 0) {
-            for(ConfigOption<?> option : options) {
+            for (ConfigOption<?> option : options) {
                 String value = UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC);
-                
-                if(!option.isValueEmpty(fieldData)) {
+
+                if (!option.isValueEmpty(fieldData)) {
                     value = UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY);
                 }
-                        
+
                 fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
             }
         } else {
             fieldsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         fieldsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
+
         fieldsButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             Menus.ORDER_FIELDS.open(player, order);
-         });
-        
+        });
+
         menu.setButton(fieldsButton, 32);
 
         // Set bottom line

@@ -36,7 +36,7 @@ public class MenuProductList implements PredefinedMenu {
 
         for (Product product : products) {
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon());
-            
+
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -46,15 +46,15 @@ public class MenuProductList implements PredefinedMenu {
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
-            
+
             // Category and price
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategory().getName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
-            
+
             // Commands
             item.addLore(UI.color("Commands:", UI.COLOR_TEXT));
-            
-            if(product.getCommands().size() > 0) {
+
+            if (product.getCommands().size() > 0) {
                 for (Command command : product.getCommands()) {
                     item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.COLOR_SECONDARY));
                 }
@@ -70,7 +70,7 @@ public class MenuProductList implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 if (clickType == ClickType.LEFT) {
                     Menus.PRODUCT_EDIT.open(player, product);
                 } else if (clickType == ClickType.RIGHT) {

@@ -14,13 +14,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class ActionProductList implements MenuItemAction {
 
     private boolean clickSound = true;
-    
+
     public ActionProductList(boolean clickSound) {
         this.clickSound = clickSound;
     }
-    
-    public ActionProductList() { }
-    
+
+    public ActionProductList() {
+    }
+
     @Override
     public void onClick(MenuItemClick event) {
         ProductService productService = Commerce.getInstance().getService("products");
@@ -28,10 +29,10 @@ public class ActionProductList implements MenuItemAction {
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
-        if(clickSound) {
+        if (clickSound) {
             UI.playSound(whoClicked, UI.SOUND_CLICK);
         }
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -39,7 +40,7 @@ public class ActionProductList implements MenuItemAction {
         // Create menu
         productService.getProducts(products -> {
             activeMenu.enableButtons();
-            
+
             if (products == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load products.", UI.COLOR_ERROR));

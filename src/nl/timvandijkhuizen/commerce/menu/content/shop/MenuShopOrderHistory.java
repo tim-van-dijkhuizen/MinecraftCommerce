@@ -45,33 +45,33 @@ public class MenuShopOrderHistory implements PredefinedMenu {
             DataList<LineItem> lineItems = order.getLineItems();
 
             item.addLore("", UI.color("Products:", UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
+
             if (lineItems.size() > 0) {
-                for(LineItem lineItem : lineItems) {
+                for (LineItem lineItem : lineItems) {
                     ProductSnapshot product = lineItem.getProduct();
                     String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
                     String price = ShopHelper.formatPrice(lineItem.getPrice(), order.getCurrency());
-                    
+
                     item.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
                 }
             } else {
                 item.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-            
+
             // Add fields
             OrderFieldData fieldData = order.getFieldData();
             Collection<ConfigOption<?>> options = fieldData.getOptions();
 
             item.addLore("", UI.color("Fields:", UI.COLOR_PRIMARY, ChatColor.BOLD));
-            
+
             if (options.size() > 0) {
-                for(ConfigOption<?> option : options) {
+                for (ConfigOption<?> option : options) {
                     String value = UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC);
-                    
-                    if(!option.isValueEmpty(fieldData)) {
+
+                    if (!option.isValueEmpty(fieldData)) {
                         value = UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY);
                     }
-                            
+
                     item.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
                 }
             } else {
@@ -93,5 +93,5 @@ public class MenuShopOrderHistory implements PredefinedMenu {
 
         return menu;
     }
-    
+
 }

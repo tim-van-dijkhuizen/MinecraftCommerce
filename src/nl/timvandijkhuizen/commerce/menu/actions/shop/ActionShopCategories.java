@@ -23,7 +23,7 @@ public class ActionShopCategories implements MenuItemAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -46,7 +46,7 @@ public class ActionShopCategories implements MenuItemAction {
                     activeMenu.refresh();
                     return;
                 }
-                
+
                 Menus.SHOP_CATEGORIES.open(whoClicked, categories, cart);
             });
         });

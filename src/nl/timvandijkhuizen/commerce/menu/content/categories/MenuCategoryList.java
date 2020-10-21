@@ -52,7 +52,7 @@ public class MenuCategoryList implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 if (clickType == ClickType.LEFT) {
                     Menus.CATEGORY_EDIT.open(player, category);
                 } else if (clickType == ClickType.RIGHT) {

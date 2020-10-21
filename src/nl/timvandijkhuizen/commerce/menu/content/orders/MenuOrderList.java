@@ -47,7 +47,7 @@ public class MenuOrderList implements PredefinedMenu {
                 ClickType clickType = event.getClickType();
 
                 UI.playSound(player, UI.SOUND_CLICK);
-                
+
                 if (clickType == ClickType.LEFT) {
                     Menus.ORDER_VIEW.open(player, order);
                 } else if (clickType == ClickType.RIGHT) {

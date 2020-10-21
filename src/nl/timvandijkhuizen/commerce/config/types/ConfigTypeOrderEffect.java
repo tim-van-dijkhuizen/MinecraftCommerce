@@ -22,14 +22,14 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
     @Override
     public OrderEffect getValue(OptionConfig config, ConfigOption<OrderEffect> option) {
-    	OrderService orderService = Commerce.getInstance().getService("orders");
-    	Collection<OrderEffect> effects = orderService.getOrderEffects();
+        OrderService orderService = Commerce.getInstance().getService("orders");
+        Collection<OrderEffect> effects = orderService.getOrderEffects();
         String handle = config.getString(option.getPath());
-        
-        if(handle == null) {
+
+        if (handle == null) {
             return null;
         }
-        
+
         Optional<OrderEffect> effect = effects.stream()
             .filter(i -> i.getHandle().equals(handle))
             .findFirst();
@@ -54,8 +54,8 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<OrderEffect> option, MenuItemClick event, Consumer<OrderEffect> callback) {
-    	OrderService orderService = Commerce.getInstance().getService("orders");
-    	Collection<OrderEffect> effects = orderService.getOrderEffects();
+        OrderService orderService = Commerce.getInstance().getService("orders");
+        Collection<OrderEffect> effects = orderService.getOrderEffects();
         PagedMenu menu = new PagedMenu("Choose an effect", 3, 7, 1, 1);
         OrderEffect selected = getValue(config, option);
         Player player = event.getPlayer();
@@ -65,10 +65,10 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
             item.setName(UI.color(effect.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            if(selected != null && selected.getHandle().equals(effect.getHandle())) {
+            if (selected != null && selected.getHandle().equals(effect.getHandle())) {
                 item.addEnchantGlow();
             }
-            
+
             item.setClickListener(itemClick -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 callback.accept(effect);
@@ -76,7 +76,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
             menu.addPagedButton(item);
         }
-        
+
         menu.open(player);
     }
 

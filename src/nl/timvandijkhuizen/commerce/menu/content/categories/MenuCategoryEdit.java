@@ -48,7 +48,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
                 iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
             }
         }
-        
+
         iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
@@ -58,7 +58,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         });
 
         menu.setButton(iconButton, 11);
-        
+
         // Name button
         // ===========================
         MenuItemBuilder nameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
@@ -72,7 +72,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         }
 
         nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        
+
         // Add validation errors to lore
         if (category.hasErrors("name")) {
             nameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
@@ -124,7 +124,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
         } else {
             descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
-        
+
         descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Add validation errors to lore
@@ -198,7 +198,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             // Save category
             categoryService.saveCategory(category, success -> {
                 menu.enableButtons();
-                
+
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");

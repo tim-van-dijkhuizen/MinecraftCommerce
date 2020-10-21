@@ -24,7 +24,7 @@ public class FieldService extends BaseService {
 
     private Set<FieldType<?>> fieldTypes;
     private Set<ConfigOption<?>> options = null;
-    
+
     @Override
     public String getHandle() {
         return "fields";
@@ -38,26 +38,26 @@ public class FieldService extends BaseService {
         event.addType(new FieldTypeString());
         event.addType(new FieldTypeInteger());
         event.addType(new FieldTypeBoolean());
-        
+
         Bukkit.getServer().getPluginManager().callEvent(event);
         this.fieldTypes = event.getTypes();
     }
-    
+
     @Override
     public void load() throws Throwable {
         getFields(fields -> {
-            if(fields == null) {
+            if (fields == null) {
                 ConsoleHelper.printError("Failed to cache options, fields cannot be loaded.");
                 return;
             }
-            
+
             // Create option cache
             options = fields.stream()
                 .map(i -> i.getOption())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         });
     }
-    
+
     public void getFields(Consumer<Set<Field>> callback) {
         StorageType storage = Commerce.getInstance().getStorage();
 
@@ -90,7 +90,7 @@ public class FieldService extends BaseService {
             } else {
                 storage.updateField(field);
             }
-            
+
             // Update option cache
             options = storage.getFields().stream()
                 .map(i -> i.getOption())
@@ -113,7 +113,7 @@ public class FieldService extends BaseService {
         // Delete field
         ThreadHelper.executeAsync(() -> {
             storage.deleteField(field);
-            
+
             // Update option cache
             options = storage.getFields().stream()
                 .map(i -> i.getOption())
@@ -123,7 +123,7 @@ public class FieldService extends BaseService {
             ConsoleHelper.printError("Failed to delete field: " + error.getMessage(), error);
         });
     }
-    
+
     /**
      * Returns all registered field types.
      * 
@@ -132,7 +132,7 @@ public class FieldService extends BaseService {
     public Set<FieldType<?>> getFieldTypes() {
         return fieldTypes;
     }
-    
+
     /**
      * Returns a field type by its handle or null.
      * 
@@ -145,9 +145,9 @@ public class FieldService extends BaseService {
             .findFirst()
             .orElse(null);
     }
-    
+
     public Set<ConfigOption<?>> getOptions() {
         return options;
     }
-    
+
 }

@@ -23,7 +23,7 @@ public class ActionShopGateways implements MenuItemAction {
         MenuItemBuilder clickedItem = event.getItem();
 
         UI.playSound(whoClicked, UI.SOUND_CLICK);
-        
+
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
         activeMenu.disableButtons();
         activeMenu.refresh();
@@ -46,10 +46,10 @@ public class ActionShopGateways implements MenuItemAction {
                     activeMenu.refresh();
                     return;
                 }
-                
+
                 Menus.SHOP_GATEWAY.open(whoClicked, gateways, cart);
             });
         });
     }
-    
+
 }

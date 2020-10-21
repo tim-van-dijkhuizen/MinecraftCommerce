@@ -31,7 +31,7 @@ public class Category extends Element {
             addError("icon", "Icon is required");
             return false;
         }
-        
+
         if (name == null || name.length() == 0) {
             addError("name", "Name is required");
             return false;
@@ -62,7 +62,7 @@ public class Category extends Element {
     public void setIcon(Material icon) {
         this.icon = icon;
     }
-    
+
     public String getName() {
         return name;
     }

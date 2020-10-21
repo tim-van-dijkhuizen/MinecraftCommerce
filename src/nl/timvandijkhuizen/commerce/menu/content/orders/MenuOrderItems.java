@@ -28,7 +28,7 @@ public class MenuOrderItems implements PredefinedMenu {
         for (LineItem lineItem : order.getLineItems()) {
             ProductSnapshot product = lineItem.getProduct();
             MenuItemBuilder item = new MenuItemBuilder(product.getIcon(), lineItem.getQuantity());
-            
+
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -38,15 +38,15 @@ public class MenuOrderItems implements PredefinedMenu {
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
-            
+
             // Category and price
             item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
-            
+
             // Commands
             item.addLore(UI.color("Commands:", UI.COLOR_TEXT));
-            
-            if(product.getCommands().size() > 0) {
+
+            if (product.getCommands().size() > 0) {
                 for (String command : product.getCommands()) {
                     item.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command, UI.COLOR_SECONDARY));
                 }

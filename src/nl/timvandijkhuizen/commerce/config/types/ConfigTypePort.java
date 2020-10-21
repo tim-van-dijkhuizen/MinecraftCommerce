@@ -33,19 +33,19 @@ public class ConfigTypePort extends ConfigTypeInteger {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
                 int value = input.intValue();
-                
+
                 // Check range
                 if (value < 1 || value > Short.MAX_VALUE) {
                     context.getForWhom().sendRawMessage(UI.color("Invalid port, choose a port between 1 and " + Short.MAX_VALUE + ".", UI.COLOR_ERROR));
                     return this;
                 }
-                
+
                 // Check server port
                 if (value == Bukkit.getServer().getPort()) {
                     context.getForWhom().sendRawMessage(UI.color("This port is already being used by your server.", UI.COLOR_ERROR));
                     return this;
                 }
-                
+
                 callback.accept(value);
                 return null;
             }
@@ -54,5 +54,5 @@ public class ConfigTypePort extends ConfigTypeInteger {
         player.closeInventory();
         conversation.begin();
     }
-    
+
 }

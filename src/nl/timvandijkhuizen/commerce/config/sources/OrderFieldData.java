@@ -14,21 +14,21 @@ public class OrderFieldData extends JsonConfig {
     public OrderFieldData(JsonObject json) {
         super(json);
     }
-    
+
     public OrderFieldData() {
         super();
     }
-    
+
     @Override
     public void addOption(ConfigOption<?> option) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public void addOptions(Collection<ConfigOption<?>> options) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public Collection<ConfigOption<?>> getOptions() {
         FieldService fieldService = Commerce.getInstance().getService("fields");
