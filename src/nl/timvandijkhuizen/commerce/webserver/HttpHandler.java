@@ -109,7 +109,9 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             }
 
             // Let gateway handle the response
-            order.getGateway().getClient().handleWebRequest(order, request);
+            FullHttpResponse response = order.getGateway().getClient().handleWebRequest(order, request);
+            WebHelper.sendResponse(ctx, request, response);
+            
             return true;
         } else {
             return false;
