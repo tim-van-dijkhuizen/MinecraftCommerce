@@ -2,10 +2,12 @@ package nl.timvandijkhuizen.commerce.services;
 
 import java.util.function.Consumer;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
-import nl.timvandijkhuizen.commerce.base.PaymentUrl;
+import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
@@ -18,6 +20,7 @@ public class PaymentService extends BaseService {
     }
 
     public void createPaymentUrl(Order order, Consumer<PaymentUrl> callback) {
+        StorageType storage = Commerce.getInstance().getStorage();
         Gateway gateway = order.getGateway();
 
         // Make sure the gateway was set
@@ -30,7 +33,12 @@ public class PaymentService extends BaseService {
         // Create payment link
         ThreadHelper.getAsync(() -> {
             GatewayClient client = gateway.getClient();
-            return client.createPaymentUrl(order);
+            PaymentUrl url = client.createPaymentUrl(order);
+            
+            // Create URL
+            storage.createPaymentUrl(url);
+            
+            return url;
         }, callback, error -> {
             callback.accept(null);
             ConsoleHelper.printError("Failed to create payment url", error);

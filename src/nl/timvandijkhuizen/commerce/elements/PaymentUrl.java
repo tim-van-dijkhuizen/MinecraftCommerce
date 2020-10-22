@@ -1,15 +1,22 @@
-package nl.timvandijkhuizen.commerce.base;
+package nl.timvandijkhuizen.commerce.elements;
 
-public class PaymentUrl {
+import nl.timvandijkhuizen.commerce.base.Element;
+
+public class PaymentUrl extends Element {
 
     private String url;
     private long expiryTime;
-
+    
     public PaymentUrl(String url, long expiryTime) {
         this.url = url;
         this.expiryTime = expiryTime;
     }
-
+    
+    @Override
+    protected boolean validate(String scenario) {
+        return true;
+    }
+    
     /**
      * Returns the payment URL.
      * 
@@ -26,15 +33,6 @@ public class PaymentUrl {
      */
     public long getExpiryTime() {
         return expiryTime;
-    }
-
-    /**
-     * Returns whether this URL has expired.
-     * 
-     * @return
-     */
-    public boolean hasExpired() {
-        return expiryTime <= System.currentTimeMillis();
     }
 
 }

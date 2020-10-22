@@ -28,9 +28,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
-import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.WebService;
@@ -68,7 +68,7 @@ public class ClientPayPal implements GatewayClient {
     }
 
     @Override
-    public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Exception {
+    public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Throwable {
         PurchaseUnitRequest unit = new PurchaseUnitRequest();
         String currency = order.getCurrency().getCode();
         String totalPrice = String.valueOf(order.getTotal());
@@ -140,7 +140,7 @@ public class ClientPayPal implements GatewayClient {
     }
 
     @Override
-    public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Exception {
+    public FullHttpResponse handleWebRequest(nl.timvandijkhuizen.commerce.elements.Order order, FullHttpRequest request) throws Throwable {
         URL url = WebHelper.createWebUrl(request.uri());
         String path = url.getPath();
 
@@ -153,13 +153,13 @@ public class ClientPayPal implements GatewayClient {
         }
     }
 
-    private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Exception {
+    private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Throwable {
         OrderService orderService = Commerce.getInstance().getService("orders");
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
 
         // Return success if the order has already been completed
-        if (order.isCompleted()) {
+        if (order.getTransaction() != null) {
             return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         }
 

@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce.base;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 
 public interface GatewayClient {
 
@@ -13,7 +14,7 @@ public interface GatewayClient {
      * @param order
      * @return string|null
      */
-    public PaymentUrl createPaymentUrl(Order order) throws Exception;
+    public PaymentUrl createPaymentUrl(Order order) throws Throwable;
 
     /**
      * Processes a webhook response. Returns null if the payment did not
@@ -22,6 +23,6 @@ public interface GatewayClient {
      * @param response
      * @return Payment|null
      */
-    public FullHttpResponse handleWebRequest(Order order, FullHttpRequest request) throws Exception;
+    public FullHttpResponse handleWebRequest(Order order, FullHttpRequest request) throws Throwable;
 
 }

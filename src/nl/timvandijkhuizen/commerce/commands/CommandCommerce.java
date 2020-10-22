@@ -23,7 +23,7 @@ public class CommandCommerce extends BaseCommand {
     }
 
     @Override
-    public void onPlayerUse(Player player, String[] args) throws Exception {
+    public void onPlayerUse(Player player, String[] args) throws Throwable {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
         OrderService orderService = Commerce.getInstance().getService("orders");
 
@@ -48,7 +48,7 @@ public class CommandCommerce extends BaseCommand {
     }
 
     @Override
-    public void onConsoleUse(CommandSender console, String[] args) throws Exception {
+    public void onConsoleUse(CommandSender console, String[] args) throws Throwable {
         console.sendMessage(UI.color("You must be a player to use this command.", UI.COLOR_ERROR));
     }
 

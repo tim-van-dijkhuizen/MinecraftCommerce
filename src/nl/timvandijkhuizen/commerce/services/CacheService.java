@@ -34,7 +34,7 @@ public class CacheService extends BaseService implements Listener {
         // Load preferences
         try {
             userPreferences.put(uuid, storage.getUserPreferences(uuid));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ConsoleHelper.printError("Failed to load user preferences for " + uuid, e);
         }
     }

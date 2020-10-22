@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import nl.timvandijkhuizen.commerce.base.Element;
-import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -22,25 +21,23 @@ public class Order extends Element {
     private UUID playerUniqueId;
     private String playerName;
     private StoreCurrency currency;
-    private boolean completed;
     private DataList<LineItem> lineItems;
     private OrderFieldData fieldData;
     private Gateway gateway;
     private PaymentUrl paymentUrl;
+    private Transaction transaction;
 
-    private boolean updatePaymentUrl;
-
-    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, boolean completed, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl) {
+    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl, Transaction transaction) {
         this.setId(id);
         this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
         this.playerName = playerName;
         this.currency = currency;
-        this.completed = completed;
         this.lineItems = lineItems;
         this.fieldData = fieldData;
         this.gateway = gateway;
         this.paymentUrl = paymentUrl;
+        this.transaction = transaction;
     }
 
     public Order(UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -123,10 +120,6 @@ public class Order extends Element {
         this.currency = currency;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
     public float getTotal() {
         float total = 0;
 
@@ -176,14 +169,9 @@ public class Order extends Element {
     public PaymentUrl getPaymentUrl() {
         return paymentUrl;
     }
-
-    public void setPaymentUrl(PaymentUrl paymentUrl) {
-        this.paymentUrl = paymentUrl;
-        this.updatePaymentUrl = true;
-    }
-
-    public boolean updatePaymentUrl() {
-        return updatePaymentUrl;
+    
+    public Transaction getTransaction() {
+        return transaction;
     }
 
 }

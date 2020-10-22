@@ -148,11 +148,6 @@ public class OrderService extends BaseService {
             return;
         }
 
-        // Clear payment URL if order changed
-        if (!order.updatePaymentUrl()) {
-            order.setPaymentUrl(null);
-        }
-
         // Create or edit order
         ThreadHelper.executeAsync(() -> {
             DataList<LineItem> lineItems = order.getLineItems();

@@ -12,7 +12,9 @@ import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Product;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 
 public interface StorageType extends Service {
@@ -31,270 +33,296 @@ public interface StorageType extends Service {
      * Returns all categories.
      * 
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    Set<Category> getCategories() throws Exception;
+    Set<Category> getCategories() throws Throwable;
 
     /**
      * Creates a category.
      * 
      * @param category
-     * @throws Exception
+     * @throws Throwable
      */
-    void createCategory(Category category) throws Exception;
+    void createCategory(Category category) throws Throwable;
 
     /**
      * Updates a category.
      * 
      * @param category
-     * @throws Exception
+     * @throws Throwable
      */
-    void updateCategory(Category category) throws Exception;
+    void updateCategory(Category category) throws Throwable;
 
     /**
      * Deletes a category.
      * 
      * @param category
-     * @throws Exception
+     * @throws Throwable
      */
-    void deleteCategory(Category category) throws Exception;
+    void deleteCategory(Category category) throws Throwable;
 
     /**
      * Returns all products for the specified category. All products will be
      * returned if the category is null.
      * 
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    Set<Product> getProducts(Category category) throws Exception;
+    Set<Product> getProducts(Category category) throws Throwable;
 
     /**
      * Creates a product.
      * 
      * @param product
-     * @throws Exception
+     * @throws Throwable
      */
-    void createProduct(Product product) throws Exception;
+    void createProduct(Product product) throws Throwable;
 
     /**
      * Updates a product.
      * 
      * @param product
-     * @throws Exception
+     * @throws Throwable
      */
-    void updateProduct(Product product) throws Exception;
+    void updateProduct(Product product) throws Throwable;
 
     /**
      * Deletes a product.
      * 
      * @param product
-     * @throws Exception
+     * @throws Throwable
      */
-    void deleteProduct(Product product) throws Exception;
+    void deleteProduct(Product product) throws Throwable;
 
     /**
      * Returns all commands belonging to the specified product.
      * 
      * @param productId
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    Set<Command> getCommandsByProductId(int productId) throws Exception;
+    Set<Command> getCommandsByProductId(int productId) throws Throwable;
 
     /**
      * Creates a command.
      * 
      * @param command
-     * @throws Exception
+     * @throws Throwable
      */
-    void createCommand(Command command) throws Exception;
+    void createCommand(Command command) throws Throwable;
 
     /**
      * Deletes a command.
      * 
      * @param command
-     * @throws Exception
+     * @throws Throwable
      */
-    void deleteCommand(Command command) throws Exception;
+    void deleteCommand(Command command) throws Throwable;
 
     /**
      * Returns all fields.
      * 
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    Set<Field> getFields() throws Exception;
+    Set<Field> getFields() throws Throwable;
 
     /**
      * Creates a field
      * 
      * @param field
-     * @throws Exception
+     * @throws Throwable
      */
-    void createField(Field field) throws Exception;
+    void createField(Field field) throws Throwable;
 
     /**
      * Updates a field
      * 
      * @param field
-     * @throws Exception
+     * @throws Throwable
      */
-    void updateField(Field field) throws Exception;
+    void updateField(Field field) throws Throwable;
 
     /**
      * Deletes a field.
      * 
      * @param field
-     * @throws Exception
+     * @throws Throwable
      */
-    void deleteField(Field field) throws Exception;
-
-    /**
-     * Returns the cart of the specified user.
-     * 
-     * @return
-     * @throws Exception
-     */
-    Order getCart(UUID playerUniqueId) throws Exception;
-
-    /**
-     * Returns an order by its UUID.
-     * 
-     * @return
-     * @throws Exception
-     */
-    Order getOrderByUniqueId(UUID uniqueId) throws Exception;
-
-    /**
-     * Returns all orders.
-     * 
-     * @return
-     * @throws Exception
-     */
-    Set<Order> getOrders() throws Exception;
-
-    /**
-     * Returns all orders that belong to a player.
-     * 
-     * @param playerUniqueId
-     * @return
-     * @throws Exception
-     */
-    Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Exception;
-
-    /**
-     * Creates an order.
-     * 
-     * @param order
-     * @throws Exception
-     */
-    void createOrder(Order order) throws Exception;
-
-    /**
-     * Updates an order.
-     * 
-     * @param order
-     * @throws Exception
-     */
-    void updateOrder(Order order) throws Exception;
-
-    /**
-     * Completes an order.
-     * 
-     * @param order
-     * @throws Exception
-     */
-    void completeOrder(Order order) throws Exception;
-
-    /**
-     * Deletes an order.
-     * 
-     * @param order
-     * @throws Exception
-     */
-    void deleteOrder(Order order) throws Exception;
-
-    /**
-     * Returns all LineItems belonging to the specified order.
-     * 
-     * @param orderId
-     * @return
-     * @throws Exception
-     */
-    Set<LineItem> getLineItemsByOrderId(int orderId) throws Exception;
-
-    /**
-     * Creates a LineItem.
-     * 
-     * @param lineItem
-     * @throws Exception
-     */
-    void createLineItem(LineItem lineItem) throws Exception;
-
-    /**
-     * Updates a LineItem.
-     * 
-     * @param lineItem
-     * @throws Exception
-     */
-    void updateLineItem(LineItem lineItem) throws Exception;
-
-    /**
-     * Deletes a LineItem.
-     * 
-     * @param lineItem
-     * @throws Exception
-     */
-    void deleteLineItem(LineItem lineItem) throws Exception;
+    void deleteField(Field field) throws Throwable;
 
     /**
      * Returns all gateways.
      * 
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    Set<Gateway> getGateways() throws Exception;
+    Set<Gateway> getGateways() throws Throwable;
 
     /**
      * Creates a gateway.
      * 
      * @param order
-     * @throws Exception
+     * @throws Throwable
      */
-    void createGateway(Gateway gateway) throws Exception;
+    void createGateway(Gateway gateway) throws Throwable;
 
     /**
      * Updates a gateway.
      * 
      * @param order
-     * @throws Exception
+     * @throws Throwable
      */
-    void updateGateway(Gateway gateway) throws Exception;
+    void updateGateway(Gateway gateway) throws Throwable;
 
     /**
      * Deletes a gateway.
      * 
      * @param order
-     * @throws Exception
+     * @throws Throwable
      */
-    void deleteGateway(Gateway gateway) throws Exception;
-
+    void deleteGateway(Gateway gateway) throws Throwable;
+    
     /**
      * Returns the UserPreferences of the specified user.
      * 
      * @param playerUniqueId
      * @return
-     * @throws Exception
+     * @throws Throwable
      */
-    UserPreferences getUserPreferences(UUID playerUniqueId) throws Exception;
+    UserPreferences getUserPreferences(UUID playerUniqueId) throws Throwable;
 
     /**
      * Saves the UserPreferences for the specified user.
      * 
      * @param playerUniqueId
      * @param preferences
-     * @throws Exception
+     * @throws Throwable
      */
-    void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Exception;
+    void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Throwable;
+    
+    /**
+     * Returns the cart of the specified user.
+     * 
+     * @return
+     * @throws Throwable
+     */
+    Order getCart(UUID playerUniqueId) throws Throwable;
+
+    /**
+     * Returns an order by its UUID.
+     * 
+     * @return
+     * @throws Throwable
+     */
+    Order getOrderByUniqueId(UUID uniqueId) throws Throwable;
+
+    /**
+     * Returns all orders.
+     * 
+     * @return
+     * @throws Throwable
+     */
+    Set<Order> getOrders() throws Throwable;
+
+    /**
+     * Returns all orders that belong to a player.
+     * 
+     * @param playerUniqueId
+     * @return
+     * @throws Throwable
+     */
+    Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Throwable;
+
+    /**
+     * Creates an order.
+     * 
+     * @param order
+     * @throws Throwable
+     */
+    void createOrder(Order order) throws Throwable;
+
+    /**
+     * Updates an order.
+     * 
+     * @param order
+     * @throws Throwable
+     */
+    void updateOrder(Order order) throws Throwable;
+
+    /**
+     * Deletes an order.
+     * 
+     * @param order
+     * @throws Throwable
+     */
+    void deleteOrder(Order order) throws Throwable;
+
+    /**
+     * Returns all LineItems belonging to the specified order.
+     * 
+     * @param orderId
+     * @return
+     * @throws Throwable
+     */
+    Set<LineItem> getLineItemsByOrderId(int orderId) throws Throwable;
+
+    /**
+     * Creates a LineItem.
+     * 
+     * @param lineItem
+     * @throws Throwable
+     */
+    void createLineItem(LineItem lineItem) throws Throwable;
+
+    /**
+     * Updates a LineItem.
+     * 
+     * @param lineItem
+     * @throws Throwable
+     */
+    void updateLineItem(LineItem lineItem) throws Throwable;
+
+    /**
+     * Deletes a LineItem.
+     * 
+     * @param lineItem
+     * @throws Throwable
+     */
+    void deleteLineItem(LineItem lineItem) throws Throwable;
+
+    /**
+     * Returns the PaymentUrl that belongs to the specified order.
+     * 
+     * @param orderId
+     * @return PaymentUrl|null
+     * @throws Throwable
+     */
+    PaymentUrl getPaymentUrlByOrderId(int orderId) throws Throwable;
+
+    /**
+     * Creates a PaymentUrl.
+     * 
+     * @param transaction
+     * @throws Throwable
+     */
+    void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable; 
+    
+    /**
+     * Return the Transaction that belongs to the specified order.
+     * 
+     * @param orderId
+     * @return Transaction|null
+     * @throws Throwable
+     */
+    Transaction getTransactionByOrderId(int orderId) throws Throwable;
+
+    /**
+     * Creates a Transaction.
+     * 
+     * @param transaction
+     * @throws Throwable
+     */
+    void createTransaction(Transaction transaction) throws Throwable;
 
 }

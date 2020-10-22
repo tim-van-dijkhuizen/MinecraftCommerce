@@ -21,7 +21,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
-import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
@@ -34,7 +33,9 @@ import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Product;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.helpers.DbHelper;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
@@ -73,7 +74,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
 
         // Create configuration options
@@ -106,7 +107,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
         String host = configHost.getValue(config);
         Integer port = configPort.getValue(config);
@@ -135,7 +136,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void unload() throws Exception {
+    public void unload() throws Throwable {
         if (dbSource != null) {
             dbSource.close();
             dbSource = null;
@@ -178,6 +179,18 @@ public class StorageMysql implements StorageType {
             + "required BOOLEAN NOT NULL"
         + ");");
 
+        PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
+            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+            + "displayName VARCHAR(40) NOT NULL,"
+            + "type VARCHAR(50) NOT NULL,"
+            + "config JSON NOT NULL"
+        + ");");
+        
+        PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
+            + "playerUniqueId CHAR(36) PRIMARY KEY,"
+            + "preferences JSON NOT NULL"
+        + ");");
+        
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "number CHAR(36) UNIQUE NOT NULL,"
@@ -189,6 +202,7 @@ public class StorageMysql implements StorageType {
             + "gatewayId INTEGER,"
             + "paymentUrl VARCHAR(255),"
             + "paymentUrlExpire BIGINT,"
+            + "paymentReference VARCHAR(255),"
             + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
         + ");");
 
@@ -200,16 +214,12 @@ public class StorageMysql implements StorageType {
             + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
         + ");");
 
-        PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
+        PreparedStatement createTransactions = connection.prepareStatement("CREATE TABLE IF NOT EXISTS transactions ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "displayName VARCHAR(40) NOT NULL,"
-            + "type VARCHAR(50) NOT NULL,"
-            + "config JSON NOT NULL"
-        + ");");
-
-        PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
-            + "playerUniqueId CHAR(36) PRIMARY KEY,"
-            + "preferences JSON NOT NULL"
+            + "orderId INTEGER NOT NULL,"
+            + "reference VARCHAR(255) NOT NULL,"
+            + "meta JSON,"
+            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
         + ");");
 
         // Execute queries
@@ -218,10 +228,11 @@ public class StorageMysql implements StorageType {
         createProducts.execute();
         createCommands.execute();
         createFields.execute();
-        createOrders.execute();
-        createLineItems.execute();
         createGateways.execute();
         createUserPreferences.execute();
+        createOrders.execute();
+        createLineItems.execute();
+        createTransactions.execute();
 
         // Cleanup
         // ===========================
@@ -229,10 +240,11 @@ public class StorageMysql implements StorageType {
         createProducts.close();
         createCommands.close();
         createFields.close();
-        createOrders.close();
-        createLineItems.close();
         createGateways.close();
         createUserPreferences.close();
+        createOrders.close();
+        createLineItems.close();
+        createTransactions.close();
 
         connection.close();
     }
@@ -246,7 +258,7 @@ public class StorageMysql implements StorageType {
      */
 
     @Override
-    public Set<Category> getCategories() throws Exception {
+    public Set<Category> getCategories() throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT * FROM categories";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -273,7 +285,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void createCategory(Category category) throws Exception {
+    public void createCategory(Category category) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO categories (icon, name, description) VALUES (?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -300,7 +312,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void updateCategory(Category category) throws Exception {
+    public void updateCategory(Category category) throws Throwable {
         Connection connection = getConnection();
         String sql = "UPDATE categories SET icon=?, name=?, description=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -320,7 +332,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void deleteCategory(Category category) throws Exception {
+    public void deleteCategory(Category category) throws Throwable {
         Connection connection = getConnection();
         String sql = "DELETE FROM categories WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -341,7 +353,7 @@ public class StorageMysql implements StorageType {
      */
 
     @Override
-    public Set<Product> getProducts(Category category) throws Exception {
+    public Set<Product> getProducts(Category category) throws Throwable {
         Connection connection = getConnection();
         PreparedStatement statement;
 
@@ -390,7 +402,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void createProduct(Product product) throws Exception {
+    public void createProduct(Product product) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO products (icon, name, description, categoryId, price) VALUES (?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -419,7 +431,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void updateProduct(Product product) throws Exception {
+    public void updateProduct(Product product) throws Throwable {
         Connection connection = getConnection();
         String sql = "UPDATE products SET icon=?, name=?, description=?, categoryId=?, price=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -441,7 +453,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void deleteProduct(Product product) throws Exception {
+    public void deleteProduct(Product product) throws Throwable {
         Connection connection = getConnection();
         String sql = "DELETE FROM products WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -462,7 +474,7 @@ public class StorageMysql implements StorageType {
      */
 
     @Override
-    public Set<Command> getCommandsByProductId(int productId) throws Exception {
+    public Set<Command> getCommandsByProductId(int productId) throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT * FROM commands WHERE productId=?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -489,7 +501,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void createCommand(Command command) throws Exception {
+    public void createCommand(Command command) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO commands (productId, command) VALUES (?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -515,7 +527,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void deleteCommand(Command command) throws Exception {
+    public void deleteCommand(Command command) throws Throwable {
         Connection connection = getConnection();
         String sql = "DELETE FROM commands WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -536,7 +548,7 @@ public class StorageMysql implements StorageType {
      */
 
     @Override
-    public Set<Field> getFields() throws Exception {
+    public Set<Field> getFields() throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT * FROM fields";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -571,7 +583,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void createField(Field field) throws Exception {
+    public void createField(Field field) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO fields (icon, name, description, type, required) VALUES (?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -600,7 +612,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void updateField(Field field) throws Exception {
+    public void updateField(Field field) throws Throwable {
         Connection connection = getConnection();
         String sql = "UPDATE fields SET icon=?, name=?, description=?, type=?, required=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -622,7 +634,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void deleteField(Field field) throws Exception {
+    public void deleteField(Field field) throws Throwable {
         Connection connection = getConnection();
         String sql = "DELETE FROM fields WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -639,354 +651,11 @@ public class StorageMysql implements StorageType {
     }
 
     /**
-     * Orders
-     */
-
-    @Override
-    public Order getCart(UUID playerUniqueId) throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
-            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
-            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.playerUniqueId=? AND orders.completed=0 LIMIT 1";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, playerUniqueId.toString());
-
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Order order = null;
-
-        if (result.next()) {
-            order = parseOrder(result);
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return order;
-    }
-
-    @Override
-    public Order getOrderByUniqueId(UUID uniqueId) throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
-            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
-            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.uniqueId=? LIMIT 1";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, uniqueId.toString());
-
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Order order = null;
-
-        if (result.next()) {
-            order = parseOrder(result);
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return order;
-    }
-
-    @Override
-    public Set<Order> getOrders() throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
-            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
-            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Set<Order> orders = new LinkedHashSet<>();
-
-        while (result.next()) {
-            Order order = parseOrder(result);
-
-            if (order != null) {
-                orders.add(order);
-            }
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return orders;
-    }
-
-    @Override
-    public Set<Order> getOrdersByPlayer(UUID uuid) throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.completed, orders.fields, orders.paymentUrl, orders.paymentUrlExpire, "
-            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
-            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1 AND orders.playerUniqueId=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, uuid.toString());
-
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Set<Order> orders = new LinkedHashSet<>();
-
-        while (result.next()) {
-            Order order = parseOrder(result);
-
-            if (order != null) {
-                orders.add(order);
-            }
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return orders;
-    }
-
-    @Override
-    public void createOrder(Order order) throws Exception {
-        Connection connection = getConnection();
-        String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, completed, fields, gatewayId, paymentUrl, paymentUrlExpire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        Gateway gateway = order.getGateway();
-        PaymentUrl paymentUrl = order.getPaymentUrl();
-
-        // Set arguments
-        statement.setString(1, order.getUniqueId().toString());
-        statement.setString(2, order.getPlayerUniqueId().toString());
-        statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCode());
-        statement.setBoolean(5, order.isCompleted());
-        statement.setString(6, DbHelper.prepareJsonConfig(order.getFieldData()));
-
-        if (gateway != null) {
-            statement.setInt(7, gateway.getId());
-        } else {
-            statement.setNull(7, Types.INTEGER);
-        }
-
-        if (paymentUrl != null) {
-            statement.setString(8, paymentUrl.getUrl());
-            statement.setLong(9, paymentUrl.getExpiryTime());
-        } else {
-            statement.setNull(8, Types.VARCHAR);
-            statement.setNull(9, Types.BIGINT);
-        }
-
-        // Execute query
-        statement.executeUpdate();
-
-        // Set ID
-        ResultSet ids = statement.getGeneratedKeys();
-
-        if (ids.next()) {
-            order.setId(ids.getInt(1));
-        }
-
-        // Cleanup
-        ids.close();
-        statement.close();
-        connection.close();
-    }
-
-    @Override
-    public void updateOrder(Order order) throws Exception {
-        Connection connection = getConnection();
-        String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, completed=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        Gateway gateway = order.getGateway();
-        PaymentUrl paymentUrl = order.getPaymentUrl();
-
-        // Set arguments
-        statement.setString(1, order.getUniqueId().toString());
-        statement.setString(2, order.getPlayerUniqueId().toString());
-        statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCode());
-        statement.setBoolean(5, order.isCompleted());
-        statement.setString(6, DbHelper.prepareJsonConfig(order.getFieldData()));
-
-        if (gateway != null) {
-            statement.setInt(7, gateway.getId());
-        } else {
-            statement.setNull(7, Types.INTEGER);
-        }
-
-        if (paymentUrl != null) {
-            statement.setString(8, paymentUrl.getUrl());
-            statement.setLong(9, paymentUrl.getExpiryTime());
-        } else {
-            statement.setNull(8, Types.VARCHAR);
-            statement.setNull(9, Types.BIGINT);
-        }
-
-        statement.setInt(10, order.getId());
-
-        // Execute query
-        statement.execute();
-
-        // Cleanup
-        statement.close();
-        connection.close();
-    }
-
-    @Override
-    public void completeOrder(Order order) throws Exception {
-        Connection connection = getConnection();
-        String sql = "UPDATE orders SET completed=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        // Set arguments
-        statement.setBoolean(1, true);
-        statement.setNull(2, Types.VARCHAR);
-        statement.setNull(3, Types.BIGINT);
-        statement.setInt(4, order.getId());
-
-        // Execute query
-        statement.execute();
-
-        // Cleanup
-        statement.close();
-        connection.close();
-    }
-
-    @Override
-    public void deleteOrder(Order order) throws Exception {
-        Connection connection = getConnection();
-        String sql = "DELETE FROM orders WHERE id=?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        // Set arguments
-        statement.setInt(1, order.getId());
-
-        // Execute query
-        statement.execute();
-
-        // Cleanup
-        statement.close();
-        connection.close();
-    }
-
-    /**
-     * LineItems
-     */
-
-    @Override
-    public Set<LineItem> getLineItemsByOrderId(int orderId) throws Exception {
-        Connection connection = getConnection();
-        String sql = "SELECT * FROM lineItems WHERE orderId=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setInt(1, orderId);
-
-        // Get result
-        ResultSet result = statement.executeQuery();
-        Set<LineItem> lineItems = new LinkedHashSet<>();
-
-        while (result.next()) {
-            int id = result.getInt(1);
-            int quantity = result.getInt(4);
-
-            // Parse product snapshot
-            String rawJson = result.getString(3);
-            JsonObject json = DbHelper.parseJson(rawJson);
-            ProductSnapshot product = new ProductSnapshot(json);
-
-            lineItems.add(new LineItem(id, orderId, product, quantity));
-        }
-
-        // Cleanup
-        result.close();
-        statement.close();
-        connection.close();
-
-        return lineItems;
-    }
-
-    @Override
-    public void createLineItem(LineItem lineItem) throws Exception {
-        Connection connection = getConnection();
-        String sql = "INSERT INTO lineItems (orderId, product, quantity) VALUES (?, ?, ?);";
-        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-        // Prepare product snapshot
-        JsonObject json = lineItem.getProduct().toJson();
-
-        // Set arguments
-        statement.setInt(1, lineItem.getOrderId());
-        statement.setString(2, DbHelper.prepareJson(json));
-        statement.setInt(3, lineItem.getQuantity());
-
-        // Execute query
-        statement.executeUpdate();
-
-        // Set ID
-        ResultSet ids = statement.getGeneratedKeys();
-
-        if (ids.next()) {
-            lineItem.setId(ids.getInt(1));
-        }
-
-        // Cleanup
-        ids.close();
-        statement.close();
-        connection.close();
-    }
-
-    @Override
-    public void updateLineItem(LineItem lineItem) throws Exception {
-        Connection connection = getConnection();
-        String sql = "UPDATE lineItems SET orderId=?, product=?, quantity=? WHERE id=?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        // Prepare product snapshot
-        JsonObject json = lineItem.getProduct().toJson();
-
-        // Set arguments
-        statement.setInt(1, lineItem.getOrderId());
-        statement.setString(2, DbHelper.prepareJson(json));
-        statement.setInt(3, lineItem.getQuantity());
-        statement.setInt(4, lineItem.getId());
-
-        // Execute query
-        statement.execute();
-
-        // Cleanup
-        statement.close();
-        connection.close();
-    }
-
-    @Override
-    public void deleteLineItem(LineItem lineItem) throws Exception {
-        Connection connection = getConnection();
-        String sql = "DELETE FROM lineItems WHERE id=?;";
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        // Set arguments
-        statement.setInt(1, lineItem.getId());
-
-        // Execute query
-        statement.execute();
-
-        // Cleanup
-        statement.close();
-        connection.close();
-    }
-
-    /**
      * Gateways
      */
 
     @Override
-    public Set<Gateway> getGateways() throws Exception {
+    public Set<Gateway> getGateways() throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT * FROM gateways";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1020,7 +689,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void createGateway(Gateway gateway) throws Exception {
+    public void createGateway(Gateway gateway) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO gateways (displayName, type, config) VALUES (?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -1047,7 +716,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void updateGateway(Gateway gateway) throws Exception {
+    public void updateGateway(Gateway gateway) throws Throwable {
         Connection connection = getConnection();
         String sql = "UPDATE gateways SET displayName=?, type=?, config=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1067,7 +736,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void deleteGateway(Gateway gateway) throws Exception {
+    public void deleteGateway(Gateway gateway) throws Throwable {
         Connection connection = getConnection();
         String sql = "DELETE FROM gateways WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1082,9 +751,13 @@ public class StorageMysql implements StorageType {
         statement.close();
         connection.close();
     }
-
+    
+    /**
+     * User preferences
+     */
+    
     @Override
-    public UserPreferences getUserPreferences(UUID playerUniqueId) throws Exception {
+    public UserPreferences getUserPreferences(UUID playerUniqueId) throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT preferences FROM user_preferences WHERE playerUniqueId=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1111,7 +784,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Exception {
+    public void saveUserPreferences(UUID playerUniqueId, UserPreferences preferences) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO user_preferences VALUES (?, ?) ON DUPLICATE KEY UPDATE preferences=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -1130,14 +803,362 @@ public class StorageMysql implements StorageType {
         statement.close();
         connection.close();
     }
+    
+    /**
+     * Orders
+     */
 
-    private Order parseOrder(ResultSet result) throws Exception {
+    @Override
+    public Order getCart(UUID playerUniqueId) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+            + "orders.paymentUrl, orders.paymentUrlExpire, orders.paymentReference, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.playerUniqueId=? AND orders.completed=0 LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, playerUniqueId.toString());
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Order order = null;
+
+        if (result.next()) {
+            order = parseOrder(result);
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return order;
+    }
+
+    @Override
+    public Order getOrderByUniqueId(UUID uniqueId) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+            + "orders.paymentUrl, orders.paymentUrlExpire, orders.paymentReference, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.uniqueId=? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uniqueId.toString());
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Order order = null;
+
+        if (result.next()) {
+            order = parseOrder(result);
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return order;
+    }
+
+    @Override
+    public Set<Order> getOrders() throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+            + "orders.paymentUrl, orders.paymentUrlExpire, orders.paymentReference, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<Order> orders = new LinkedHashSet<>();
+
+        while (result.next()) {
+            Order order = parseOrder(result);
+
+            if (order != null) {
+                orders.add(order);
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return orders;
+    }
+
+    @Override
+    public Set<Order> getOrdersByPlayer(UUID uuid) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+            + "orders.paymentUrl, orders.paymentUrlExpire, orders.paymentReference, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config FROM orders "
+            + "LEFT JOIN gateways ON gateways.id = orders.gatewayId WHERE orders.completed=1 AND orders.playerUniqueId=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uuid.toString());
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<Order> orders = new LinkedHashSet<>();
+
+        while (result.next()) {
+            Order order = parseOrder(result);
+
+            if (order != null) {
+                orders.add(order);
+            }
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return orders;
+    }
+
+    @Override
+    public void createOrder(Order order) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, fields, gatewayId, paymentUrl, paymentUrlExpire, paymentReference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        Gateway gateway = order.getGateway();
+        PaymentUrl paymentUrl = order.getPaymentUrl();
+
+        // Set arguments
+        statement.setString(1, order.getUniqueId().toString());
+        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setString(3, order.getPlayerName());
+        statement.setString(4, order.getCurrency().getCode());
+        statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
+
+        if (gateway != null) {
+            statement.setInt(6, gateway.getId());
+        } else {
+            statement.setNull(6, Types.INTEGER);
+        }
+
+        if (paymentUrl != null) {
+            statement.setString(7, paymentUrl.getUrl());
+            statement.setLong(8, paymentUrl.getExpiryTime());
+        } else {
+            statement.setNull(7, Types.VARCHAR);
+            statement.setNull(8, Types.BIGINT);
+        }
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            order.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void updateOrder(Order order) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, fields=?, gatewayId=?, paymentUrl=?, paymentUrlExpire=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        Gateway gateway = order.getGateway();
+        PaymentUrl paymentUrl = order.getPaymentUrl();
+
+        // Set arguments
+        statement.setString(1, order.getUniqueId().toString());
+        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setString(3, order.getPlayerName());
+        statement.setString(4, order.getCurrency().getCode());
+        statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
+
+        if (gateway != null) {
+            statement.setInt(6, gateway.getId());
+        } else {
+            statement.setNull(6, Types.INTEGER);
+        }
+
+        if (paymentUrl != null) {
+            statement.setString(7, paymentUrl.getUrl());
+            statement.setLong(8, paymentUrl.getExpiryTime());
+        } else {
+            statement.setNull(7, Types.VARCHAR);
+            statement.setNull(8, Types.BIGINT);
+        }
+
+        statement.setInt(9, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void deleteOrder(Order order) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM orders WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setInt(1, order.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    /**
+     * LineItems
+     */
+
+    @Override
+    public Set<LineItem> getLineItemsByOrderId(int orderId) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM lineItems WHERE orderId=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setInt(1, orderId);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<LineItem> lineItems = new LinkedHashSet<>();
+
+        while (result.next()) {
+            int id = result.getInt(1);
+            int quantity = result.getInt(4);
+
+            // Parse product snapshot
+            String rawJson = result.getString(3);
+            JsonObject json = DbHelper.parseJson(rawJson);
+            ProductSnapshot product = new ProductSnapshot(json);
+
+            lineItems.add(new LineItem(id, orderId, product, quantity));
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return lineItems;
+    }
+
+    @Override
+    public void createLineItem(LineItem lineItem) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "INSERT INTO lineItems (orderId, product, quantity) VALUES (?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // Prepare product snapshot
+        JsonObject json = lineItem.getProduct().toJson();
+
+        // Set arguments
+        statement.setInt(1, lineItem.getOrderId());
+        statement.setString(2, DbHelper.prepareJson(json));
+        statement.setInt(3, lineItem.getQuantity());
+
+        // Execute query
+        statement.executeUpdate();
+
+        // Set ID
+        ResultSet ids = statement.getGeneratedKeys();
+
+        if (ids.next()) {
+            lineItem.setId(ids.getInt(1));
+        }
+
+        // Cleanup
+        ids.close();
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void updateLineItem(LineItem lineItem) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "UPDATE lineItems SET orderId=?, product=?, quantity=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Prepare product snapshot
+        JsonObject json = lineItem.getProduct().toJson();
+
+        // Set arguments
+        statement.setInt(1, lineItem.getOrderId());
+        statement.setString(2, DbHelper.prepareJson(json));
+        statement.setInt(3, lineItem.getQuantity());
+        statement.setInt(4, lineItem.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public void deleteLineItem(LineItem lineItem) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM lineItems WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        // Set arguments
+        statement.setInt(1, lineItem.getId());
+
+        // Execute query
+        statement.execute();
+
+        // Cleanup
+        statement.close();
+        connection.close();
+    }
+
+    @Override
+    public PaymentUrl getPaymentUrlByOrderId(int orderId) throws Throwable {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Transaction getTransactionByOrderId(int orderId) throws Throwable {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createTransaction(Transaction transaction) throws Throwable {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    private Order parseOrder(ResultSet result) throws Throwable {
         int id = result.getInt(1);
         UUID uniqueId = UUID.fromString(result.getString(2));
         UUID playerUniqueId = UUID.fromString(result.getString(3));
         String playerName = result.getString(4);
         String currencyCode = result.getString(5);
-        boolean completed = result.getBoolean(6);
         OrderFieldData fields = DbHelper.parseOrderFields(result.getString(7));
 
         // Get currency
@@ -1167,21 +1188,16 @@ public class StorageMysql implements StorageType {
             }
         }
 
-        // Get payment URL
-        String paymentUrlRaw = result.getString(8);
-        long paymentUrlExpire = result.getLong(9);
-        PaymentUrl paymentUrl = null;
-
-        if (paymentUrlRaw != null) {
-            paymentUrl = new PaymentUrl(paymentUrlRaw, paymentUrlExpire);
-        }
+        // Get PaymentUrl and Transaction
+        PaymentUrl paymentUrl = getPaymentUrlByOrderId(id);
+        Transaction transaction = getTransactionByOrderId(id);
 
         if (currency != null) {
             Set<LineItem> rawLineItems = this.getLineItemsByOrderId(id);
             DataList<LineItem> lineItems = new DataList<>(rawLineItems);
 
             // Add order to list
-            return new Order(id, uniqueId, playerUniqueId, playerName, currency, completed, lineItems, fields, gateway, paymentUrl);
+            return new Order(id, uniqueId, playerUniqueId, playerName, currency, lineItems, fields, gateway, paymentUrl, transaction);
         } else {
             ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
         }

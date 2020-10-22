@@ -11,12 +11,11 @@ import org.bukkit.event.inventory.ClickType;
 import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
-import nl.timvandijkhuizen.commerce.base.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopGateways;
-import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.data.TypedValue;
@@ -33,7 +32,6 @@ public class MenuShopPayment implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         Menu menu = new Menu("Cart " + Icon.ARROW_RIGHT + " Payment (4/4)", MenuSize.LG);
-        OrderService orderService = Commerce.getInstance().getService("orders");
         PaymentService paymentService = Commerce.getInstance().getService("payments");
         TypedValue<Boolean> accepted = new TypedValue<>(false);
 
@@ -103,7 +101,7 @@ public class MenuShopPayment implements PredefinedMenu {
                 PaymentUrl cachedUrl = cart.getPaymentUrl();
 
                 // Return cached URL if we've got one
-                if (cachedUrl != null && !cachedUrl.hasExpired()) {
+                if (cachedUrl != null) {
                     sendPaymentUrl(player, menu, cachedUrl.getUrl());
                     return;
                 }
@@ -115,26 +113,14 @@ public class MenuShopPayment implements PredefinedMenu {
                 menu.refresh();
 
                 paymentService.createPaymentUrl(cart, url -> {
+                    menu.enableButtons();
+                    
                     if (url != null) {
-                        cart.setPaymentUrl(url);
-
-                        // Save cart
-                        orderService.saveOrder(cart, success -> {
-                            menu.enableButtons();
-
-                            if (success) {
-                                payActionLore.set(null);
-                                sendPaymentUrl(player, menu, url.getUrl());
-                            } else {
-                                UI.playSound(player, UI.SOUND_ERROR);
-                                payActionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
-                                menu.refresh();
-                            }
-                        });
+                        payActionLore.set(null);
+                        sendPaymentUrl(player, menu, url.getUrl());
                     } else {
                         UI.playSound(player, UI.SOUND_ERROR);
                         payActionLore.set(UI.color("Failed to create payment url.", UI.COLOR_ERROR));
-                        menu.enableButtons();
                         menu.refresh();
                     }
                 });
