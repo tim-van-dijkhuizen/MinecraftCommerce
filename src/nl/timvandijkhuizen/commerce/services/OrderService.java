@@ -198,9 +198,6 @@ public class OrderService extends BaseService {
         StorageType storage = Commerce.getInstance().getStorage();
 
         try {
-            storage.completeOrder(order);
-
-            // Perform commands and play effect
             ThreadHelper.execute(() -> {
                 YamlConfig config = Commerce.getInstance().getConfig();
 

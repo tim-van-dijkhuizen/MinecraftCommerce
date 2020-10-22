@@ -292,30 +292,12 @@ public interface StorageType extends Service {
     void deleteLineItem(LineItem lineItem) throws Throwable;
 
     /**
-     * Returns the PaymentUrl that belongs to the specified order.
-     * 
-     * @param orderId
-     * @return PaymentUrl|null
-     * @throws Throwable
-     */
-    PaymentUrl getPaymentUrlByOrderId(int orderId) throws Throwable;
-
-    /**
      * Creates a PaymentUrl.
      * 
      * @param transaction
      * @throws Throwable
      */
     void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable; 
-    
-    /**
-     * Return the Transaction that belongs to the specified order.
-     * 
-     * @param orderId
-     * @return Transaction|null
-     * @throws Throwable
-     */
-    Transaction getTransactionByOrderId(int orderId) throws Throwable;
 
     /**
      * Creates a Transaction.

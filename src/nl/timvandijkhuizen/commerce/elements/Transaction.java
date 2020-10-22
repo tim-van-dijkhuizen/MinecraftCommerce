@@ -10,6 +10,11 @@ public class Transaction extends Element {
     private String reference;
     private JsonObject meta;
     
+    public Transaction(int id, int orderId, String reference, JsonObject meta) {
+        this(orderId, reference, meta);
+        this.setId(id);
+    }
+    
     public Transaction(int orderId, String reference, JsonObject meta) {
         this.orderId = orderId;
         this.reference = reference;

@@ -135,7 +135,7 @@ public class ClientPayPal implements GatewayClient {
 
         return links.stream()
             .filter(link -> link.rel().equals("approve"))
-            .map(link -> new PaymentUrl(link.href(), System.currentTimeMillis() + URL_TTL))
+            .map(link -> new PaymentUrl(order.getId(), link.href(), System.currentTimeMillis() + URL_TTL))
             .findFirst().orElse(null);
     }
 

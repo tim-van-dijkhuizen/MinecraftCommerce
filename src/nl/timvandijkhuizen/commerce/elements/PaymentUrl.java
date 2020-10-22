@@ -4,10 +4,17 @@ import nl.timvandijkhuizen.commerce.base.Element;
 
 public class PaymentUrl extends Element {
 
+    private int orderId;
     private String url;
-    private long expiryTime;
+    private Long expiryTime;
     
-    public PaymentUrl(String url, long expiryTime) {
+    public PaymentUrl(int id, int orderId, String url, Long expiryTime) {
+        this(orderId, url, expiryTime);
+        this.setId(id);
+    }
+    
+    public PaymentUrl(int orderId, String url, Long expiryTime) {
+        this.orderId = orderId;
         this.url = url;
         this.expiryTime = expiryTime;
     }
@@ -15,6 +22,15 @@ public class PaymentUrl extends Element {
     @Override
     protected boolean validate(String scenario) {
         return true;
+    }
+    
+    /**
+     * Returns the id of the order this url belongs to.
+     * 
+     * @return
+     */
+    public int getOrderId() {
+        return orderId;
     }
     
     /**
@@ -31,7 +47,7 @@ public class PaymentUrl extends Element {
      * 
      * @return
      */
-    public long getExpiryTime() {
+    public Long getExpiryTime() {
         return expiryTime;
     }
 
