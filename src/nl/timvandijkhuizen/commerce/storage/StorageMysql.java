@@ -363,16 +363,16 @@ public class StorageMysql implements StorageType {
      */
 
     @Override
-    public Set<Product> getProducts(Category category) throws Throwable {
+    public Set<Product> getProducts(Category source) throws Throwable {
         Connection connection = getConnection();
         PreparedStatement statement;
 
         // Get all products or products that belong to a category
-        if (category == null) {
+        if (source == null) {
             statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products LEFT JOIN categories ON products.categoryId = categories.id;");
         } else {
             statement = connection.prepareStatement("SELECT id, icon, name, description, price FROM products WHERE categoryId=?;");
-            statement.setInt(1, category.getId());
+            statement.setInt(1, source.getId());
         }
 
         // Get result
@@ -385,14 +385,18 @@ public class StorageMysql implements StorageType {
             String name = result.getString(3);
             String description = result.getString(4);
             float price = result.getFloat(5);
+            Category category;
+            
 
             // Get category data
-            if (category == null) {
+            if (source == null) {
                 int categoryId = result.getInt(6);
                 Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
                 String categoryName = result.getString(8);
                 String categoryDescription = result.getString(9);
                 category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
+            } else {
+                category = source;
             }
 
             // Get commands
