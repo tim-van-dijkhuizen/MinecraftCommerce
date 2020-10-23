@@ -144,8 +144,8 @@ public class MenuOrderView implements PredefinedMenu {
             String dateTimeFormatted = dateFormat.format(new Date(dateTime));
             
             transactionButton.setName(UI.color("Transaction", UI.COLOR_PRIMARY, ChatColor.BOLD));
-            transactionButton.addLore(UI.color("Reference: ", UI.COLOR_SECONDARY) + UI.color(reference, UI.COLOR_SECONDARY));
-            transactionButton.addLore(UI.color("Date: ", UI.COLOR_SECONDARY) + UI.color(dateTimeFormatted, UI.COLOR_SECONDARY));
+            transactionButton.addLore(UI.color("Reference: ", UI.COLOR_TEXT) + UI.color(reference, UI.COLOR_SECONDARY));
+            transactionButton.addLore(UI.color("Date: ", UI.COLOR_TEXT) + UI.color(dateTimeFormatted, UI.COLOR_SECONDARY));
         }
         
         menu.setButton(transactionButton, 33);
