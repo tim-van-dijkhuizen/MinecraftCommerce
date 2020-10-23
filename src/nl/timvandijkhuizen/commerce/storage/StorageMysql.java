@@ -79,19 +79,22 @@ public class StorageMysql implements StorageType {
 
         // Create configuration options
         configHost = new ConfigOption<>("storage.host", "Storage Host", XMaterial.BARREL, ConfigTypes.STRING)
-            .setRequired(true);
+            .setRequired(true)
+            .setDefaultValue("localhost");
 
         configPort = new ConfigOption<>("storage.port", "Storage Port", XMaterial.BARREL, ConfigTypes.INTEGER)
-            .setRequired(true);
+            .setRequired(true)
+            .setDefaultValue(3306);
 
         configDatabase = new ConfigOption<>("storage.database", "Storage Database", XMaterial.BARREL, ConfigTypes.STRING)
-            .setRequired(true);
+            .setRequired(true)
+            .setDefaultValue("minecraft_commerce");
 
         configUsername = new ConfigOption<>("storage.username", "Storage Username", XMaterial.BARREL, ConfigTypes.STRING)
-            .setRequired(true);
+            .setRequired(true).setDefaultValue("minecraft_commerce");
 
         configPassword = new ConfigOption<>("storage.password", "Storage Password", XMaterial.BARREL, ConfigTypes.PASSWORD)
-            .setRequired(true);
+            .setRequired(true).setDefaultValue("MySecretPassword");
 
         configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", XMaterial.BARREL, ConfigTypes.INTEGER)
             .setRequired(true)

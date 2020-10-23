@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +52,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class Commerce extends PluginBase {
 
     public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && icon != Material.AIR).toArray(Material[]::new);
-    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, new DecimalFormat("###,###,###.00"));
+    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, "###,###,##0.00", ',', '.');
 
     private static Commerce instance;
     private YamlConfig config;

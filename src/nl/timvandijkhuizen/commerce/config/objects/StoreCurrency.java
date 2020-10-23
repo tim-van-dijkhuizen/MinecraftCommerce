@@ -1,6 +1,7 @@
 package nl.timvandijkhuizen.commerce.config.objects;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
@@ -20,27 +21,37 @@ public class StoreCurrency implements ConfigObject {
     private float conversionRate;
     private DecimalFormat format;
 
-    public StoreCurrency(String code, float conversionRate, DecimalFormat format) {
+    public StoreCurrency(String code, float conversionRate, String format, char groupingSeparator, char decimalSeparator) {
         this.code = code;
         this.conversionRate = conversionRate;
-        this.format = format;
+        this.format = parseFormat(format, groupingSeparator, decimalSeparator);
     }
 
-    public StoreCurrency() {
-    }
+    public StoreCurrency() { }
 
     @Override
-    public void serialize(ConfigObjectData output) {
+    public void serialize(ConfigObjectData output) throws Throwable {
         output.set("code", code);
         output.set("conversionRate", conversionRate);
+        
+        // Serialize format
+        DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+        
         output.set("format", format.toPattern());
+        output.set("groupingSeparator", symbols.getGroupingSeparator());
+        output.set("decimalSeparator", symbols.getDecimalSeparator());
     }
 
     @Override
-    public void deserialize(ConfigObjectData input) {
+    public void deserialize(ConfigObjectData input) throws Throwable {
         code = input.getString("code");
         conversionRate = input.getFloat("conversionRate");
-        format = new DecimalFormat(input.getString("format"));
+        
+        // Deserialize format
+        char groupingSeparator = input.getChar("groupingSeparator");
+        char decimalSeparator = input.getChar("decimalSeparator");
+        
+        format = parseFormat(input.getString("format"), groupingSeparator, decimalSeparator);
     }
 
     @Override
@@ -51,7 +62,8 @@ public class StoreCurrency implements ConfigObject {
     @Override
     public String[] getItemLore() {
         return new String[] {
-            UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + conversionRate, UI.COLOR_SECONDARY), UI.color("Format: ", UI.COLOR_TEXT) + UI.color(format.toPattern(), UI.COLOR_SECONDARY)
+            UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + conversionRate, UI.COLOR_SECONDARY),
+            UI.color("Format: ", UI.COLOR_TEXT) + UI.color(format.toPattern(), UI.COLOR_SECONDARY)
         };
     }
 
@@ -59,6 +71,8 @@ public class StoreCurrency implements ConfigObject {
     public void getInput(Player player, Runnable callback) {
         ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
 
+        // Get the format including grouping and decimal separator
+        // ====================================================
         StringPrompt formatPrompt = new StringPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -66,18 +80,57 @@ public class StoreCurrency implements ConfigObject {
             }
 
             @Override
-            public Prompt acceptInput(ConversationContext context, String input) {
-                try {
-                    format = new DecimalFormat(input);
-                    callback.run();
-                    return null;
-                } catch (IllegalArgumentException e) {
-                    context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.COLOR_ERROR));
-                    return this;
-                }
+            public Prompt acceptInput(ConversationContext context, String pattern) {
+                Prompt firstStep = this;
+                
+                // Next get the grouping separator
+                return new StringPrompt() {
+                    @Override
+                    public String getPromptText(ConversationContext context) {
+                        return UI.color("What should be the grouping separator?", UI.COLOR_PRIMARY);
+                    }
+
+                    @Override
+                    public Prompt acceptInput(ConversationContext context, String grouping) {
+                        if(grouping.length() > 1) {
+                            context.getForWhom().sendRawMessage(UI.color("The grouping separator must be a character, please try again.", UI.COLOR_ERROR));
+                            UI.playSound(player, UI.SOUND_ERROR);
+                            return this;
+                        }
+                        
+                        // Next get the decimal separator
+                        return new StringPrompt() {
+                            @Override
+                            public String getPromptText(ConversationContext context) {
+                                return UI.color("What should be the decimal separator?", UI.COLOR_PRIMARY);
+                            }
+
+                            @Override
+                            public Prompt acceptInput(ConversationContext context, String decimal) {
+                                if(decimal.length() > 1) {
+                                    context.getForWhom().sendRawMessage(UI.color("The decimal separator must be a character, please try again.", UI.COLOR_ERROR));
+                                    UI.playSound(player, UI.SOUND_ERROR);
+                                    return this;
+                                }
+                                
+                                try {
+                                    format = parseFormat(pattern, grouping.charAt(0), decimal.charAt(0));
+                                    callback.run();
+                                    return null;
+                                } catch (IllegalArgumentException e) {
+                                    context.getForWhom().sendRawMessage(UI.color("Invalid format, please try again.", UI.COLOR_ERROR));
+                                    UI.playSound(player, UI.SOUND_ERROR);
+                                    return firstStep;
+                                }
+                            }
+                        };
+                    }
+                };
             }
         };
 
+        // Get the conversion rate
+        // ====================================================
         NumericPrompt conversionRatePrompt = new NumericPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -91,6 +144,8 @@ public class StoreCurrency implements ConfigObject {
             }
         };
 
+        // Get the name
+        // ====================================================
         StringPrompt namePrompt = new StringPrompt() {
             @Override
             public String getPromptText(ConversationContext context) {
@@ -100,7 +155,7 @@ public class StoreCurrency implements ConfigObject {
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
                 if (input.length() > 255) {
-                    context.getForWhom().sendRawMessage(UI.color("The currency code cannot be longer than 255 characters", UI.COLOR_ERROR));
+                    context.getForWhom().sendRawMessage(UI.color("The currency code cannot be longer than 255 characters, please try again.", UI.COLOR_ERROR));
                     UI.playSound(player, UI.SOUND_ERROR);
                     return this;
                 }
@@ -133,6 +188,15 @@ public class StoreCurrency implements ConfigObject {
         } else {
             return false;
         }
+    }
+    
+    private DecimalFormat parseFormat(String pattern, char groupingSeparator, char decimalSeparator) throws IllegalArgumentException {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        
+        symbols.setGroupingSeparator(groupingSeparator);
+        symbols.setDecimalSeparator(decimalSeparator);
+
+        return new DecimalFormat(pattern, symbols);
     }
 
 }
