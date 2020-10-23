@@ -20,6 +20,7 @@ import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
@@ -194,10 +195,13 @@ public class OrderService extends BaseService {
      * @param order
      * @return
      */
-    public boolean completeOrder(Order order) {
+    public boolean completeOrder(Order order, Transaction transaction) {
         StorageType storage = Commerce.getInstance().getStorage();
 
         try {
+            storage.createTransaction(transaction);
+            
+            // Execute commands & play effect
             ThreadHelper.execute(() -> {
                 YamlConfig config = Commerce.getInstance().getConfig();
 
@@ -227,7 +231,7 @@ public class OrderService extends BaseService {
             });
 
             return true;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ConsoleHelper.printError("Failed to complete order", e);
             return false;
         }

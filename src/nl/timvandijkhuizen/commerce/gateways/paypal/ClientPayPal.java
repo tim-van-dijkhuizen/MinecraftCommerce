@@ -31,6 +31,7 @@ import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.WebService;
@@ -182,7 +183,9 @@ public class ClientPayPal implements GatewayClient {
             }
 
             // Complete order
-            if (!orderService.completeOrder(order)) {
+            Transaction transaction = new Transaction(order.getId(), paypalOrder.id(), System.currentTimeMillis());
+            
+            if (!orderService.completeOrder(order, transaction)) {
                 throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
             }
 

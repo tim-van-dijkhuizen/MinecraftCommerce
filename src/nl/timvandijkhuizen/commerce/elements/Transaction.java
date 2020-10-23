@@ -8,16 +8,22 @@ public class Transaction extends Element {
 
     private int orderId;
     private String reference;
+    private long dateCreated;
     private JsonObject meta;
     
-    public Transaction(int id, int orderId, String reference, JsonObject meta) {
-        this(orderId, reference, meta);
+    public Transaction(int id, int orderId, String reference, long dateCreated, JsonObject meta) {
+        this(orderId, reference, dateCreated, meta);
         this.setId(id);
     }
     
-    public Transaction(int orderId, String reference, JsonObject meta) {
+    public Transaction(int orderId, String reference, long dateCreated) {
+        this(orderId, reference, dateCreated, null);
+    }
+    
+    public Transaction(int orderId, String reference, long dateCreated, JsonObject meta) {
         this.orderId = orderId;
         this.reference = reference;
+        this.dateCreated = dateCreated;
         this.meta = meta;
     }
     
@@ -32,6 +38,10 @@ public class Transaction extends Element {
     
     public String getReference() {
         return reference;
+    }
+    
+    public long getDateCreated() {
+        return dateCreated;
     }
     
     public JsonObject getMeta() {

@@ -1,5 +1,8 @@
 package nl.timvandijkhuizen.commerce.helpers;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.bukkit.Material;
 
 import com.cryptomorin.xseries.XMaterial;
@@ -13,6 +16,11 @@ import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 
 public class DbHelper {
 
+    public static Integer getInteger(ResultSet result, int column) throws SQLException {
+        int value = result.getInt(column);
+        return result.wasNull() ? null : value;
+    }
+    
     public static String prepareMaterial(Material material) {
         return material.name();
     }

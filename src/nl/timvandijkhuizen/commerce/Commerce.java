@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.commerce;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<Boolean> configDevMode;
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
+    private ConfigOption<SimpleDateFormat> configDateFormat;
     private ConfigOption<String> configWebserverHost;
     private ConfigOption<Integer> configWebserverPort;
     private ConfigOption<File> configSslCertificate;
@@ -106,6 +108,10 @@ public class Commerce extends PluginBase {
         configBaseCurrency = new ConfigOption<>("general.baseCurrency", "Base Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency())
             .setRequired(true)
             .setDefaultValue(DEFAULT_CURRENCY);
+        
+        configDateFormat = new ConfigOption<>("general.dateFormat", "Date Format", XMaterial.CLOCK, ConfigTypes.DATE_FORMAT)
+            .setRequired(true)
+            .setDefaultValue(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
 
         configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.DOMAIN)
             .setRequired(true)
@@ -142,6 +148,7 @@ public class Commerce extends PluginBase {
         config.addOption(configDevMode);
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
+        config.addOption(configDateFormat);
         config.addOption(configWebserverHost);
         config.addOption(configWebserverPort);
         config.addOption(configSslCertificate);

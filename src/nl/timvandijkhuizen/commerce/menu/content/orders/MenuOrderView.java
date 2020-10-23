@@ -1,20 +1,25 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionOrderList;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -29,6 +34,7 @@ public class MenuOrderView implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
+        YamlConfig config = Commerce.getInstance().getConfig();
         Menu menu = new Menu("View Order", MenuSize.XXL);
         Order order = args.get(0);
 
@@ -88,7 +94,7 @@ public class MenuOrderView implements PredefinedMenu {
             Menus.ORDER_ITEMS.open(player, order);
         });
 
-        menu.setButton(itemsButton, 30);
+        menu.setButton(itemsButton, 29);
 
         // Fields button
         // ===========================
@@ -121,8 +127,29 @@ public class MenuOrderView implements PredefinedMenu {
             Menus.ORDER_FIELDS.open(player, order);
         });
 
-        menu.setButton(fieldsButton, 32);
+        menu.setButton(fieldsButton, 31);
 
+        // Transaction button
+        // ===========================
+        MenuItemBuilder transactionButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
+        Transaction transaction = order.getTransaction();
+
+        if(transaction != null) {
+            String reference = transaction.getReference();
+            long dateTime = transaction.getDateCreated();
+            
+            // Get used format
+            ConfigOption<SimpleDateFormat> dateFormatOption = config.getOption("general.dateFormat");
+            SimpleDateFormat dateFormat = dateFormatOption.getValue(config);
+            String dateTimeFormatted = dateFormat.format(new Date(dateTime));
+            
+            transactionButton.setName(UI.color("Transaction", UI.COLOR_PRIMARY, ChatColor.BOLD));
+            transactionButton.addLore(UI.color("Reference: ", UI.COLOR_SECONDARY) + UI.color(reference, UI.COLOR_SECONDARY));
+            transactionButton.addLore(UI.color("Date: ", UI.COLOR_SECONDARY) + UI.color(dateTimeFormatted, UI.COLOR_SECONDARY));
+        }
+        
+        menu.setButton(transactionButton, 33);
+        
         // Set bottom line
         // ===========================
         menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);

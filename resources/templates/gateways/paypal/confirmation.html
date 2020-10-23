@@ -71,7 +71,7 @@
                             <li>Username: <span th:text="${order.playerName}">TestPlayer</span></li>
                             <li>Currency: <span th:text="${order.currency.code}">USD</span></li>
                             <li th:if="${order.gateway != null}">Gateway: <span th:text="${order.gateway.displayName}">TestGateway</span></li>
-                            <li>Payment reference: <span th:text="${'36G551236X13GF23F'}">36G551236X13GF23F</span></li>
+                            <li th:if="${order.transaction != null}">Transaction reference: <span th:text="${order.transaction.reference}">36G551236X13GF23F</span></li>
                             <li>Total: <span th:text="${functions.formatPrice(order.total, order.currency)}">$10.50</span></p>
                         </ul>
                     </div>
