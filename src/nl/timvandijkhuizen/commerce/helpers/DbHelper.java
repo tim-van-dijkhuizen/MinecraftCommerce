@@ -34,12 +34,11 @@ public class DbHelper {
     }
 
     public static UUID parseUniqueId(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(16);
-
-        buffer.put(bytes);
-        buffer.flip();
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        long high = buffer.getLong();
+        long low = buffer.getLong();
         
-        return new UUID(buffer.getLong(), buffer.getLong());
+        return new UUID(high, low);
     }
     
     public static String prepareMaterial(Material material) {
