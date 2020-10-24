@@ -5,17 +5,17 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 public interface FieldType<T> extends ConfigType<T> {
 
     /**
-     * Returns the name of the field type.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Returns the handle of the field type.
+     * Returns the handle. This value must be unique.
      * 
      * @return
      */
     public String getHandle();
+    
+    /**
+     * Returns the display name.
+     * 
+     * @return
+     */
+    public String getDisplayName();
 
 }

@@ -16,6 +16,7 @@ public interface ModelInterface {
      * Returns whether the model is valid under the specified scenario. All
      * previous errors will be cleared and any new errors will be added.
      * 
+     * @param scenario
      * @return
      */
     boolean isValid(String scenario);

@@ -131,7 +131,7 @@ public class MenuOrderView implements PredefinedMenu {
 
         // Transaction button
         // ===========================
-        MenuItemBuilder transactionButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
+        MenuItemBuilder transactionButton = new MenuItemBuilder(XMaterial.DROPPER);
         Transaction transaction = order.getTransaction();
 
         if(transaction != null) {

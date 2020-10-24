@@ -40,7 +40,7 @@ public class MenuGatewayList implements PredefinedMenu {
 
             // Set gateway name
             item.setName(UI.color(gateway.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.setLore(UI.color("Type: ", UI.COLOR_TEXT) + UI.color(gateway.getType().getName(), UI.COLOR_SECONDARY), "");
+            item.setLore(UI.color("Type: ", UI.COLOR_TEXT) + UI.color(gateway.getType().getDisplayName(), UI.COLOR_SECONDARY), "");
 
             // Add configuration to lore
             item.addLore(UI.color("Configuration:", UI.COLOR_TEXT));

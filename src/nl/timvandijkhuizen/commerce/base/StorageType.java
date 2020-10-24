@@ -3,8 +3,6 @@ package nl.timvandijkhuizen.commerce.base;
 import java.util.Set;
 import java.util.UUID;
 
-import com.cryptomorin.xseries.XMaterial;
-
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Command;
@@ -23,11 +21,19 @@ public interface StorageType extends Service {
         return "storage";
     }
 
+    /**
+     * Returns the type handle. This value must be unique.
+     * 
+     * @return
+     */
     public String getType();
 
-    public XMaterial getIcon();
-
-    public String getName();
+    /**
+     * Returns the display name used in menu's.
+     * 
+     * @return
+     */
+    public String getDisplayName();
 
     /**
      * Returns all categories.
@@ -65,6 +71,7 @@ public interface StorageType extends Service {
      * Returns all products for the specified category. All products will be
      * returned if the category is null.
      * 
+     * @param category
      * @return
      * @throws Throwable
      */
@@ -162,7 +169,7 @@ public interface StorageType extends Service {
     /**
      * Creates a gateway.
      * 
-     * @param order
+     * @param gateway
      * @throws Throwable
      */
     void createGateway(Gateway gateway) throws Throwable;
@@ -170,7 +177,7 @@ public interface StorageType extends Service {
     /**
      * Updates a gateway.
      * 
-     * @param order
+     * @param gateway
      * @throws Throwable
      */
     void updateGateway(Gateway gateway) throws Throwable;
@@ -178,7 +185,7 @@ public interface StorageType extends Service {
     /**
      * Deletes a gateway.
      * 
-     * @param order
+     * @param gateway
      * @throws Throwable
      */
     void deleteGateway(Gateway gateway) throws Throwable;
@@ -204,6 +211,7 @@ public interface StorageType extends Service {
     /**
      * Returns the cart of the specified user.
      * 
+     * @param playerUniqueId
      * @return
      * @throws Throwable
      */
@@ -212,6 +220,7 @@ public interface StorageType extends Service {
     /**
      * Returns an order by its UUID.
      * 
+     * @param uniqueId
      * @return
      * @throws Throwable
      */
@@ -294,7 +303,7 @@ public interface StorageType extends Service {
     /**
      * Creates a PaymentUrl.
      * 
-     * @param transaction
+     * @param paymentUrl
      * @throws Throwable
      */
     void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable; 

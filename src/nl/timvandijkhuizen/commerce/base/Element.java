@@ -4,20 +4,12 @@ public abstract class Element extends Model implements ElementInterface {
 
     private Integer id;
 
-    /**
-     * Returns the element id. This can be null.
-     * 
-     * @return
-     */
+    @Override
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets the element id. Throws an exception if the id is already set.
-     * 
-     * @param id
-     */
+    @Override
     public void setId(int id) {
         if (this.id != null) {
             throw new RuntimeException("Id already set");

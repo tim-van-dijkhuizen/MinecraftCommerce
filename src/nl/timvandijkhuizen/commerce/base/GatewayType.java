@@ -10,18 +10,18 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 public interface GatewayType {
 
     /**
-     * Returns the type name.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
      * Returns the type handle.
      * 
      * @return
      */
     public String getHandle();
+    
+    /**
+     * Returns the type display name.
+     * 
+     * @return
+     */
+    public String getDisplayName();
 
     /**
      * Returns the type icon.
@@ -38,8 +38,9 @@ public interface GatewayType {
     public Collection<ConfigOption<?>> getOptions();
 
     /**
-     * Creates and returns a gateway client for this gateway type.
+     * Creates a GatewayClient for this GatewayType.
      * 
+     * @param config
      * @return A new GatewayClient
      */
     public GatewayClient createClient(GatewayConfig config);

@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -14,6 +16,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -52,17 +55,19 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuItemClick event, Consumer<StorageType> callback) {
-        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
-        PagedMenu menu = new PagedMenu("Choose a storage type", 3, 7, 1, 1);
-        StorageType selected = getValue(config, option);
+        PagedMenu menu = new PagedMenu("Choose a storage type", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
+        StorageType selected = getValue(config, option);
 
+        // Add available types
+        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        
         for (StorageType type : types) {
-            MenuItemBuilder item = new MenuItemBuilder(type.getIcon());
+            MenuItemBuilder item = new MenuItemBuilder(XMaterial.BOOKSHELF);
 
-            item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(type.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            if (selected != null && selected.getType().equals(type.getType())) {
+            if (selected != null && type.getType().equals(selected.getType())) {
                 item.addEnchantGlow();
             }
 
@@ -73,6 +78,16 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
             menu.addPagedButton(item);
         }
+        
+        // Go back button
+        MenuItemBuilder backButton = MenuItems.BACK.clone();
+
+        backButton.setClickListener(backEvent -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            callback.accept(selected);
+        });
+
+        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
 
         menu.open(player);
     }

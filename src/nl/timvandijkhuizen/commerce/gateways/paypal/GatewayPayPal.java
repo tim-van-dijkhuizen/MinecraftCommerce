@@ -32,13 +32,13 @@ public class GatewayPayPal implements GatewayType {
     }
 
     @Override
-    public String getName() {
-        return "PayPal";
-    }
-
-    @Override
     public String getHandle() {
         return "paypal";
+    }
+    
+    @Override
+    public String getDisplayName() {
+        return "PayPal";
     }
 
     @Override

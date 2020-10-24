@@ -53,7 +53,10 @@ public class CommandCommerce extends BaseCommand {
     }
 
     public BaseCommand[] getSubCommands() {
-        return new BaseCommand[] { new CommandAdmin() };
+        return new BaseCommand[] {
+            new CommandAccount(),
+            new CommandAdmin()
+        };
     }
 
 }

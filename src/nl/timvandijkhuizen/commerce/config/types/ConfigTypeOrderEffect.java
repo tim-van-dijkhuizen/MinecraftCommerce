@@ -15,6 +15,7 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
+import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -55,17 +56,19 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<OrderEffect> option, MenuItemClick event, Consumer<OrderEffect> callback) {
         OrderService orderService = Commerce.getInstance().getService("orders");
-        Collection<OrderEffect> effects = orderService.getOrderEffects();
-        PagedMenu menu = new PagedMenu("Choose an effect", 3, 7, 1, 1);
-        OrderEffect selected = getValue(config, option);
+        PagedMenu menu = new PagedMenu("Choose an effect", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
+        OrderEffect selected = getValue(config, option);
 
+        // Add available effects
+        Collection<OrderEffect> effects = orderService.getOrderEffects();
+        
         for (OrderEffect effect : effects) {
             MenuItemBuilder item = new MenuItemBuilder(effect.getIcon());
 
-            item.setName(UI.color(effect.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(effect.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            if (selected != null && selected.getHandle().equals(effect.getHandle())) {
+            if (selected != null && effect.getHandle().equals(selected.getHandle())) {
                 item.addEnchantGlow();
             }
 
@@ -77,6 +80,16 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
             menu.addPagedButton(item);
         }
 
+        // Go back button
+        MenuItemBuilder backButton = MenuItems.BACK.clone();
+
+        backButton.setClickListener(backEvent -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            callback.accept(selected);
+        });
+
+        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        
         menu.open(player);
     }
 

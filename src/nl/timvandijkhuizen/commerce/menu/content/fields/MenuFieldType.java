@@ -30,7 +30,7 @@ public class MenuFieldType implements PredefinedMenu {
         for (FieldType<?> type : fieldService.getFieldTypes()) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.CAULDRON);
 
-            item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(type.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
             if (selected != null && type.getHandle().equals(selected.getHandle())) {

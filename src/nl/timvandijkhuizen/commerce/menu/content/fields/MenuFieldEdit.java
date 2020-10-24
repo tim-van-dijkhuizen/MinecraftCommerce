@@ -170,7 +170,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (field.getType() != null) {
-            typeButton.addLore(UI.color(field.getType().getName(), UI.COLOR_SECONDARY));
+            typeButton.addLore(UI.color(field.getType().getDisplayName(), UI.COLOR_SECONDARY));
         } else {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }

@@ -44,7 +44,7 @@ public class MenuFieldList implements PredefinedMenu {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));
             }
 
-            item.addLore("", UI.color("Type: ", UI.COLOR_TEXT) + UI.color(field.getType().getName(), UI.COLOR_SECONDARY));
+            item.addLore("", UI.color("Type: ", UI.COLOR_TEXT) + UI.color(field.getType().getDisplayName(), UI.COLOR_SECONDARY));
             item.addLore(UI.color("Required: ", UI.COLOR_TEXT) + UI.color(field.isRequired() ? "Yes" : "No", UI.COLOR_SECONDARY), "");
 
             item.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));

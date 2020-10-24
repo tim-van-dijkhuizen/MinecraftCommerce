@@ -64,12 +64,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public XMaterial getIcon() {
-        return XMaterial.CHEST;
-    }
-
-    @Override
-    public String getName() {
+    public String getDisplayName() {
         return "MySQL";
     }
 
@@ -190,14 +185,14 @@ public class StorageMysql implements StorageType {
         + ");");
         
         PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
-            + "playerUniqueId CHAR(36) PRIMARY KEY,"
+            + "playerUniqueId BINARY(16) PRIMARY KEY,"
             + "preferences JSON NOT NULL"
         + ");");
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "number CHAR(36) UNIQUE NOT NULL,"
-            + "playerUniqueId CHAR(36) NOT NULL,"
+            + "number BINARY(16) UNIQUE NOT NULL,"
+            + "playerUniqueId BINARY(16) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"
             + "fields JSON NOT NULL,"
@@ -776,17 +771,15 @@ public class StorageMysql implements StorageType {
         String sql = "SELECT preferences FROM user_preferences WHERE playerUniqueId=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, playerUniqueId.toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
 
         // Get result
         ResultSet result = statement.executeQuery();
-        UserPreferences preferences;
+        UserPreferences preferences = null;
 
         if (result.next()) {
             String json = result.getString(1);
             preferences = DbHelper.parseUserPreferences(json);
-        } else {
-            preferences = new UserPreferences();
         }
 
         // Cleanup
@@ -806,7 +799,7 @@ public class StorageMysql implements StorageType {
         // Set parameters
         String json = DbHelper.prepareJsonConfig(preferences);
 
-        statement.setString(1, playerUniqueId.toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
         statement.setString(2, json);
         statement.setString(3, json);
 
@@ -836,7 +829,7 @@ public class StorageMysql implements StorageType {
             + "WHERE orders.playerUniqueId=? AND transactions.id IS NULL LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, playerUniqueId.toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
 
         // Get result
         ResultSet result = statement.executeQuery();
@@ -868,7 +861,7 @@ public class StorageMysql implements StorageType {
             + "WHERE orders.uniqueId=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, uniqueId.toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(uniqueId));
 
         // Get result
         ResultSet result = statement.executeQuery();
@@ -921,7 +914,7 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
-    public Set<Order> getOrdersByPlayer(UUID uuid) throws Throwable {
+    public Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Throwable {
         Connection connection = getConnection();
         String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config, "
@@ -934,7 +927,7 @@ public class StorageMysql implements StorageType {
             + "WHERE orders.playerUniqueId=? AND transactions.id IS NOT NULL";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, uuid.toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
 
         // Get result
         ResultSet result = statement.executeQuery();
@@ -964,8 +957,8 @@ public class StorageMysql implements StorageType {
         Gateway gateway = order.getGateway();
 
         // Set arguments
-        statement.setString(1, order.getUniqueId().toString());
-        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(order.getUniqueId()));
+        statement.setBytes(2, DbHelper.prepareUniqueId(order.getPlayerUniqueId()));
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
@@ -1000,8 +993,8 @@ public class StorageMysql implements StorageType {
         Gateway gateway = order.getGateway();
 
         // Set arguments
-        statement.setString(1, order.getUniqueId().toString());
-        statement.setString(2, order.getPlayerUniqueId().toString());
+        statement.setBytes(1, DbHelper.prepareUniqueId(order.getUniqueId()));
+        statement.setBytes(2, DbHelper.prepareUniqueId(order.getPlayerUniqueId()));
         statement.setString(3, order.getPlayerName());
         statement.setString(4, order.getCurrency().getCode());
         statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
@@ -1210,8 +1203,8 @@ public class StorageMysql implements StorageType {
     
     private Order parseOrder(ResultSet result) throws Throwable {
         int id = result.getInt(1);
-        UUID uniqueId = UUID.fromString(result.getString(2));
-        UUID playerUniqueId = UUID.fromString(result.getString(3));
+        UUID uniqueId = DbHelper.parseUniqueId(result.getBytes(2));
+        UUID playerUniqueId = DbHelper.parseUniqueId(result.getBytes(3));
         String playerName = result.getString(4);
         String currencyCode = result.getString(5);
         OrderFieldData fields = DbHelper.parseOrderFields(result.getString(6));

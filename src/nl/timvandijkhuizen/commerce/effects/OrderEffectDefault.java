@@ -27,7 +27,7 @@ public class OrderEffectDefault implements OrderEffect {
     }
 
     @Override
-    public String getName() {
+    public String getDisplayName() {
         return "Default";
     }
 

@@ -19,7 +19,6 @@ import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MenuGatewayOptions implements PredefinedMenu {
 
     @Override

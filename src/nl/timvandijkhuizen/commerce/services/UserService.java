@@ -53,9 +53,7 @@ public class UserService extends BaseService {
 
         // Set default if null
         if (preferences == null) {
-            preferences = new UserPreferences();
-            cacheService.updatePreferences(player, preferences);
-            return preferences;
+            return new UserPreferences();
         }
 
         return preferences;

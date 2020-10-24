@@ -8,12 +8,33 @@ import nl.timvandijkhuizen.commerce.elements.Order;
 
 public interface OrderEffect {
 
+    /**
+     * Returns the handle.
+     * 
+     * @return
+     */
     String getHandle();
 
+    /**
+     * Returns the display name.
+     * 
+     * @return
+     */
+    String getDisplayName();
+    
+    /**
+     * Returns the icon.
+     * 
+     * @return
+     */
     XMaterial getIcon();
 
-    String getName();
-
+    /**
+     * Plays the effect for an order. 
+     * 
+     * @param player
+     * @param order
+     */
     void playEffect(Player player, Order order);
 
 }

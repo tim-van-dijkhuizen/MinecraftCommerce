@@ -50,8 +50,4 @@ public class CacheService extends BaseService implements Listener {
         return userPreferences.get(player.getUniqueId());
     }
 
-    void updatePreferences(Player player, UserPreferences preferences) {
-        userPreferences.put(player.getUniqueId(), preferences);
-    }
-
 }

@@ -8,20 +8,19 @@ import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 public interface GatewayClient {
 
     /**
-     * Creates a payment URL for the specified order. Returns null if we were
-     * unable to obtain an url.
+     * Creates a payment URL for the specified order.
      * 
      * @param order
-     * @return string|null
+     * @return PaymentUrl
      */
     public PaymentUrl createPaymentUrl(Order order) throws Throwable;
 
     /**
-     * Processes a webhook response. Returns null if the payment did not
-     * succeed.
+     * Handles a web request for this gateway.
      * 
-     * @param response
-     * @return Payment|null
+     * @param order
+     * @param request
+     * @return FullHttpResponse
      */
     public FullHttpResponse handleWebRequest(Order order, FullHttpRequest request) throws Throwable;
 

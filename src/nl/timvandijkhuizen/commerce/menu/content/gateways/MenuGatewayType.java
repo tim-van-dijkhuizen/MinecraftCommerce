@@ -28,7 +28,7 @@ public class MenuGatewayType implements PredefinedMenu {
         for (GatewayType type : gatewayService.getTypes()) {
             MenuItemBuilder item = new MenuItemBuilder(type.getIcon());
 
-            item.setName(UI.color(type.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(type.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
             if (selected != null && type.getHandle().equals(selected.getHandle())) {

@@ -1,7 +1,9 @@
 package nl.timvandijkhuizen.commerce.helpers;
 
+import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.bukkit.Material;
 
@@ -19,6 +21,25 @@ public class DbHelper {
     public static Integer getInteger(ResultSet result, int column) throws SQLException {
         int value = result.getInt(column);
         return result.wasNull() ? null : value;
+    }
+    
+    public static byte[] prepareUniqueId(UUID uuid) {
+        byte[] bytes = new byte[16];
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        
+        buffer.putLong(uuid.getMostSignificantBits());
+        buffer.putLong(uuid.getLeastSignificantBits());
+        
+        return bytes;
+    }
+
+    public static UUID parseUniqueId(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+
+        buffer.put(bytes);
+        buffer.flip();
+        
+        return new UUID(buffer.getLong(), buffer.getLong());
     }
     
     public static String prepareMaterial(Material material) {

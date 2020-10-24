@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.commerce.menu.content.shop;
+package nl.timvandijkhuizen.commerce.menu.content.shop.account;
 
 import java.util.Collection;
 import java.util.Set;
@@ -13,6 +13,7 @@ import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
+import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
@@ -24,15 +25,14 @@ import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuShopOrderHistory implements PredefinedMenu {
+public class MenuShopAccountOrders implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Order History", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Order History", 3, 7, 1, 1, 1, 5, 7);
 
         // Add order buttons
         Set<Order> orders = args.getSet(0);
-        Menu returnMenu = args.get(1);
 
         for (Order order : orders) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
@@ -86,7 +86,7 @@ public class MenuShopOrderHistory implements PredefinedMenu {
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            returnMenu.open(player);
+            Menus.SHOP_ACCOUNT.open(player);
         });
 
         menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);

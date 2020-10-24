@@ -93,7 +93,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
         typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
         if (gateway.getType() != null) {
-            typeButton.addLore(UI.color(gateway.getType().getName(), UI.COLOR_SECONDARY));
+            typeButton.addLore(UI.color(gateway.getType().getDisplayName(), UI.COLOR_SECONDARY));
         } else {
             typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }

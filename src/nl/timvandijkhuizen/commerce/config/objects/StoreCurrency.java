@@ -185,9 +185,9 @@ public class StoreCurrency implements ConfigObject {
         if (obj instanceof StoreCurrency) {
             StoreCurrency currency = (StoreCurrency) obj;
             return currency.getCode().equals(code) && currency.getConversionRate() == conversionRate && currency.getFormat().equals(format);
-        } else {
-            return false;
         }
+        
+        return false;
     }
     
     private DecimalFormat parseFormat(String pattern, char groupingSeparator, char decimalSeparator) throws IllegalArgumentException {

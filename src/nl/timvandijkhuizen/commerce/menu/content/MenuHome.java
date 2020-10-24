@@ -29,7 +29,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder configButton = new MenuItemBuilder(XMaterial.COMPARATOR);
 
         configButton.setName(UI.color("Configuration", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        configButton.setLore(UI.color("Modify your configuration", UI.COLOR_TEXT));
+        configButton.setLore(UI.color("Manage your configuration", UI.COLOR_TEXT));
 
         configButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);

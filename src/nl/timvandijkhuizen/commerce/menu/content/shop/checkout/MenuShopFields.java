@@ -26,7 +26,6 @@ import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MenuShopFields implements PredefinedMenu {
 
     @Override
