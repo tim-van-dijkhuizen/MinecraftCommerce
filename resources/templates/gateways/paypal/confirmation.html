@@ -92,7 +92,7 @@
                         <h3>Order fields</h3>
 
                         <ul class="mb-0 pl-2 pl-lg-3" th:with="fieldData=${order.fieldData}">
-                            <li th:each="option,loop : ${fieldData.options}" th:text="${option.name} + ' &rarr; ' + (${option.isValueEmpty(fieldData)} ? 'None' : ${option.getValueLore(fieldData)})">
+                            <li th:each="option,loop : ${fieldData.options}" th:text="${option.name} + ' &rarr; ' + (${option.isValueEmpty(fieldData)} ? 'None' : ${option.getDisplayValue(fieldData)})">
                                 Key &rarr; Value
                             </li>
                         </ul>

@@ -77,7 +77,17 @@ public class MenuProductCommands implements PredefinedMenu {
         createButton.addLore("", UI.color("Available variables:", UI.COLOR_TEXT));
 
         for (OrderVariable variable : orderService.getOrderVariables()) {
-            createButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + UI.color(" {" + variable.getKey() + "}", UI.COLOR_SECONDARY));
+            String key = variable.getKey();
+            String[] properties = variable.getProperties();
+            
+            if(properties.length == 0) {
+                createButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + UI.color(" {" + key + "}", UI.COLOR_SECONDARY));
+                continue;
+            }
+            
+            for(String property : properties) {
+                createButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + UI.color(" {" + key + ":" + property + "}", UI.COLOR_SECONDARY));
+            }
         }
 
         createButton.setClickListener(event -> {

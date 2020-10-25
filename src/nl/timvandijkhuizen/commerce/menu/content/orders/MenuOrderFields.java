@@ -40,7 +40,7 @@ public class MenuOrderFields implements PredefinedMenu {
                 List<String> lore = new ArrayList<>();
 
                 if (!option.isValueEmpty(fieldData)) {
-                    lore.add(UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getDisplayValue(fieldData), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }

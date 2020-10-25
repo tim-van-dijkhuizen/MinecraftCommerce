@@ -12,6 +12,7 @@ import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 public class Field extends Element {
 
     private Material icon;
+    private String handle;
     private String name;
     private String description;
     private FieldType<?> type;
@@ -19,13 +20,15 @@ public class Field extends Element {
 
     public Field() {
         this.icon = XMaterial.OAK_SIGN.parseMaterial(true);
+        this.handle = "";
         this.name = "";
         this.description = "";
     }
 
-    public Field(int id, Material icon, String name, String description, FieldType<?> type, boolean required) {
+    public Field(int id, Material icon, String handle, String name, String description, FieldType<?> type, boolean required) {
         this.setId(id);
         this.icon = icon;
+        this.handle = handle;
         this.name = name;
         this.description = description;
         this.type = type;
@@ -39,6 +42,16 @@ public class Field extends Element {
             return false;
         }
 
+        if (handle.length() == 0) {
+            addError("handle", "Handle is required");
+            return false;
+        }
+
+        if (handle.length() > 40) {
+            addError("handle", "Handle cannot be longer than 40 characters");
+            return false;
+        }
+        
         if (name.length() == 0) {
             addError("name", "Name is required");
             return false;
@@ -74,6 +87,10 @@ public class Field extends Element {
     public void setIcon(Material icon) {
         this.icon = icon;
     }
+    
+    public String getHandle() {
+        return handle;
+    }
 
     public String getName() {
         return name;
@@ -108,13 +125,7 @@ public class Field extends Element {
     }
 
     public ConfigOption<?> getOption() {
-        Integer id = getId();
-
-        if (id == null) {
-            throw new RuntimeException("Fields must be saved before an option can be created");
-        }
-
-        return new ConfigOption<>("field-" + id, name, icon, type)
+        return new ConfigOption<>(handle, name, icon, type)
             .setRequired(required)
             .setMeta(new DataArguments(description));
     }

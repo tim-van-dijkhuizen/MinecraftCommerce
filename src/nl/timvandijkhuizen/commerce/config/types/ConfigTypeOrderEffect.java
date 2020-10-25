@@ -44,8 +44,13 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
     }
 
     @Override
-    public String getValueLore(OptionConfig config, ConfigOption<OrderEffect> option) {
+    public String getRawValue(OptionConfig config, ConfigOption<OrderEffect> option) {
         return !isValueEmpty(config, option) ? getValue(config, option).getHandle() : "";
+    }
+    
+    @Override
+    public String getDisplayValue(OptionConfig config, ConfigOption<OrderEffect> option) {
+        return !isValueEmpty(config, option) ? getValue(config, option).getDisplayName() : "";
     }
 
     @Override

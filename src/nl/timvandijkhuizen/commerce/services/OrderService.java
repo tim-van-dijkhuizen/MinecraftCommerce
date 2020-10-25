@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,6 +25,7 @@ import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
+import nl.timvandijkhuizen.commerce.variables.VariableFields;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
 import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
@@ -36,6 +39,8 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class OrderService extends BaseService {
 
+    public static final Pattern VARIABLE_FORMAT = Pattern.compile("\\{(.*?)\\}");
+    
     private Set<OrderVariable> orderVariables;
     private Set<OrderEffect> orderEffects;
 
@@ -53,6 +58,7 @@ public class OrderService extends BaseService {
         variableEvent.addVariable(new VariableUniqueId());
         variableEvent.addVariable(new VariablePlayerUsername());
         variableEvent.addVariable(new VariablePlayerUniqueId());
+        variableEvent.addVariable(new VariableFields());
 
         // Add core effects
         effectEvent.addEffect(new OrderEffectDefault());
@@ -262,10 +268,38 @@ public class OrderService extends BaseService {
      * @return
      */
     public String replaceVariables(String value, Order order) {
-        for (OrderVariable variable : orderVariables) {
-            value = value.replace("{" + variable.getKey() + "}", variable.getValue(order));
+        Matcher matcher = VARIABLE_FORMAT.matcher(value);
+        
+        // Find all variables
+        while (matcher.find()) {
+            String[] match = matcher.group(1).split(":");
+            String key = match[0];
+            String property = match.length == 2 ? match[1] : null;
+            
+            // Find variable and replace with value
+            OrderVariable variable = orderVariables.stream()
+                .filter(i -> i.getKey().equals(key))
+                .findFirst()
+                .orElse(null);
+            
+            if(variable != null) {
+                String replace = "{" + key + (property != null ? (":" + property) : "") + "}";
+                String[] properties = variable.getProperties();
+                
+                // Error if we're missing the required property
+                if(properties.length > 0 && property == null) {
+                    ConsoleHelper.printError("Failed to parse variable, missing required property.");
+                    continue;
+                }
+                
+                try {
+                    value = value.replace(replace, variable.getValue(order, property));
+                } catch(Throwable e) {
+                    ConsoleHelper.printError("Failed to parse variable: " + replace, e);
+                }
+            }
         }
-
+        
         return value;
     }
 

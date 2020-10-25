@@ -44,8 +44,13 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
     }
 
     @Override
-    public String getValueLore(OptionConfig config, ConfigOption<StorageType> option) {
+    public String getRawValue(OptionConfig config, ConfigOption<StorageType> option) {
         return !isValueEmpty(config, option) ? getValue(config, option).getType() : "";
+    }
+    
+    @Override
+    public String getDisplayValue(OptionConfig config, ConfigOption<StorageType> option) {
+        return !isValueEmpty(config, option) ? getValue(config, option).getDisplayName() : "";
     }
 
     @Override

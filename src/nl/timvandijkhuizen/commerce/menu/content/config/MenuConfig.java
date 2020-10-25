@@ -45,7 +45,7 @@ public class MenuConfig implements PredefinedMenu {
                 List<String> lore = new ArrayList<>();
 
                 if (!option.isValueEmpty(config)) {
-                    lore.add(UI.color(option.getValueLore(config), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getDisplayValue(config), UI.COLOR_SECONDARY));
                 } else {
                     lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }

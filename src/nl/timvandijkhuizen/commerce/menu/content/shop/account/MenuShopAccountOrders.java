@@ -69,7 +69,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
                     String value = UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC);
 
                     if (!option.isValueEmpty(fieldData)) {
-                        value = UI.color(option.getValueLore(fieldData), UI.COLOR_SECONDARY);
+                        value = UI.color(option.getDisplayValue(fieldData), UI.COLOR_SECONDARY);
                     }
 
                     item.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);

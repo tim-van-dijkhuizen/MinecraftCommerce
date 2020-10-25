@@ -49,8 +49,13 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     }
 
     @Override
-    public String getValueLore(OptionConfig config, ConfigOption<StoreCurrency> option) {
+    public String getRawValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
         return !isValueEmpty(config, option) ? getValue(config, option).getCode() : "";
+    }
+    
+    @Override
+    public String getDisplayValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
+        return getRawValue(config, option);
     }
 
     @Override

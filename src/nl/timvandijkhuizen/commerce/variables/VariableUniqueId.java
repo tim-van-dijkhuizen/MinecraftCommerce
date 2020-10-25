@@ -11,7 +11,7 @@ public class VariableUniqueId implements OrderVariable {
     }
 
     @Override
-    public String getValue(Order order) {
+    public String getValue(Order order, String property) throws Throwable {
         return order.getUniqueId().toString();
     }
 

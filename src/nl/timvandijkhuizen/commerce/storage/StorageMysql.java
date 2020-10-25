@@ -171,6 +171,7 @@ public class StorageMysql implements StorageType {
         PreparedStatement createFields = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
+            + "handle VARCHAR(40) NOT NULL,"
             + "name VARCHAR(40) NOT NULL,"
             + "description TEXT NOT NULL,"
             + "type VARCHAR(255) NOT NULL,"
@@ -570,16 +571,17 @@ public class StorageMysql implements StorageType {
         while (result.next()) {
             int id = result.getInt(1);
             Material icon = DbHelper.parseMaterial(result.getString(2));
-            String name = result.getString(3);
-            String description = result.getString(4);
-            String typeHandle = result.getString(5);
-            Boolean required = result.getBoolean(6);
+            String handle = result.getString(3);
+            String name = result.getString(4);
+            String description = result.getString(5);
+            String typeHandle = result.getString(6);
+            Boolean required = result.getBoolean(7);
 
             // Parse field type
             FieldType<?> type = fieldService.getFieldTypeByHandle(typeHandle);
 
             if (type != null) {
-                fields.add(new Field(id, icon, name, description, type, required));
+                fields.add(new Field(id, icon, handle, name, description, type, required));
             }
         }
 
@@ -594,15 +596,16 @@ public class StorageMysql implements StorageType {
     @Override
     public void createField(Field field) throws Throwable {
         Connection connection = getConnection();
-        String sql = "INSERT INTO fields (icon, name, description, type, required) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO fields (icon, handle, name, description, type, required) VALUES (?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Set arguments
         statement.setString(1, DbHelper.prepareMaterial(field.getIcon()));
-        statement.setString(2, field.getName());
-        statement.setString(3, field.getDescription());
-        statement.setString(4, field.getType().getHandle());
-        statement.setBoolean(5, field.isRequired());
+        statement.setString(2, field.getHandle());
+        statement.setString(3, field.getName());
+        statement.setString(4, field.getDescription());
+        statement.setString(5, field.getType().getHandle());
+        statement.setBoolean(6, field.isRequired());
 
         // Execute query
         statement.executeUpdate();
@@ -623,16 +626,17 @@ public class StorageMysql implements StorageType {
     @Override
     public void updateField(Field field) throws Throwable {
         Connection connection = getConnection();
-        String sql = "UPDATE fields SET icon=?, name=?, description=?, type=?, required=? WHERE id=?;";
+        String sql = "UPDATE fields SET icon=?, handle=?, name=?, description=?, type=?, required=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set arguments
         statement.setString(1, DbHelper.prepareMaterial(field.getIcon()));
-        statement.setString(2, field.getName());
-        statement.setString(3, field.getDescription());
-        statement.setString(4, field.getType().getHandle());
-        statement.setBoolean(5, field.isRequired());
-        statement.setInt(6, field.getId());
+        statement.setString(2, field.getHandle());
+        statement.setString(3, field.getName());
+        statement.setString(4, field.getDescription());
+        statement.setString(5, field.getType().getHandle());
+        statement.setBoolean(6, field.isRequired());
+        statement.setInt(7, field.getId());
 
         // Execute query
         statement.execute();
