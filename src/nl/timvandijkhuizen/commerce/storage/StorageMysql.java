@@ -204,9 +204,11 @@ public class StorageMysql implements StorageType {
         PreparedStatement createLineItems = connection.prepareStatement("CREATE TABLE IF NOT EXISTS lineItems ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "orderId INTEGER NOT NULL,"
+            + "productId INTEGER,"
             + "product JSON NOT NULL,"
             + "quantity INTEGER NOT NULL,"
-            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
+            + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE,"
+            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE SET NULL"
         + ");");
 
         PreparedStatement createPaymentUrls = connection.prepareStatement("CREATE TABLE IF NOT EXISTS payment_urls ("
@@ -365,9 +367,16 @@ public class StorageMysql implements StorageType {
 
         // Get all products or products that belong to a category
         if (source == null) {
-            statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, categories.id, categories.icon, categories.name, categories.description FROM products LEFT JOIN categories ON products.categoryId = categories.id;");
+            statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, "
+                + "categories.id, categories.icon, categories.name, categories.description "
+                + "FROM products "
+                + "LEFT JOIN categories ON products.categoryId = categories.id;");
         } else {
-            statement = connection.prepareStatement("SELECT id, icon, name, description, price FROM products WHERE categoryId=?;");
+            statement = connection.prepareStatement("SELECT products.id, products.icon, products.name, products.description, products.price, "
+                + "categories.id, categories.icon, categories.name, categories.description "
+                + "FROM products "
+                + "LEFT JOIN categories ON products.categoryId = categories.id "
+                + "WHERE categoryId=?;");
             statement.setInt(1, source.getId());
         }
 
@@ -376,31 +385,7 @@ public class StorageMysql implements StorageType {
         Set<Product> products = new LinkedHashSet<>();
 
         while (result.next()) {
-            int id = result.getInt(1);
-            Material icon = DbHelper.parseMaterial(result.getString(2));
-            String name = result.getString(3);
-            String description = result.getString(4);
-            float price = result.getFloat(5);
-            Category category;
-            
-
-            // Get category data
-            if (source == null) {
-                int categoryId = result.getInt(6);
-                Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
-                String categoryName = result.getString(8);
-                String categoryDescription = result.getString(9);
-                category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
-            } else {
-                category = source;
-            }
-
-            // Get commands
-            Set<Command> rawCommands = getCommandsByProductId(id);
-            DataList<Command> commands = new DataList<>(rawCommands);
-
-            // Add product to list
-            products.add(new Product(id, icon, name, description, category, price, commands));
+            products.add(parseProduct(result));
         }
 
         // Cleanup
@@ -411,6 +396,34 @@ public class StorageMysql implements StorageType {
         return products;
     }
 
+    @Override
+    public Product getProductById(int id) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT products.id, products.icon, products.name, products.description, products.price, "
+            + "categories.id, categories.icon, categories.name, categories.description "
+            + "FROM products "
+            + "LEFT JOIN categories ON products.categoryId = categories.id "
+            + "WHERE products.id=?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setInt(1, id);
+        
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Product product = null;
+
+        if (result.next()) {
+            product = parseProduct(result);
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return product;
+    }
+    
     @Override
     public void createProduct(Product product) throws Throwable {
         Connection connection = getConnection();
@@ -1054,14 +1067,15 @@ public class StorageMysql implements StorageType {
 
         while (result.next()) {
             int id = result.getInt(1);
-            int quantity = result.getInt(4);
+            Integer productId = DbHelper.getInteger(result, 3);
+            String rawJson = result.getString(4);
+            int quantity = result.getInt(5);
 
             // Parse product snapshot
-            String rawJson = result.getString(3);
             JsonObject json = DbHelper.parseJson(rawJson);
             ProductSnapshot product = new ProductSnapshot(json);
 
-            lineItems.add(new LineItem(id, orderId, product, quantity));
+            lineItems.add(new LineItem(id, orderId, productId, product, quantity));
         }
 
         // Cleanup
@@ -1075,7 +1089,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void createLineItem(LineItem lineItem) throws Throwable {
         Connection connection = getConnection();
-        String sql = "INSERT INTO lineItems (orderId, product, quantity) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO lineItems (orderId, productId, product, quantity) VALUES (?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Prepare product snapshot
@@ -1083,8 +1097,15 @@ public class StorageMysql implements StorageType {
 
         // Set arguments
         statement.setInt(1, lineItem.getOrderId());
-        statement.setString(2, DbHelper.prepareJson(json));
-        statement.setInt(3, lineItem.getQuantity());
+        
+        if(lineItem.getProductId() != null) {
+            statement.setInt(2, lineItem.getProductId());
+        } else {
+            statement.setNull(2, Types.INTEGER);
+        }
+        
+        statement.setString(3, DbHelper.prepareJson(json));
+        statement.setInt(4, lineItem.getQuantity());
 
         // Execute query
         statement.executeUpdate();
@@ -1105,7 +1126,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void updateLineItem(LineItem lineItem) throws Throwable {
         Connection connection = getConnection();
-        String sql = "UPDATE lineItems SET orderId=?, product=?, quantity=? WHERE id=?;";
+        String sql = "UPDATE lineItems SET orderId=?, productId=?, product=?, quantity=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Prepare product snapshot
@@ -1113,9 +1134,16 @@ public class StorageMysql implements StorageType {
 
         // Set arguments
         statement.setInt(1, lineItem.getOrderId());
-        statement.setString(2, DbHelper.prepareJson(json));
-        statement.setInt(3, lineItem.getQuantity());
-        statement.setInt(4, lineItem.getId());
+
+        if(lineItem.getProductId() != null) {
+            statement.setInt(2, lineItem.getProductId());
+        } else {
+            statement.setNull(2, Types.INTEGER);
+        }
+        
+        statement.setString(3, DbHelper.prepareJson(json));
+        statement.setInt(4, lineItem.getQuantity());
+        statement.setInt(5, lineItem.getId());
 
         // Execute query
         statement.execute();
@@ -1203,6 +1231,28 @@ public class StorageMysql implements StorageType {
         ids.close();
         statement.close();
         connection.close();
+    }
+    
+    private Product parseProduct(ResultSet result) throws Throwable {
+        int id = result.getInt(1);
+        Material icon = DbHelper.parseMaterial(result.getString(2));
+        String name = result.getString(3);
+        String description = result.getString(4);
+        float price = result.getFloat(5);
+        
+        // Create the category
+        int categoryId = result.getInt(6);
+        Material categoryIcon = DbHelper.parseMaterial(result.getString(7));
+        String categoryName = result.getString(8);
+        String categoryDescription = result.getString(9);
+        Category category = new Category(categoryId, categoryIcon, categoryName, categoryDescription);
+
+        // Get commands
+        Set<Command> rawCommands = getCommandsByProductId(id);
+        DataList<Command> commands = new DataList<>(rawCommands);
+
+        // Add product to list
+        return new Product(id, icon, name, description, category, price, commands);
     }
     
     private Order parseOrder(ResultSet result) throws Throwable {

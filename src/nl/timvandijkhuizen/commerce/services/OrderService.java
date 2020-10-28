@@ -22,6 +22,7 @@ import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
@@ -171,6 +172,14 @@ public class OrderService extends BaseService {
 
                 if (lineItem.getQuantity() <= 0) {
                     order.getLineItems().remove(lineItem);
+                }
+                
+                // Update snapshot
+                Integer productId = lineItem.getProductId();
+                
+                if(productId != null) {
+                    Product product = storage.getProductById(productId);
+                    lineItem.updateProduct(product);
                 }
             }
 

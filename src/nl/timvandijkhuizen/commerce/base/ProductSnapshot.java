@@ -17,7 +17,6 @@ import nl.timvandijkhuizen.commerce.helpers.DbHelper;
 
 public class ProductSnapshot {
 
-    private int id;
     private Material icon;
     private String name;
     private String description;
@@ -29,7 +28,6 @@ public class ProductSnapshot {
     private String categoryDescription;
 
     public ProductSnapshot(Product product) {
-        id = product.getId();
         icon = product.getIcon();
         name = product.getName();
         description = product.getDescription();
@@ -52,7 +50,6 @@ public class ProductSnapshot {
 
     public ProductSnapshot(JsonObject json) throws JsonParseException {
         try {
-            id = json.get("id").getAsInt();
             icon = DbHelper.parseMaterial(json.get("icon").getAsString());
             name = json.get("name").getAsString();
             description = json.get("description").getAsString();
@@ -77,7 +74,6 @@ public class ProductSnapshot {
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
 
-        json.addProperty("id", id);
         json.addProperty("icon", icon.name());
         json.addProperty("name", name);
         json.addProperty("description", description);
@@ -98,10 +94,6 @@ public class ProductSnapshot {
         json.addProperty("categoryDescription", categoryDescription);
 
         return json;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Material getIcon() {

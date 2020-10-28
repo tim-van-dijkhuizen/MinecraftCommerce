@@ -68,15 +68,23 @@ public interface StorageType extends Service {
     void deleteCategory(Category category) throws Throwable;
 
     /**
-     * Returns all products for the specified category. All products will be
-     * returned if the category is null.
+     * Returns products that belong to the specified category or all of them.
      * 
-     * @param category
-     * @return
+     * @param category The category to get products for or null.
+     * @return A set of products.
      * @throws Throwable
      */
     Set<Product> getProducts(Category category) throws Throwable;
 
+    /**
+     * Returns a product by its id.
+     * 
+     * @param id The product id.
+     * @return The product.
+     * @throws Throwable
+     */
+    Product getProductById(int id) throws Throwable;
+    
     /**
      * Creates a product.
      * 

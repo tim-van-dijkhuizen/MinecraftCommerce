@@ -135,7 +135,7 @@ public class Order extends Element {
 
         // Merge with existing or create new
         LineItem existing = stream
-            .filter(i -> i.getProduct().getId() == lineItem.getProduct().getId())
+            .filter(i -> i.getProductId() == lineItem.getProductId())
             .findFirst()
             .orElse(null);
 
