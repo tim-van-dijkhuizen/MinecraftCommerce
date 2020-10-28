@@ -29,6 +29,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
+import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
@@ -71,17 +72,18 @@ public class ClientPayPal implements GatewayClient {
     @Override
     public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Throwable {
         PurchaseUnitRequest unit = new PurchaseUnitRequest();
-        String currency = order.getCurrency().getCode();
+        StoreCurrency currency = order.getCurrency();
+        String currencyCode = currency.getCode().getCurrencyCode();
         String totalPrice = String.valueOf(order.getTotal());
 
         // Add amount
         AmountWithBreakdown amount = new AmountWithBreakdown();
 
-        amount.currencyCode(currency);
+        amount.currencyCode(currencyCode);
         amount.value(totalPrice);
 
         Money itemTotal = new Money()
-            .currencyCode(currency)
+            .currencyCode(currencyCode)
             .value(totalPrice);
 
         amount.amountBreakdown(new AmountBreakdown().itemTotal(itemTotal));
@@ -97,7 +99,7 @@ public class ClientPayPal implements GatewayClient {
 
             item.name(product.getName());
             item.description(product.getDescription());
-            item.unitAmount(new Money().currencyCode(currency).value(price));
+            item.unitAmount(new Money().currencyCode(currencyCode).value(price));
             item.quantity(String.valueOf(lineItem.getQuantity()));
 
             items.add(item);

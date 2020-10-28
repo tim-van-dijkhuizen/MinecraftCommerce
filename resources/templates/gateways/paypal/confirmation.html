@@ -69,7 +69,7 @@
                         <ul class="mb-0 pl-2 pl-lg-3">
                             <li>UUID: <span th:text="${order.playerUniqueId}">f19bf717-78f0-4f33-bce9-129dcad2a252</span></li>
                             <li>Username: <span th:text="${order.playerName}">TestPlayer</span></li>
-                            <li>Currency: <span th:text="${order.currency.code}">USD</span></li>
+                            <li>Currency: <span th:text="${order.currency.code.displayName}">USD</span></li>
                             <li th:if="${order.gateway != null}">Gateway: <span th:text="${order.gateway.displayName}">TestGateway</span></li>
                             <li th:if="${order.transaction != null}">Transaction reference: <span th:text="${order.transaction.reference}">36G551236X13GF23F</span></li>
                             <li>Total: <span th:text="${functions.formatPrice(order.total, order.currency)}">$10.50</span></p>

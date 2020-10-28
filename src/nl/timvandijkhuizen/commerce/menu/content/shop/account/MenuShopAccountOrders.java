@@ -39,7 +39,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
 
             // Set order name
             item.setName(UI.color(order.getUniqueId().toString(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.addLore(UI.color("Currency: ", UI.COLOR_TEXT) + UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
+            item.addLore(UI.color("Currency: ", UI.COLOR_TEXT) + UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_SECONDARY));
 
             // Add LineItems
             DataList<LineItem> lineItems = order.getLineItems();

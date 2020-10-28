@@ -35,7 +35,7 @@ public class UserService extends BaseService {
         StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
 
         // Create user options
-        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency())
+        ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency(false))
             .setRequired(true)
             .setDefaultValue(baseCurrency);
 

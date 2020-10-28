@@ -62,7 +62,7 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder currencyButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        currencyButton.addLore(UI.color(order.getCurrency().getCode(), UI.COLOR_SECONDARY));
+        currencyButton.addLore(UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_SECONDARY));
 
         menu.setButton(currencyButton, 15);
 

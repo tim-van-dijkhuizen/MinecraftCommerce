@@ -42,7 +42,7 @@ public class MenuShopCurrency implements PredefinedMenu {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
             // Set category name
-            item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.setName(UI.color(currency.getCode().getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
             item.addLore("", UI.color("Left-click to select.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             // Add glow if selected

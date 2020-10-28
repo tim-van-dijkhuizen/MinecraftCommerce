@@ -972,12 +972,13 @@ public class StorageMysql implements StorageType {
         String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, fields, gatewayId) VALUES (?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         Gateway gateway = order.getGateway();
+        StoreCurrency currency = order.getCurrency();
 
         // Set arguments
         statement.setBytes(1, DbHelper.prepareUniqueId(order.getUniqueId()));
         statement.setBytes(2, DbHelper.prepareUniqueId(order.getPlayerUniqueId()));
         statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCode());
+        statement.setString(4, currency.getCode().getCurrencyCode());
         statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
 
         if (gateway != null) {
@@ -1008,12 +1009,13 @@ public class StorageMysql implements StorageType {
         String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, fields=?, gatewayId=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
         Gateway gateway = order.getGateway();
+        StoreCurrency currency = order.getCurrency();
 
         // Set arguments
         statement.setBytes(1, DbHelper.prepareUniqueId(order.getUniqueId()));
         statement.setBytes(2, DbHelper.prepareUniqueId(order.getPlayerUniqueId()));
         statement.setString(3, order.getPlayerName());
-        statement.setString(4, order.getCurrency().getCode());
+        statement.setString(4, currency.getCode().getCurrencyCode());
         statement.setString(5, DbHelper.prepareJsonConfig(order.getFieldData()));
 
         if (gateway != null) {
@@ -1269,7 +1271,7 @@ public class StorageMysql implements StorageType {
         List<StoreCurrency> currencies = currenciesOption.getValue(config);
 
         StoreCurrency currency = currencies.stream()
-            .filter(i -> i.getCode().equals(currencyCode))
+            .filter(i -> i.getCode().getCurrencyCode().equals(currencyCode))
             .findFirst()
             .orElse(null);
 

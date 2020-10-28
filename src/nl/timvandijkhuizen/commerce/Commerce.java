@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,8 +53,8 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class Commerce extends PluginBase {
 
     public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && icon != Material.AIR).toArray(Material[]::new);
-    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency("USD", 1, "###,###,##0.00", ',', '.');
-
+    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency(Currency.getInstance("USD"), 1, "###,###,##0.00", ',', '.');
+    
     private static Commerce instance;
     private YamlConfig config;
     private Set<StorageType> storageTypes;

@@ -23,6 +23,14 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
+    private boolean showDetails;
+    
+    public ConfigTypeStoreCurrency(boolean showDetails) {
+        this.showDetails = showDetails;
+    }
+    
+    public ConfigTypeStoreCurrency() { }
+    
     @Override
     public StoreCurrency getValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
@@ -37,7 +45,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         }
 
         Optional<StoreCurrency> currency = currencies.stream()
-            .filter(i -> i.getCode().equals(code))
+            .filter(i -> i.getCode().getCurrencyCode().equals(code))
             .findFirst();
 
         return currency.orElse(null);
@@ -45,12 +53,12 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
     @Override
     public void setValue(OptionConfig config, ConfigOption<StoreCurrency> option, StoreCurrency value) {
-        config.set(option.getPath(), value != null ? value.getCode() : null);
+        config.set(option.getPath(), value != null ? value.getCode().getCurrencyCode() : null);
     }
 
     @Override
     public String getRawValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
-        return !isValueEmpty(config, option) ? getValue(config, option).getCode() : "";
+        return !isValueEmpty(config, option) ? getValue(config, option).getItemName() : "";
     }
     
     @Override
@@ -77,9 +85,14 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
-            item.setName(UI.color(currency.getCode(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.setLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color("" + currency.getConversionRate(), UI.COLOR_SECONDARY));
-            item.addLore(UI.color("Format: ", UI.COLOR_TEXT) + UI.color(currency.getFormat().toPattern(), UI.COLOR_SECONDARY));
+            item.setName(UI.color(currency.getItemName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            
+            if(showDetails) {
+                item.addLore(UI.color("Conversion rate: ", UI.COLOR_TEXT) + UI.color(String.valueOf(currency.getConversionRate()), UI.COLOR_SECONDARY));
+                item.addLore(UI.color("Pattern: ", UI.COLOR_TEXT) + UI.color(currency.getPattern(), UI.COLOR_SECONDARY));
+                item.addLore(UI.color("Group separator: ", UI.COLOR_TEXT) + UI.color(String.valueOf(currency.getGroupSeparator()), UI.COLOR_SECONDARY));
+                item.addLore(UI.color("Decimal separator: ", UI.COLOR_TEXT) + UI.color(String.valueOf(currency.getDecimalSeparator()), UI.COLOR_SECONDARY));
+            }
 
             if (currency.equals(selected)) {
                 item.addEnchantGlow();
