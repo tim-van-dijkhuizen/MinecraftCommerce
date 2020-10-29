@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.commerce.gateways.paypal;
 
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
+import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.WebService;
@@ -49,11 +51,11 @@ public class ClientPayPal implements GatewayClient {
     public static final String COMPLETE_PATH = "/orders/complete";
     public static final String CONFIRMATION_PATH = "/orders/confirmation";
     public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
-
-    private File template;
+    public static final DecimalFormat AMOUNT_FORMAT = new DecimalFormat("##0.##");
 
     private PayPalEnvironment environment;
     private PayPalHttpClient client;
+    private File template;
 
     public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {
         if (testMode) {
@@ -72,19 +74,24 @@ public class ClientPayPal implements GatewayClient {
     @Override
     public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Throwable {
         PurchaseUnitRequest unit = new PurchaseUnitRequest();
+        
+        // Get currency
         StoreCurrency currency = order.getCurrency();
         String currencyCode = currency.getCode().getCurrencyCode();
-        String totalPrice = String.valueOf(order.getTotal());
+        
+        // Get converted price
+        float totalPrice = ShopHelper.convertPrice(order.getTotal(), currency);
+        String totalValue = AMOUNT_FORMAT.format(totalPrice);
 
         // Add amount
         AmountWithBreakdown amount = new AmountWithBreakdown();
 
         amount.currencyCode(currencyCode);
-        amount.value(totalPrice);
+        amount.value(totalValue);
 
         Money itemTotal = new Money()
             .currencyCode(currencyCode)
-            .value(totalPrice);
+            .value(totalValue);
 
         amount.amountBreakdown(new AmountBreakdown().itemTotal(itemTotal));
         unit.amountWithBreakdown(amount);
@@ -94,12 +101,15 @@ public class ClientPayPal implements GatewayClient {
 
         for (LineItem lineItem : order.getLineItems()) {
             ProductSnapshot product = lineItem.getProduct();
-            String price = String.valueOf(product.getPrice());
             Item item = new Item();
 
+            // Get converted price
+            float price = ShopHelper.convertPrice(product.getPrice(), currency);
+            String priceValue = AMOUNT_FORMAT.format(price);
+            
             item.name(product.getName());
             item.description(product.getDescription());
-            item.unitAmount(new Money().currencyCode(currencyCode).value(price));
+            item.unitAmount(new Money().currencyCode(currencyCode).value(priceValue));
             item.quantity(String.valueOf(lineItem.getQuantity()));
 
             items.add(item);

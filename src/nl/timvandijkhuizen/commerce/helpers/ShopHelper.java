@@ -23,9 +23,13 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ShopHelper {
 
+    public static float convertPrice(float price, StoreCurrency currency) {
+        return price * currency.getConversionRate();
+    }
+    
     public static String formatPrice(float price, StoreCurrency currency) {
         DecimalFormat format = currency.getFormat();
-        return format.format(price *= currency.getConversionRate());
+        return format.format(convertPrice(price, currency));
     }
 
     public static String formatPrice(float price) {
