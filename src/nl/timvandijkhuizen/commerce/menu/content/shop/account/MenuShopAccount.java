@@ -46,8 +46,8 @@ public class MenuShopAccount implements PredefinedMenu {
         // Orders button
         MenuItemBuilder ordersButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 
-        ordersButton.setName(UI.color("My Orders", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        ordersButton.setLore(UI.color("View your order history", UI.COLOR_TEXT));
+        ordersButton.setName(UI.color("My Donations", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        ordersButton.setLore(UI.color("View your donation history", UI.COLOR_TEXT));
         ordersButton.setClickListener(new ActionShopOrderHistory());
 
         menu.setButton(ordersButton, 15);

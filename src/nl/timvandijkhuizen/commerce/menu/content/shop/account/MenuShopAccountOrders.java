@@ -29,7 +29,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Order History", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Donation History", 3, 7, 1, 1, 1, 5, 7);
 
         // Add order buttons
         Set<Order> orders = args.getSet(0);
@@ -44,7 +44,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
             // Add LineItems
             DataList<LineItem> lineItems = order.getLineItems();
 
-            item.addLore("", UI.color("Products:", UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.addLore("", UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             if (lineItems.size() > 0) {
                 for (LineItem lineItem : lineItems) {
@@ -62,7 +62,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
             OrderFieldData fieldData = order.getFieldData();
             Collection<ConfigOption<?>> options = fieldData.getOptions();
 
-            item.addLore("", UI.color("Fields:", UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.addLore("", UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             if (options.size() > 0) {
                 for (ConfigOption<?> option : options) {

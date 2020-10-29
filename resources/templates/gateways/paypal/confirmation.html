@@ -59,7 +59,7 @@
 
                     <!-- Thank you message -->
                     <div class="col-md-9 mb-4 mb-lg-5">
-                        <p class="mb-0">Thank you for your donation! We’ve successfully added the products to your account. You can now close this window.</p>
+                        <p class="mb-0">Thank you for your donation! We’ve successfully added the items to your account. You can now close this window.</p>
                     </div>
 
                     <!-- Order information -->
@@ -76,9 +76,9 @@
                         </ul>
                     </div>
 
-                    <!-- Order products -->
+                    <!-- Order items -->
                     <div class="col-md-12 mb-4 mb-lg-5">
-                        <h3>Order products</h3>
+                        <h3>Order items</h3>
 
                         <ul class="mb-0 pl-2 pl-lg-3">
                             <li th:each="lineItem,loop : ${order.lineItems}" th:text="${lineItem.quantity} + 'x ' + ${lineItem.product.name} + ' &rarr; ' + ${functions.formatPrice(lineItem.price, order.currency)}">

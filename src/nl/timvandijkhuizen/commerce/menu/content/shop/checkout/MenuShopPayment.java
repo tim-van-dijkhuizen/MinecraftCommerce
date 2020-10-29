@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -160,12 +159,12 @@ public class MenuShopPayment implements PredefinedMenu {
         menu.close(player);
 
         // Send message
-        player.sendMessage(UI.color(StringUtils.repeat(Icon.SQUARE, 75), UI.COLOR_TEXT, ChatColor.BOLD));
+        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
         player.sendMessage("");
-        player.sendMessage(UI.color("Complete your order by paying using this link:", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        player.sendMessage(UI.color("Complete your donation using this link:", UI.COLOR_PRIMARY, ChatColor.BOLD));
         player.sendMessage(UI.color(url, UI.COLOR_SECONDARY));
         player.sendMessage("");
-        player.sendMessage(UI.color(StringUtils.repeat(Icon.SQUARE, 75), UI.COLOR_TEXT, ChatColor.BOLD));
+        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
     }
 
 }

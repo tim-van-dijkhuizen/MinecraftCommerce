@@ -145,7 +145,7 @@ public class MenuShopFields implements PredefinedMenu {
             if (!cart.isValid(Order.SCENARIO_FIELDS)) {
                 lore.add("");
                 lore.add(UI.color("Errors: ", UI.COLOR_ERROR, ChatColor.BOLD));
-                lore.add(UI.color(UI.TAB + Icon.SQUARE + " One or more fields have invalid values.", UI.COLOR_ERROR));
+                lore.add(UI.color(UI.TAB + Icon.SQUARE + " Field contains an invalid value.", UI.COLOR_ERROR));
             }
 
             return lore;
