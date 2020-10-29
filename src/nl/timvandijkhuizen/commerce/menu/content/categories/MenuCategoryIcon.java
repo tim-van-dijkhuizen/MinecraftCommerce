@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -21,8 +20,10 @@ public class MenuCategoryIcon implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Category Icon", 3, 7, 1, 1, 1, 5, 7);
+        
+        // Get arguments
         Category category = args.get(0);
-        Material selected = category.getIcon();
+        Menu returnMenu = args.get(1);
 
         for (Material icon : Commerce.MATERIAL_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
@@ -30,14 +31,14 @@ public class MenuCategoryIcon implements PredefinedMenu {
             item.setName(UI.color(WordUtils.capitalize(icon.name().replace('_', ' ').toLowerCase()), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Enchant if selected
-            if (icon == selected) {
+            if (icon == category.getIcon()) {
                 item.addEnchantGlow();
             }
 
             item.setClickListener(event -> {
                 category.setIcon(icon);
                 UI.playSound(player, UI.SOUND_CLICK);
-                Menus.CATEGORY_EDIT.open(player, category);
+                returnMenu.open(player);
             });
 
             menu.addPagedButton(item);
@@ -48,7 +49,7 @@ public class MenuCategoryIcon implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.CATEGORY_EDIT.open(player, category);
+            returnMenu.open(player);
         });
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);

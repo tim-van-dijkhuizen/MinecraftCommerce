@@ -308,7 +308,7 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
         if (product.hasErrors()) {
-            saveButton.setLore(UI.color("Error: The glowing fields have invalid values.", UI.COLOR_ERROR));
+            saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
         }
 
         saveButton.setClickListener(event -> {
