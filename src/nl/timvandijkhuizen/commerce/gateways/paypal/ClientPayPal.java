@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce.gateways.paypal;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,11 +52,11 @@ public class ClientPayPal implements GatewayClient {
     public static final String COMPLETE_PATH = "/orders/complete";
     public static final String CONFIRMATION_PATH = "/orders/confirmation";
     public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
-    public static final DecimalFormat AMOUNT_FORMAT = new DecimalFormat("##0.##");
 
     private PayPalEnvironment environment;
     private PayPalHttpClient client;
     private File template;
+    public DecimalFormat amountFormat;
 
     public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {
         if (testMode) {
@@ -69,6 +70,13 @@ public class ClientPayPal implements GatewayClient {
 
         // Set template
         this.template = template;
+        
+        // Create format
+        DecimalFormatSymbols amountSymbols = new DecimalFormatSymbols();
+            
+        amountSymbols.setDecimalSeparator('.');
+        
+        amountFormat = new DecimalFormat("##0.##", amountSymbols);
     }
 
     @Override
@@ -81,7 +89,7 @@ public class ClientPayPal implements GatewayClient {
         
         // Get converted price
         float totalPrice = ShopHelper.convertPrice(order.getTotal(), currency);
-        String totalValue = AMOUNT_FORMAT.format(totalPrice);
+        String totalValue = amountFormat.format(totalPrice);
 
         // Add amount
         AmountWithBreakdown amount = new AmountWithBreakdown();
@@ -105,7 +113,7 @@ public class ClientPayPal implements GatewayClient {
 
             // Get converted price
             float price = ShopHelper.convertPrice(product.getPrice(), currency);
-            String priceValue = AMOUNT_FORMAT.format(price);
+            String priceValue = amountFormat.format(price);
             
             item.name(product.getName());
             item.description(product.getDescription());

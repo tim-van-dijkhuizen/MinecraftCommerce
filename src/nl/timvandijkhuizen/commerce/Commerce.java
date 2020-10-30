@@ -53,7 +53,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class Commerce extends PluginBase {
 
     public static final Material[] MATERIAL_ICONS = Stream.of(Material.values()).filter(icon -> icon.isItem() && icon != Material.AIR).toArray(Material[]::new);
-    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency(Currency.getInstance("USD"), 1, "###,###,##0.00", ',', '.');
+    public static final StoreCurrency DEFAULT_CURRENCY = new StoreCurrency(Currency.getInstance("USD"), 1, "$###,###,##0.00", ',', '.');
     
     private static Commerce instance;
     private YamlConfig config;
@@ -113,7 +113,7 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
 
-        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.DOMAIN)
+        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
 
