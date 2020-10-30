@@ -70,8 +70,8 @@ public class Gateway extends Element {
     }
 
     public void setType(GatewayType type) {
-        if (this.type != null && this.type.getHandle() != type.getHandle()) {
-            this.config = new GatewayConfig(type);
+        if (this.type == null || this.type.getHandle() != type.getHandle()) {
+            config = new GatewayConfig(type);
         }
 
         this.type = type;

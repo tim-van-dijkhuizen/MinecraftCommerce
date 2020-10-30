@@ -3,6 +3,7 @@ package nl.timvandijkhuizen.commerce.variables;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderVariable;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
+import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -24,7 +25,7 @@ public class VariableFields implements OrderVariable {
     }
     
     @Override
-    public String getValue(Order order, String property) throws Throwable {
+    public String getValue(Order order, LineItem item, String property) throws Throwable {
         OrderFieldData fieldData = order.getFieldData();
         ConfigOption<?> option = fieldData.getOption(property);
         

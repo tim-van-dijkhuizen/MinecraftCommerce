@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.base;
 
+import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 
 public interface OrderVariable {
@@ -25,11 +26,12 @@ public interface OrderVariable {
     
     /**
      * Returns the string value of a variable. This can be a dynamic value based
-     * of order properties and conditions.
+     * on order/item properties and conditions.
      * 
      * @param order
+     * @param item
      * @return
      */
-    String getValue(Order order, String property) throws Throwable;
+    String getValue(Order order, LineItem item, String property) throws Throwable;
 
 }

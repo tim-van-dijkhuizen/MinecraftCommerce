@@ -1,28 +1,27 @@
 package nl.timvandijkhuizen.commerce.menu.content.fields;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Field;
+import nl.timvandijkhuizen.commerce.helpers.ValidationHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionFieldList;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
-import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuFieldEdit implements PredefinedMenu {
@@ -35,79 +34,103 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         // Icon button
         // ===========================
-        MenuItemBuilder iconButton = new MenuItemBuilder(field.getIcon());
+        MenuItemBuilder iconButton = new MenuItemBuilder();
 
+        iconButton.setTypeGenerator(() -> field.getIcon());
         iconButton.setName(UI.color("Icon", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        // Add validation errors to lore
-        if (field.hasErrors("icon")) {
-            iconButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            iconButton.addEnchantGlow();
+        iconButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            ValidationHelper.addErrorLore(lore, field, "icon");
 
-            for (String error : field.getErrors("icon")) {
-                iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-            }
-        }
-
-        iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         iconButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.FIELD_ICON.open(player, field, field.getIcon());
+            Menus.FIELD_ICON.open(player, field, menu);
         });
 
         menu.setButton(iconButton, 11);
 
         // Name button
         // ===========================
+        MenuItemBuilder handleButton = new MenuItemBuilder(XMaterial.PAPER);
+
+        handleButton.setName(UI.color("Handle", UI.COLOR_PRIMARY, ChatColor.BOLD));
+
+        handleButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (field.getHandle().length() > 0) {
+                lore.add(UI.color(field.getHandle(), UI.COLOR_SECONDARY));
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            }
+
+            ValidationHelper.addErrorLore(lore, field, "handle");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
+
+        // Set click listener
+        handleButton.setClickListener(event -> {
+            UI.playSound(player, UI.SOUND_CLICK);
+            menu.close(player);
+
+            InputHelper.getString(player, UI.color("What should be the handle of the field?", UI.COLOR_PRIMARY), (ctx, value) -> {
+                field.setHandle(value);
+                menu.open(player);
+                return null;
+            });
+        });
+
+        menu.setButton(handleButton, 13);
+        
+        // Name button
+        // ===========================
         MenuItemBuilder nameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         nameButton.setName(UI.color("Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (field.getName().length() > 0) {
-            nameButton.addLore(UI.color(field.getName(), UI.COLOR_SECONDARY));
-        } else {
-            nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
-
-        nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (field.hasErrors("name")) {
-            nameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            nameButton.addEnchantGlow();
-
-            for (String error : field.getErrors("name")) {
-                nameButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+        nameButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (field.getName().length() > 0) {
+                lore.add(UI.color(field.getName(), UI.COLOR_SECONDARY));
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        }
+
+            ValidationHelper.addErrorLore(lore, field, "name");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         nameButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the name of the field?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    field.setName(input);
-                    Menus.FIELD_EDIT.open(player, field);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the name of the field?", UI.COLOR_PRIMARY), (ctx, value) -> {
+                field.setName(value);
+                menu.open(player);
+                return null;
+            });
         });
 
-        menu.setButton(nameButton, 13);
+        menu.setButton(nameButton, 15);
 
         // Description button
         // ===========================
@@ -115,53 +138,40 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         descriptionButton.setName(UI.color("Description", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (field.getDescription().length() > 0) {
-            String[] lines = WordUtils.wrap(field.getDescription(), 40).split("\n");
+        descriptionButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (field.getDescription().length() > 0) {
+                String[] lines = WordUtils.wrap(field.getDescription(), 40).split("\n");
 
-            for (String line : lines) {
-                descriptionButton.addLore(UI.color(line, UI.COLOR_SECONDARY));
+                for (String line : lines) {
+                    lore.add(UI.color(line, UI.COLOR_SECONDARY));
+                }
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        } else {
-            descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
+            
+            ValidationHelper.addErrorLore(lore, field, "description");
 
-        descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (field.hasErrors("description")) {
-            descriptionButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            descriptionButton.addEnchantGlow();
-
-            for (String error : field.getErrors("description")) {
-                descriptionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-            }
-        }
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the description of the field?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    field.setDescription(input);
-                    Menus.FIELD_EDIT.open(player, field);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the description of the field?", UI.COLOR_PRIMARY), (ctx, value) -> {
+                field.setDescription(value);
+                menu.open(player);
+                return null;
+            });
         });
 
-        menu.setButton(descriptionButton, 15);
+        menu.setButton(descriptionButton, 29);
 
         // Type button
         // ===========================
@@ -169,58 +179,50 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         typeButton.setName(UI.color("Type", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (field.getType() != null) {
-            typeButton.addLore(UI.color(field.getType().getDisplayName(), UI.COLOR_SECONDARY));
-        } else {
-            typeButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
-
-        typeButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (field.hasErrors("type")) {
-            typeButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            typeButton.addEnchantGlow();
-
-            for (String error : field.getErrors("type")) {
-                typeButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+        typeButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (field.getType() != null) {
+                lore.add(UI.color(field.getType().getDisplayName(), UI.COLOR_SECONDARY));
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        }
+
+            ValidationHelper.addErrorLore(lore, field, "type");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         typeButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.FIELD_TYPE.open(player, field);
+            Menus.FIELD_TYPE.open(player, field, menu);
         });
 
-        menu.setButton(typeButton, 30);
+        menu.setButton(typeButton, 31);
 
         // Required button
         // ===========================
-        XMaterial requiredIcon = field.isRequired() ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA;
-        MenuItemBuilder requiredButton = new MenuItemBuilder(requiredIcon);
+        MenuItemBuilder requiredButton = new MenuItemBuilder();
 
+        requiredButton.setTypeGenerator(() -> {
+            return field.isRequired() ? XMaterial.LIME_TERRACOTTA.parseMaterial() : XMaterial.LIGHT_GRAY_TERRACOTTA.parseMaterial();
+        });
+        
         requiredButton.setName(UI.color("Required", UI.COLOR_PRIMARY, ChatColor.BOLD));
         requiredButton.setLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
         // Set click listener
         requiredButton.setClickListener(event -> {
-            UI.playSound(player, UI.SOUND_CLICK);
-
-            // Invert boolean value
             field.setRequired(!field.isRequired());
-
-            // Update button material
-            if (field.isRequired()) {
-                requiredButton.setType(XMaterial.LIME_TERRACOTTA);
-            } else {
-                requiredButton.setType(XMaterial.LIGHT_GRAY_TERRACOTTA);
-            }
-
+            UI.playSound(player, UI.SOUND_CLICK);
             menu.refresh();
         });
 
-        menu.setButton(requiredButton, 32);
+        menu.setButton(requiredButton, 33);
 
         // Set bottom line
         // ===========================
@@ -244,10 +246,6 @@ public class MenuFieldEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
-        if (field.hasErrors()) {
-            saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
-        }
-
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
@@ -261,11 +259,12 @@ public class MenuFieldEdit implements PredefinedMenu {
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");
-                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
-                    Menus.FIELD_EDIT.open(player, field);
+                    saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
                 }
+                
+                menu.refresh();
             });
         });
 

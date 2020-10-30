@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Field;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -21,8 +20,10 @@ public class MenuFieldIcon implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Field Icon", 3, 7, 1, 1, 1, 5, 7);
+        
         Field field = args.get(0);
-        Material selected = args.get(1);
+        Menu returnMenu = args.get(1);
+        Material selected = field.getIcon();
 
         for (Material icon : Commerce.MATERIAL_ICONS) {
             MenuItemBuilder item = new MenuItemBuilder(icon);
@@ -37,7 +38,7 @@ public class MenuFieldIcon implements PredefinedMenu {
             item.setClickListener(event -> {
                 field.setIcon(icon);
                 UI.playSound(player, UI.SOUND_CLICK);
-                Menus.FIELD_EDIT.open(player, field);
+                returnMenu.open(player);
             });
 
             menu.addPagedButton(item);
@@ -48,7 +49,7 @@ public class MenuFieldIcon implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.FIELD_EDIT.open(player, field);
+            returnMenu.open(player);
         });
 
         menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);

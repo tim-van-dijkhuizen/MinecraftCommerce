@@ -86,10 +86,10 @@ public class StorageMysql implements StorageType {
             .setDefaultValue("minecraft_commerce");
 
         configUsername = new ConfigOption<>("storage.username", "Storage Username", XMaterial.BARREL, ConfigTypes.STRING)
-            .setRequired(true).setDefaultValue("minecraft_commerce");
+            .setRequired(true)
+            .setDefaultValue("minecraft_commerce");
 
-        configPassword = new ConfigOption<>("storage.password", "Storage Password", XMaterial.BARREL, ConfigTypes.PASSWORD)
-            .setRequired(true).setDefaultValue("MySecretPassword");
+        configPassword = new ConfigOption<>("storage.password", "Storage Password", XMaterial.BARREL, ConfigTypes.PASSWORD);
 
         configMaxLifetime = new ConfigOption<>("storage.maxLifetime", "Max Lifetime", XMaterial.BARREL, ConfigTypes.INTEGER)
             .setRequired(true)
@@ -111,7 +111,6 @@ public class StorageMysql implements StorageType {
         Integer port = configPort.getValue(config);
         String database = configDatabase.getValue(config);
         String username = configUsername.getValue(config);
-        String password = configPassword.getValue(config);
         int maxLifetime = configMaxLifetime.getValue(config);
 
         // Create data pool
@@ -119,8 +118,13 @@ public class StorageMysql implements StorageType {
 
         dbConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         dbConfig.setUsername(username);
-        dbConfig.setPassword(password);
         dbConfig.setMaxLifetime(maxLifetime);
+        
+        // Set password if we've got one
+        if(!configPassword.isValueEmpty(config)) {
+            String password = configPassword.getValue(config);
+            dbConfig.setPassword(password);
+        }
 
         dbConfig.addDataSourceProperty("cachePrepStmts", "true");
         dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -192,7 +196,7 @@ public class StorageMysql implements StorageType {
         
         PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "number BINARY(16) UNIQUE NOT NULL,"
+            + "uniqueId BINARY(16) UNIQUE NOT NULL,"
             + "playerUniqueId BINARY(16) NOT NULL,"
             + "playerName VARCHAR(16) NOT NULL,"
             + "currency VARCHAR(255) NOT NULL,"

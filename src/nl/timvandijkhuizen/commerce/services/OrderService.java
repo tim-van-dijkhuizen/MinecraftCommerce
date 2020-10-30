@@ -29,6 +29,7 @@ import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
 import nl.timvandijkhuizen.commerce.variables.VariableFields;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
+import nl.timvandijkhuizen.commerce.variables.VariableQuantity;
 import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
@@ -59,6 +60,7 @@ public class OrderService extends BaseService {
         variableEvent.addVariable(new VariableUniqueId());
         variableEvent.addVariable(new VariablePlayerUsername());
         variableEvent.addVariable(new VariablePlayerUniqueId());
+        variableEvent.addVariable(new VariableQuantity());
         variableEvent.addVariable(new VariableFields());
 
         // Add core effects
@@ -227,10 +229,12 @@ public class OrderService extends BaseService {
                     List<String> commands = product.getCommands();
 
                     for (String rawCommand : commands) {
-                        String command = replaceVariables(rawCommand, order);
+                        String command = replaceVariables(rawCommand, order, lineItem);
 
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                        ConsoleHelper.printInfo("Performed command for order with id " + order.getId() + ": " + command);
+                        for(int i = 0; i < lineItem.getQuantity(); i++) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                            ConsoleHelper.printInfo("Performed command for order with id " + order.getId() + ": " + command + "(" + (i+1) + "/" + lineItem.getQuantity() + ")");
+                        }
                     }
                 }
 
@@ -276,7 +280,7 @@ public class OrderService extends BaseService {
      * @param order
      * @return
      */
-    public String replaceVariables(String value, Order order) {
+    public String replaceVariables(String value, Order order, LineItem lineItem) {
         Matcher matcher = VARIABLE_FORMAT.matcher(value);
         
         // Find all variables
@@ -302,7 +306,7 @@ public class OrderService extends BaseService {
                 }
                 
                 try {
-                    value = value.replace(replace, variable.getValue(order, property));
+                    value = value.replace(replace, variable.getValue(order, lineItem, property));
                 } catch(Throwable e) {
                     ConsoleHelper.printError("Failed to parse variable: " + replace, e);
                 }
