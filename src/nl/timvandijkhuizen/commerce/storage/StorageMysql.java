@@ -134,7 +134,7 @@ public class StorageMysql implements StorageType {
         dbSource = new HikariDataSource(dbConfig);
 
         // Create tables
-        createTables();
+        createSchema();
     }
 
     @Override
@@ -145,17 +145,19 @@ public class StorageMysql implements StorageType {
         }
     }
 
-    private void createTables() throws SQLException {
+    private void createSchema() throws SQLException {
         Connection connection = getConnection();
 
-        PreparedStatement createCategories = connection.prepareStatement("CREATE TABLE IF NOT EXISTS categories ("
+        // Create tables
+        // ===========================
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS categories ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
             + "name VARCHAR(40) NOT NULL,"
             + "description TEXT NOT NULL"
         + ");");
 
-        PreparedStatement createProducts = connection.prepareStatement("CREATE TABLE IF NOT EXISTS products ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS products ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
             + "name VARCHAR(40) NOT NULL,"
@@ -165,14 +167,14 @@ public class StorageMysql implements StorageType {
             + "FOREIGN KEY(categoryId) REFERENCES categories(id) ON DELETE CASCADE"
         + ");");
 
-        PreparedStatement createCommands = connection.prepareStatement("CREATE TABLE IF NOT EXISTS commands ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS commands ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "productId INTEGER NOT NULL,"
             + "command VARCHAR(255) NOT NULL,"
             + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE"
         + ");");
 
-        PreparedStatement createFields = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fields ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS fields ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "icon VARCHAR(255) NOT NULL,"
             + "handle VARCHAR(40) NOT NULL,"
@@ -182,19 +184,19 @@ public class StorageMysql implements StorageType {
             + "required BOOLEAN NOT NULL"
         + ");");
 
-        PreparedStatement createGateways = connection.prepareStatement("CREATE TABLE IF NOT EXISTS gateways ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS gateways ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "displayName VARCHAR(40) NOT NULL,"
             + "type VARCHAR(50) NOT NULL,"
             + "config JSON NOT NULL"
         + ");");
         
-        PreparedStatement createUserPreferences = connection.prepareStatement("CREATE TABLE IF NOT EXISTS user_preferences ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS user_preferences ("
             + "playerUniqueId BINARY(16) PRIMARY KEY,"
             + "preferences JSON NOT NULL"
         + ");");
         
-        PreparedStatement createOrders = connection.prepareStatement("CREATE TABLE IF NOT EXISTS orders ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS orders ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "uniqueId BINARY(16) UNIQUE NOT NULL,"
             + "playerUniqueId BINARY(16) NOT NULL,"
@@ -205,7 +207,7 @@ public class StorageMysql implements StorageType {
             + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
         + ");");
 
-        PreparedStatement createLineItems = connection.prepareStatement("CREATE TABLE IF NOT EXISTS lineItems ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS lineItems ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "orderId INTEGER NOT NULL,"
             + "productId INTEGER,"
@@ -215,7 +217,7 @@ public class StorageMysql implements StorageType {
             + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE SET NULL"
         + ");");
 
-        PreparedStatement createPaymentUrls = connection.prepareStatement("CREATE TABLE IF NOT EXISTS payment_urls ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS payment_urls ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "orderId INTEGER NOT NULL,"
             + "url VARCHAR(255) NOT NULL,"
@@ -223,7 +225,7 @@ public class StorageMysql implements StorageType {
             + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
         + ");");
         
-        PreparedStatement createTransactions = connection.prepareStatement("CREATE TABLE IF NOT EXISTS transactions ("
+        executeSafe(connection, "CREATE TABLE IF NOT EXISTS transactions ("
             + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
             + "orderId INTEGER NOT NULL,"
             + "reference VARCHAR(255) NOT NULL,"
@@ -231,32 +233,24 @@ public class StorageMysql implements StorageType {
             + "dateCreated BIGINT,"
             + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
         + ");");
-
-        // Execute queries
+        
+        // Create indexes
         // ===========================
-        createCategories.execute();
-        createProducts.execute();
-        createCommands.execute();
-        createFields.execute();
-        createGateways.execute();
-        createUserPreferences.execute();
-        createOrders.execute();
-        createLineItems.execute();
-        createPaymentUrls.execute();
-        createTransactions.execute();
-
-        // Cleanup
-        // ===========================
-        createCategories.close();
-        createProducts.close();
-        createCommands.close();
-        createFields.close();
-        createGateways.close();
-        createUserPreferences.close();
-        createOrders.close();
-        createLineItems.close();
-        createPaymentUrls.close();
-        createTransactions.close();
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_categoryid ON products (categoryId);");
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_productid ON commands (productId);");
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (uniqueId);");
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (playerUniqueId);");
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_gatewayid ON orders (gatewayId);");
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON lineItems (orderId);");
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_productid ON lineItems (productId);");
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON payment_urls (orderId);");
+        
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON transactions (orderId);");
 
         connection.close();
     }
@@ -1328,6 +1322,18 @@ public class StorageMysql implements StorageType {
         }
 
         return null;
+    }
+    
+    private boolean executeSafe(Connection connection, String sql) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            
+            statement.execute();
+            statement.close();
+            return true;
+        } catch(SQLException e) {
+            return false;
+        }
     }
 
 }
