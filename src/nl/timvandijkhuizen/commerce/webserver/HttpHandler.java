@@ -53,11 +53,13 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-        if (handleRouteRequest(ctx, request)) {
+        URL url = WebHelper.createWebUrl(request.uri());
+        
+        if (handleRouteRequest(ctx, request, url)) {
             return;
         }
 
-        if (handleGatewayRequest(ctx, request)) {
+        if (handleGatewayRequest(ctx, request, url)) {
             return;
         }
 
@@ -72,11 +74,14 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @return
      * @throws Throwable
      */
-    private boolean handleRouteRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
+    private boolean handleRouteRequest(ChannelHandlerContext ctx, FullHttpRequest request, URL url) throws Throwable {
         WebService webService = Commerce.getInstance().getService("web");
-        StaticRoute route = webService.getRoutes().get(request.uri());
+        StaticRoute route = webService.getRoutes().get(url.getPath());
 
+        ConsoleHelper.printDebug("Trying to find route for action: " + url.getPath());
+        
         if (route != null) {
+            ConsoleHelper.printDebug("Matched route, handling request...");
             route.handleRequest(ctx, request);
             return true;
         }
@@ -92,8 +97,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @return
      * @throws Throwable
      */
-    private boolean handleGatewayRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
-        URL url = WebHelper.createWebUrl(request.uri());
+    private boolean handleGatewayRequest(ChannelHandlerContext ctx, FullHttpRequest request, URL url) throws Throwable {
         QueryParameters queryParams = WebHelper.parseQuery(url);
 
         // Get gatewayId parameter

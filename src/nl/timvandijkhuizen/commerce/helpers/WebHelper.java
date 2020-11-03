@@ -37,16 +37,16 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class WebHelper {
-
+    
     /**
      * Creates a formatted URL from the specified action. Uses the configured
      * webUrl and webPort as base and then adds the action at the end.
      * 
-     * @param action
+     * @param path
      * @return URL The formatted URL.
      * @throws RuntimeException
      */
-    public static URL createWebUrl(String action) {
+    public static URL createWebUrl(String path) {
         Commerce plugin = Commerce.getInstance();
 
         // Get configuration & options
@@ -66,6 +66,10 @@ public class WebHelper {
         }
 
         // Parse action
+        String[] pathInfo = path.split("\\?");
+        String action = pathInfo[0];
+        String query = pathInfo.length > 1 ? ('?' + pathInfo[1]) : "";
+        
         action.replace('\\', '/');
 
         if (!action.startsWith("/")) {
@@ -77,7 +81,7 @@ public class WebHelper {
         }
 
         try {
-            return new URL(protocol, host, port, action);
+            return new URL(protocol, host, port, action + query);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

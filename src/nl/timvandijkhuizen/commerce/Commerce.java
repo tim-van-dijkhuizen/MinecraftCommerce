@@ -164,7 +164,7 @@ public class Commerce extends PluginBase {
         config.setDefaultOptions();
         config.save();
 
-        ConsoleHelper.showStacktraces(configDevMode.getValue(config));
+        ConsoleHelper.setDevMode(configDevMode.getValue(config));
     }
 
     @Override
