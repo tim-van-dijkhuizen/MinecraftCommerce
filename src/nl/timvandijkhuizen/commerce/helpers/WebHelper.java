@@ -51,10 +51,10 @@ public class WebHelper {
 
         // Get configuration & options
         YamlConfig config = plugin.getConfig();
-        ConfigOption<String> optionHost = config.getOption("general.webserverHost");
-        ConfigOption<Integer> optionPort = config.getOption("general.webserverPort");
-        ConfigOption<File> optionSSLCert = config.getOption("general.sslCertificate");
-        ConfigOption<File> optionSSLKey = config.getOption("general.sslPrivateKey");
+        ConfigOption<String> optionHost = config.getOption("webserver.host");
+        ConfigOption<Integer> optionPort = config.getOption("webserver.port");
+        ConfigOption<File> optionSSLCert = config.getOption("webserver.certificate");
+        ConfigOption<File> optionSSLKey = config.getOption("webserver.privateKey");
 
         // Get configuration values
         String host = optionHost.getValue(config);

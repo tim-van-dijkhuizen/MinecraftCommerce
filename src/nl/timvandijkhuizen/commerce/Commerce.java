@@ -65,13 +65,13 @@ public class Commerce extends PluginBase {
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
     private ConfigOption<SimpleDateFormat> configDateFormat;
-    private ConfigOption<String> configWebserverHost;
-    private ConfigOption<Integer> configWebserverPort;
-    private ConfigOption<File> configSslCertificate;
-    private ConfigOption<File> configSslPrivateKey;
     private ConfigOption<OrderEffect> configOrderEffect;
     private ConfigOption<String> configOrderTitle;
     private ConfigOption<String> configOrderSubtitle;
+    private ConfigOption<String> configWebHost;
+    private ConfigOption<Integer> configWebPort;
+    private ConfigOption<File> configWebCertificate;
+    private ConfigOption<File> configWebPrivateKey;
     private ConfigOption<StorageType> configStorageType;
 
     @Override
@@ -113,21 +113,6 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
 
-        configWebserverHost = new ConfigOption<>("general.webserverHost", "Webserver Host", XMaterial.COBWEB, ConfigTypes.STRING)
-            .setRequired(true)
-            .setDefaultValue(getServer().getIp());
-
-        configWebserverPort = new ConfigOption<>("general.webserverPort", "Webserver Port", XMaterial.COBWEB, new ConfigTypePort())
-            .setRequired(true)
-            .setDefaultValue(8080)
-            .setMeta(new DataArguments(true));
-
-        configSslCertificate = new ConfigOption<>("general.sslCertificate", "SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
-            .setMeta(new DataArguments(true));
-
-        configSslPrivateKey = new ConfigOption<>("general.sslPrivateKey", "SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
-            .setMeta(new DataArguments(true));
-
         configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", XMaterial.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
             .setDefaultValue(new OrderEffectDefault());
@@ -138,6 +123,21 @@ public class Commerce extends PluginBase {
         configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
             .setDefaultValue("&7Thanks for your order {playerUsername}");
 
+        configWebHost = new ConfigOption<>("webserver.host", "Webserver Host", XMaterial.COBWEB, ConfigTypes.STRING)
+            .setRequired(true)
+            .setDefaultValue(getServer().getIp());
+
+        configWebPort = new ConfigOption<>("webserver.port", "Webserver Port", XMaterial.COBWEB, new ConfigTypePort())
+            .setRequired(true)
+            .setDefaultValue(8080)
+            .setMeta(new DataArguments(true));
+
+        configWebCertificate = new ConfigOption<>("webserver.certificate", "SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
+            .setMeta(new DataArguments(true));
+
+        configWebPrivateKey = new ConfigOption<>("webserver.privateKey", "SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
+            .setMeta(new DataArguments(true));
+        
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", XMaterial.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
             .setDefaultValue(new StorageMysql())
@@ -149,13 +149,13 @@ public class Commerce extends PluginBase {
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
         config.addOption(configDateFormat);
-        config.addOption(configWebserverHost);
-        config.addOption(configWebserverPort);
-        config.addOption(configSslCertificate);
-        config.addOption(configSslPrivateKey);
         config.addOption(configOrderEffect);
         config.addOption(configOrderTitle);
         config.addOption(configOrderSubtitle);
+        config.addOption(configWebHost);
+        config.addOption(configWebPort);
+        config.addOption(configWebCertificate);
+        config.addOption(configWebPrivateKey);
         config.addOption(configStorageType);
     }
 

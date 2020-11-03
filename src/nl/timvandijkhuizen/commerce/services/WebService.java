@@ -51,8 +51,8 @@ public class WebService extends BaseService {
 
         // Create SSL context
         // =================================================
-        ConfigOption<File> optionSslCert = config.getOption("general.sslCertificate");
-        ConfigOption<File> optionSslKey = config.getOption("general.sslPrivateKey");
+        ConfigOption<File> optionSslCert = config.getOption("webserver.certificate");
+        ConfigOption<File> optionSslKey = config.getOption("webserver.privateKey");
         SslContext sslContext = null;
 
         if (!optionSslCert.isValueEmpty(config) && !optionSslCert.isValueEmpty(config)) {
@@ -72,7 +72,7 @@ public class WebService extends BaseService {
         bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
 
         // Bind to configured port
-        ConfigOption<Integer> optionPort = config.getOption("general.webserverPort");
+        ConfigOption<Integer> optionPort = config.getOption("webserver.port");
         int port = optionPort.getValue(config);
 
         ConsoleHelper.printInfo("Starting webserver on port " + port);
