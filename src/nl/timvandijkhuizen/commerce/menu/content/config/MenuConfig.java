@@ -40,6 +40,7 @@ public class MenuConfig implements PredefinedMenu {
             boolean restart = meta.getBoolean(0, false);
 
             item.setName(UI.color(option.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.hideAttributes();
 
             item.setLoreGenerator(() -> {
                 List<String> lore = new ArrayList<>();

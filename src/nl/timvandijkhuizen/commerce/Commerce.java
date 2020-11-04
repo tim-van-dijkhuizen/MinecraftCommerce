@@ -23,6 +23,7 @@ import nl.timvandijkhuizen.commerce.config.types.ConfigTypeOrderEffect;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypePort;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
+import nl.timvandijkhuizen.commerce.config.types.ConfigTypeTerms;
 import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.commerce.services.CacheService;
@@ -65,6 +66,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<List<StoreCurrency>> configCurrencies;
     private ConfigOption<StoreCurrency> configBaseCurrency;
     private ConfigOption<SimpleDateFormat> configDateFormat;
+    private ConfigOption<List<String>> configTerms;
     private ConfigOption<OrderEffect> configOrderEffect;
     private ConfigOption<String> configOrderTitle;
     private ConfigOption<String> configOrderSubtitle;
@@ -113,6 +115,8 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
 
+        configTerms = new ConfigOption<>("general.termsAndConditions", "Terms & Conditions", XMaterial.WRITTEN_BOOK, new ConfigTypeTerms());
+        
         configOrderEffect = new ConfigOption<>("general.completeEffect", "Order Complete Effect", XMaterial.FIREWORK_ROCKET, new ConfigTypeOrderEffect())
             .setRequired(true)
             .setDefaultValue(new OrderEffectDefault());
@@ -149,6 +153,7 @@ public class Commerce extends PluginBase {
         config.addOption(configCurrencies);
         config.addOption(configBaseCurrency);
         config.addOption(configDateFormat);
+        config.addOption(configTerms);
         config.addOption(configOrderEffect);
         config.addOption(configOrderTitle);
         config.addOption(configOrderSubtitle);
