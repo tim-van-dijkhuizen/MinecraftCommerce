@@ -5,13 +5,13 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionGatewayList implements MenuItemAction {
+public class ActionGatewayList implements MenuClickListener {
 
     private boolean clickSound = true;
 
@@ -23,7 +23,7 @@ public class ActionGatewayList implements MenuItemAction {
     }
 
     @Override
-    public void onClick(MenuItemClick event) {
+    public void onClick(MenuClick event) {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
@@ -34,12 +34,12 @@ public class ActionGatewayList implements MenuItemAction {
         }
 
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-        activeMenu.disableButtons();
+        activeMenu.disableItems();
         activeMenu.refresh();
 
         // Create menu
         gatewayService.getGateways(gateways -> {
-            activeMenu.enableButtons();
+            activeMenu.enableItems();
 
             if (gateways == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);

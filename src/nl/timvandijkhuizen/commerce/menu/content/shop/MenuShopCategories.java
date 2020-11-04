@@ -47,7 +47,7 @@ public class MenuShopCategories implements PredefinedMenu {
             // Set click listener
             item.setClickListener(new ActionShopProducts(category));
 
-            menu.addStructuredButton(item);
+            menu.addStructuredItem(item);
         }
 
         // Close button
@@ -58,10 +58,10 @@ public class MenuShopCategories implements PredefinedMenu {
             menu.close(player);
         });
 
-        menu.setButton(closeButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(closeButton, menu.getSize().getSlots() - 9 + 3);
 
         // Currency button
-        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

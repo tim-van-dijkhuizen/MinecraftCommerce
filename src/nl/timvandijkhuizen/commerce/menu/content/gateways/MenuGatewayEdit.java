@@ -84,7 +84,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(displayNameButton, 11);
+        menu.setItem(displayNameButton, 11);
 
         // Type button
         // ===========================
@@ -116,7 +116,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             Menus.GATEWAY_TYPE.open(player, gateway);
         });
 
-        menu.setButton(typeButton, 13);
+        menu.setItem(typeButton, 13);
 
         // Option button
         // ===========================
@@ -167,17 +167,17 @@ public class MenuGatewayEdit implements PredefinedMenu {
             }
         });
 
-        menu.setButton(optionButton, 15);
+        menu.setItem(optionButton, 15);
 
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
@@ -185,7 +185,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
 
         cancelButton.setClickListener(new ActionGatewayList());
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -198,12 +198,12 @@ public class MenuGatewayEdit implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Save gateway
             gatewayService.saveGateway(gateway, success -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -216,7 +216,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

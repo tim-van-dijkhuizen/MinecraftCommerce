@@ -70,7 +70,7 @@ public class MenuShopProducts implements PredefinedMenu {
             item.setClickListener(event -> {
                 UI.playSound(player, UI.SOUND_CLICK);
                 actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
-                menu.disableButtons();
+                menu.disableItems();
                 menu.refresh();
 
                 // Add item
@@ -85,12 +85,12 @@ public class MenuShopProducts implements PredefinedMenu {
                         actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
                     }
 
-                    menu.enableButtons();
+                    menu.enableItems();
                     menu.refresh();
                 });
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -98,10 +98,10 @@ public class MenuShopProducts implements PredefinedMenu {
 
         backButton.setClickListener(new ActionShopCategories());
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

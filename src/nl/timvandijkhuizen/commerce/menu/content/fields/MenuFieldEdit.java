@@ -56,7 +56,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             Menus.FIELD_ICON.open(player, field, menu);
         });
 
-        menu.setButton(iconButton, 11);
+        menu.setItem(iconButton, 11);
 
         // Name button
         // ===========================
@@ -93,7 +93,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(handleButton, 13);
+        menu.setItem(handleButton, 13);
         
         // Name button
         // ===========================
@@ -130,7 +130,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(nameButton, 15);
+        menu.setItem(nameButton, 15);
 
         // Description button
         // ===========================
@@ -171,7 +171,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(descriptionButton, 29);
+        menu.setItem(descriptionButton, 29);
 
         // Type button
         // ===========================
@@ -202,7 +202,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             Menus.FIELD_TYPE.open(player, field, menu);
         });
 
-        menu.setButton(typeButton, 31);
+        menu.setItem(typeButton, 31);
 
         // Required button
         // ===========================
@@ -222,17 +222,17 @@ public class MenuFieldEdit implements PredefinedMenu {
             menu.refresh();
         });
 
-        menu.setButton(requiredButton, 33);
+        menu.setItem(requiredButton, 33);
 
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
@@ -240,7 +240,7 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         cancelButton.setClickListener(new ActionFieldList());
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -249,12 +249,12 @@ public class MenuFieldEdit implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Save field
             fieldService.saveField(field, success -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -268,7 +268,7 @@ public class MenuFieldEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

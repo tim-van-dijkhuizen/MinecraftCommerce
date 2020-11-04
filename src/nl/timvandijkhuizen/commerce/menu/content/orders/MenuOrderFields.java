@@ -48,7 +48,7 @@ public class MenuOrderFields implements PredefinedMenu {
                 return lore;
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -59,7 +59,7 @@ public class MenuOrderFields implements PredefinedMenu {
             Menus.ORDER_VIEW.open(player, order);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

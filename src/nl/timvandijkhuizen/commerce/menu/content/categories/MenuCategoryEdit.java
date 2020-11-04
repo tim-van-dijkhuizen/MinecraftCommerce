@@ -60,7 +60,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             Menus.CATEGORY_ICON.open(player, category, menu);
         });
 
-        menu.setButton(iconButton, 11);
+        menu.setItem(iconButton, 11);
 
         // Name button
         // ===========================
@@ -109,7 +109,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(nameButton, 13);
+        menu.setItem(nameButton, 13);
 
         // Description button
         // ===========================
@@ -162,17 +162,17 @@ public class MenuCategoryEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(descriptionButton, 15);
+        menu.setItem(descriptionButton, 15);
 
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
@@ -180,7 +180,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
 
         cancelButton.setClickListener(new ActionCategoryList());
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -190,12 +190,12 @@ public class MenuCategoryEdit implements PredefinedMenu {
             UI.playSound(player, UI.SOUND_CLICK);
             
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Save category
             categoryService.saveCategory(category, success -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -209,7 +209,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

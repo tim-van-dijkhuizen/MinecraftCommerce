@@ -42,7 +42,7 @@ public class MenuProductCategory implements PredefinedMenu {
                 Menus.PRODUCT_EDIT.open(player, product);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Cancel button
@@ -53,7 +53,7 @@ public class MenuProductCategory implements PredefinedMenu {
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

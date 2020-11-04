@@ -65,7 +65,7 @@ public class MenuShopCart implements PredefinedMenu {
                 UI.playSound(player, UI.SOUND_CLICK);
                 item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
                 menu.refresh();
-                menu.disableButtons();
+                menu.disableItems();
 
                 // Update LineItem
                 if (type == ClickType.LEFT) {
@@ -76,7 +76,7 @@ public class MenuShopCart implements PredefinedMenu {
 
                 // Save cart
                 orderService.saveOrder(cart, success -> {
-                    menu.enableButtons();
+                    menu.enableItems();
 
                     if (success) {
                         UI.playSound(player, UI.SOUND_SUCCESS);
@@ -85,7 +85,7 @@ public class MenuShopCart implements PredefinedMenu {
                             item.setAmount(lineItem.getQuantity());
                             item.setLore(oldLore);
                         } else {
-                            menu.removePagedButton(item);
+                            menu.removePagedItem(item);
                         }
 
                         menu.refresh();
@@ -97,11 +97,11 @@ public class MenuShopCart implements PredefinedMenu {
                 });
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
 
         // Previous button
         MenuItemBuilder previousButton = MenuItems.BACK.clone();
@@ -110,7 +110,7 @@ public class MenuShopCart implements PredefinedMenu {
         previousButton.setLore(UI.color("Shop Home", UI.COLOR_TEXT));
         previousButton.setClickListener(new ActionShopCategories());
 
-        menu.setButton(previousButton, menu.getSize().getSlots() - 9);
+        menu.setItem(previousButton, menu.getSize().getSlots() - 9);
 
         // Next (fields) button
         MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
@@ -139,7 +139,7 @@ public class MenuShopCart implements PredefinedMenu {
             }
         });
 
-        menu.setButton(nextButton, menu.getSize().getSlots() - 1);
+        menu.setItem(nextButton, menu.getSize().getSlots() - 1);
 
         return menu;
     }

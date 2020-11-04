@@ -57,7 +57,7 @@ public class MenuOrderList implements PredefinedMenu {
                     orderService.deleteOrder(order, success -> {
                         if (success) {
                             UI.playSound(player, UI.SOUND_DELETE);
-                            menu.removePagedButton(item);
+                            menu.removePagedItem(item);
                             menu.refresh();
                         } else {
                             UI.playSound(player, UI.SOUND_ERROR);
@@ -68,7 +68,7 @@ public class MenuOrderList implements PredefinedMenu {
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -79,7 +79,7 @@ public class MenuOrderList implements PredefinedMenu {
             Menus.HOME.open(player);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

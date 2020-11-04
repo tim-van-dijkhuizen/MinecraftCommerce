@@ -33,7 +33,7 @@ public class MenuShopAccount implements PredefinedMenu {
             Menus.SHOP_ACCOUNT_PREFERENCES.open(player);
         });
 
-        menu.setButton(preferencesButton, 11);
+        menu.setItem(preferencesButton, 11);
 
         // Account button
         MenuItemBuilder accountButton = new MenuItemBuilder(XMaterial.PLAYER_HEAD);
@@ -41,7 +41,7 @@ public class MenuShopAccount implements PredefinedMenu {
         accountButton.setSkullOwner(player.getUniqueId());
         accountButton.setName(UI.color("My Account", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        menu.setButton(accountButton, 13);
+        menu.setItem(accountButton, 13);
 
         // Orders button
         MenuItemBuilder ordersButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
@@ -50,17 +50,17 @@ public class MenuShopAccount implements PredefinedMenu {
         ordersButton.setLore(UI.color("View your donation history", UI.COLOR_TEXT));
         ordersButton.setClickListener(new ActionShopOrderHistory());
 
-        menu.setButton(ordersButton, 15);
+        menu.setItem(ordersButton, 15);
 
         // Set bottom line
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Close button
         MenuItemBuilder closeButton = MenuItems.CLOSE.clone();
@@ -70,7 +70,7 @@ public class MenuShopAccount implements PredefinedMenu {
             menu.close(player);
         });
 
-        menu.setButton(closeButton, 31);
+        menu.setItem(closeButton, 31);
 
         return menu;
     }

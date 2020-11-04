@@ -54,7 +54,7 @@ public class MenuOrderItems implements PredefinedMenu {
                 item.addLore(UI.color(UI.TAB + "None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -65,7 +65,7 @@ public class MenuOrderItems implements PredefinedMenu {
             Menus.ORDER_VIEW.open(player, order);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

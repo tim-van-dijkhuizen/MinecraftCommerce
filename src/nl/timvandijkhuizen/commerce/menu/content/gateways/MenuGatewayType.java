@@ -41,7 +41,7 @@ public class MenuGatewayType implements PredefinedMenu {
                 Menus.GATEWAY_EDIT.open(player, gateway);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Cancel button
@@ -52,7 +52,7 @@ public class MenuGatewayType implements PredefinedMenu {
             Menus.GATEWAY_EDIT.open(player, gateway);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

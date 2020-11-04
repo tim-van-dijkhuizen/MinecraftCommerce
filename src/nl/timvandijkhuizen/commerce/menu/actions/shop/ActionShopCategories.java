@@ -6,16 +6,16 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopCategories implements MenuItemAction {
+public class ActionShopCategories implements MenuClickListener {
 
     @Override
-    public void onClick(MenuItemClick event) {
+    public void onClick(MenuClick event) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
@@ -25,7 +25,7 @@ public class ActionShopCategories implements MenuItemAction {
         UI.playSound(whoClicked, UI.SOUND_CLICK);
 
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-        activeMenu.disableButtons();
+        activeMenu.disableItems();
         activeMenu.refresh();
 
         // Create menu
@@ -33,7 +33,7 @@ public class ActionShopCategories implements MenuItemAction {
             if (categories == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);
                 clickedItem.setLore(UI.color("Error: Failed to load categories.", UI.COLOR_ERROR));
-                activeMenu.enableButtons();
+                activeMenu.enableItems();
                 activeMenu.refresh();
                 return;
             }
@@ -42,7 +42,7 @@ public class ActionShopCategories implements MenuItemAction {
                 if (cart == null) {
                     UI.playSound(whoClicked, UI.SOUND_ERROR);
                     clickedItem.setLore(UI.color("Error: Failed to load cart.", UI.COLOR_ERROR));
-                    activeMenu.enableButtons();
+                    activeMenu.enableItems();
                     activeMenu.refresh();
                     return;
                 }

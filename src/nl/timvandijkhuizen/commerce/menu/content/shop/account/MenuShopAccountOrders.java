@@ -78,7 +78,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
                 item.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -89,7 +89,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
             Menus.SHOP_ACCOUNT.open(player);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

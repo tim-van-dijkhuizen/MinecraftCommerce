@@ -78,7 +78,7 @@ public class MenuShopPreferences implements PredefinedMenu {
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -89,7 +89,7 @@ public class MenuShopPreferences implements PredefinedMenu {
             Menus.SHOP_ACCOUNT.open(player);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -98,12 +98,12 @@ public class MenuShopPreferences implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Save configuration
             userService.savePreferences(player, preferences, success -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -117,7 +117,7 @@ public class MenuShopPreferences implements PredefinedMenu {
             });
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

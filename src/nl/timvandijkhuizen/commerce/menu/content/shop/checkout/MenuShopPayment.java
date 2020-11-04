@@ -67,7 +67,7 @@ public class MenuShopPayment implements PredefinedMenu {
             }
         });
 
-        menu.setButton(acceptButton, 11);
+        menu.setItem(acceptButton, 11);
 
         // Pay button
         MenuItemBuilder payButton = new MenuItemBuilder(XMaterial.COMPARATOR);
@@ -108,11 +108,11 @@ public class MenuShopPayment implements PredefinedMenu {
                 // Create URL and cache it
                 UI.playSound(player, UI.SOUND_CLICK);
                 payActionLore.set(UI.color("Loading...", UI.COLOR_TEXT));
-                menu.disableButtons();
+                menu.disableItems();
                 menu.refresh();
 
                 paymentService.createPaymentUrl(cart, url -> {
-                    menu.enableButtons();
+                    menu.enableItems();
                     
                     if (url != null) {
                         payActionLore.set(null);
@@ -128,10 +128,10 @@ public class MenuShopPayment implements PredefinedMenu {
             }
         });
 
-        menu.setButton(payButton, 15);
+        menu.setItem(payButton, 15);
 
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 4);
 
         // Previous (gateway) button
         MenuItemBuilder previousButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
@@ -140,16 +140,16 @@ public class MenuShopPayment implements PredefinedMenu {
         previousButton.setLore(UI.color("Gateways", UI.COLOR_TEXT));
         previousButton.setClickListener(new ActionShopGateways());
 
-        menu.setButton(previousButton, menu.getSize().getSlots() - 9);
+        menu.setItem(previousButton, menu.getSize().getSlots() - 9);
 
         // Set bottom line
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         return menu;
     }

@@ -23,10 +23,10 @@ import nl.timvandijkhuizen.commerce.base.Model;
 import nl.timvandijkhuizen.commerce.helpers.ValidationHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigObject;
 import nl.timvandijkhuizen.spigotutils.config.ConfigObjectData;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -120,7 +120,7 @@ public class StoreCurrency extends Model implements ConfigObject {
     }
 
     @Override
-    public void getInput(MenuItemClick event, Consumer<Boolean> callback) {
+    public void getInput(MenuClick event, Consumer<Boolean> callback) {
         boolean isNew = code == null;
         Menu menu = new Menu((isNew ? "Edit" : "Create") + " Currency", MenuSize.XL);
         Player player = event.getPlayer();
@@ -169,7 +169,7 @@ public class StoreCurrency extends Model implements ConfigObject {
                     menu.open(player);
                 });
 
-                currencyMenu.addPagedButton(item);
+                currencyMenu.addPagedItem(item);
             }
 
             // Go back button
@@ -180,12 +180,12 @@ public class StoreCurrency extends Model implements ConfigObject {
                 menu.open(player);
             });
 
-            currencyMenu.setButton(backButton, currencyMenu.getSize().getSlots() - 9 + 3);
+            currencyMenu.setItem(backButton, currencyMenu.getSize().getSlots() - 9 + 3);
             
             currencyMenu.open(player);
         });
 
-        menu.setButton(currencyButton, 11);
+        menu.setItem(currencyButton, 11);
 
         // Conversion rate button
         // ===========================
@@ -235,7 +235,7 @@ public class StoreCurrency extends Model implements ConfigObject {
             conversation.begin();
         });
 
-        menu.setButton(conversionRateButton, 13);
+        menu.setItem(conversionRateButton, 13);
 
         // Pattern button
         // ===========================
@@ -286,7 +286,7 @@ public class StoreCurrency extends Model implements ConfigObject {
             conversation.begin();
         });
 
-        menu.setButton(patternButton, 15);
+        menu.setItem(patternButton, 15);
 
         // Group separator button
         // ===========================
@@ -336,7 +336,7 @@ public class StoreCurrency extends Model implements ConfigObject {
             conversation.begin();
         });
 
-        menu.setButton(groupSeparatorButton, 21);
+        menu.setItem(groupSeparatorButton, 21);
         
         // Conversion rate button
         // ===========================
@@ -386,17 +386,17 @@ public class StoreCurrency extends Model implements ConfigObject {
             conversation.begin();
         });
 
-        menu.setButton(decimalSeparatorButton, 23);
+        menu.setItem(decimalSeparatorButton, 23);
         
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
@@ -407,7 +407,7 @@ public class StoreCurrency extends Model implements ConfigObject {
             callback.accept(false);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -433,7 +433,7 @@ public class StoreCurrency extends Model implements ConfigObject {
             }
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 5);
         
         menu.open(player);
     }

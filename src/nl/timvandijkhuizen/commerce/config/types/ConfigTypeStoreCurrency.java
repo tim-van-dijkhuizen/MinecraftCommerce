@@ -15,8 +15,8 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -72,7 +72,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     }
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<StoreCurrency> option, MenuItemClick event, Consumer<StoreCurrency> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<StoreCurrency> option, MenuClick event, Consumer<StoreCurrency> callback) {
         PagedMenu menu = new PagedMenu("Choose a currency", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
         StoreCurrency selected = getValue(config, option);
@@ -103,7 +103,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
                 callback.accept(currency);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
         
         // Go back button
@@ -114,7 +114,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
             callback.accept(selected);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         menu.open(player);
     }

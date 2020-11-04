@@ -80,7 +80,7 @@ public class MenuProductList implements PredefinedMenu {
                     productService.deleteProduct(product, success -> {
                         if (success) {
                             UI.playSound(player, UI.SOUND_DELETE);
-                            menu.removePagedButton(item);
+                            menu.removePagedItem(item);
                             menu.refresh();
                         } else {
                             UI.playSound(player, UI.SOUND_ERROR);
@@ -91,7 +91,7 @@ public class MenuProductList implements PredefinedMenu {
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -102,7 +102,7 @@ public class MenuProductList implements PredefinedMenu {
             Menus.HOME.open(player);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new product button
         MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
@@ -114,7 +114,7 @@ public class MenuProductList implements PredefinedMenu {
             Menus.PRODUCT_EDIT.open(player);
         });
 
-        menu.setButton(createButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(createButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

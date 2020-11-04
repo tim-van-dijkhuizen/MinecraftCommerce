@@ -5,13 +5,13 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.FieldService;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionFieldList implements MenuItemAction {
+public class ActionFieldList implements MenuClickListener {
 
     private boolean clickSound = true;
 
@@ -23,7 +23,7 @@ public class ActionFieldList implements MenuItemAction {
     }
 
     @Override
-    public void onClick(MenuItemClick event) {
+    public void onClick(MenuClick event) {
         FieldService fieldService = Commerce.getInstance().getService("fields");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
@@ -34,12 +34,12 @@ public class ActionFieldList implements MenuItemAction {
         }
 
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-        activeMenu.disableButtons();
+        activeMenu.disableItems();
         activeMenu.refresh();
 
         // Create menu
         fieldService.getFields(fields -> {
-            activeMenu.enableButtons();
+            activeMenu.enableItems();
 
             if (fields == null) {
                 UI.playSound(whoClicked, UI.SOUND_ERROR);

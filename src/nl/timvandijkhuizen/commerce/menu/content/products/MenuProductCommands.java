@@ -47,12 +47,12 @@ public class MenuProductCommands implements PredefinedMenu {
                 if (clickType == ClickType.RIGHT) {
                     UI.playSound(player, UI.SOUND_DELETE);
                     product.removeCommand(command);
-                    menu.removePagedButton(item);
+                    menu.removePagedItem(item);
                     menu.refresh();
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -63,7 +63,7 @@ public class MenuProductCommands implements PredefinedMenu {
             Menus.PRODUCT_EDIT.open(player, product);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new command button
         MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
@@ -117,7 +117,7 @@ public class MenuProductCommands implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(createButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(createButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

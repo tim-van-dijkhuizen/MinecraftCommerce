@@ -9,16 +9,16 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopCart implements MenuItemAction {
+public class ActionShopCart implements MenuClickListener {
 
     @Override
-    public void onClick(MenuItemClick event) {
+    public void onClick(MenuClick event) {
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
@@ -27,7 +27,7 @@ public class ActionShopCart implements MenuItemAction {
         UI.playSound(whoClicked, UI.SOUND_CLICK);
 
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-        activeMenu.disableButtons();
+        activeMenu.disableItems();
         activeMenu.refresh();
 
         if (clickType == ClickType.LEFT) {
@@ -37,14 +37,14 @@ public class ActionShopCart implements MenuItemAction {
         }
     }
 
-    private void loadCart(MenuItemClick event, Consumer<Order> callback) {
+    private void loadCart(MenuClick event, Consumer<Order> callback) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();
 
         orderService.getCart(whoClicked, cart -> {
-            activeMenu.enableButtons();
+            activeMenu.enableItems();
 
             if (cart != null) {
                 callback.accept(cart);

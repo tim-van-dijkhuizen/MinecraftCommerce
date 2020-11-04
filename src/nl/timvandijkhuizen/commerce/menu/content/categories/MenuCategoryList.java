@@ -62,7 +62,7 @@ public class MenuCategoryList implements PredefinedMenu {
                     categoryService.deleteCategory(category, success -> {
                         if (success) {
                             UI.playSound(player, UI.SOUND_DELETE);
-                            menu.removePagedButton(item);
+                            menu.removePagedItem(item);
                             menu.refresh();
                         } else {
                             UI.playSound(player, UI.SOUND_ERROR);
@@ -73,7 +73,7 @@ public class MenuCategoryList implements PredefinedMenu {
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -84,7 +84,7 @@ public class MenuCategoryList implements PredefinedMenu {
             Menus.HOME.open(player);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         // Create new category button
         MenuItemBuilder createButton = new MenuItemBuilder(XMaterial.NETHER_STAR);
@@ -96,7 +96,7 @@ public class MenuCategoryList implements PredefinedMenu {
             Menus.CATEGORY_EDIT.open(player);
         });
 
-        menu.setButton(createButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(createButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

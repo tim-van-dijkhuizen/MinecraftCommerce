@@ -59,12 +59,12 @@ public class MenuShopCurrency implements PredefinedMenu {
 
                 // Update UI
                 item.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-                menu.disableButtons();
+                menu.disableItems();
                 menu.refresh();
 
                 // Save cart
                 orderService.saveOrder(cart, success -> {
-                    menu.enableButtons();
+                    menu.enableItems();
 
                     if (success) {
                         UI.playSound(player, UI.SOUND_SUCCESS);
@@ -77,7 +77,7 @@ public class MenuShopCurrency implements PredefinedMenu {
                 });
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Cancel button
@@ -88,7 +88,7 @@ public class MenuShopCurrency implements PredefinedMenu {
             returnMenu.open(player);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

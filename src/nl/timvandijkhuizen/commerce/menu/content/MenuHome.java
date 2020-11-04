@@ -36,7 +36,7 @@ public class MenuHome implements PredefinedMenu {
             Menus.CONFIG.open(player);
         });
 
-        menu.setButton(configButton, 11);
+        menu.setItem(configButton, 11);
 
         // Categories button
         MenuItemBuilder categoriesButton = new MenuItemBuilder(XMaterial.CHEST_MINECART);
@@ -45,7 +45,7 @@ public class MenuHome implements PredefinedMenu {
         categoriesButton.setLore(UI.color("Manage product categories", UI.COLOR_TEXT));
         categoriesButton.setClickListener(new ActionCategoryList());
 
-        menu.setButton(categoriesButton, 13);
+        menu.setItem(categoriesButton, 13);
 
         // Products button
         MenuItemBuilder productsButton = new MenuItemBuilder(XMaterial.CHEST);
@@ -54,7 +54,7 @@ public class MenuHome implements PredefinedMenu {
         productsButton.setLore(UI.color("Manage products", UI.COLOR_TEXT));
         productsButton.setClickListener(new ActionProductList());
 
-        menu.setButton(productsButton, 15);
+        menu.setItem(productsButton, 15);
 
         // Order fields button
         MenuItemBuilder fieldsButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
@@ -63,7 +63,7 @@ public class MenuHome implements PredefinedMenu {
         fieldsButton.setLore(UI.color("Manage order fields", UI.COLOR_TEXT));
         fieldsButton.setClickListener(new ActionFieldList());
 
-        menu.setButton(fieldsButton, 20);
+        menu.setItem(fieldsButton, 20);
 
         // Gateways button
         MenuItemBuilder gatewayButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
@@ -72,7 +72,7 @@ public class MenuHome implements PredefinedMenu {
         gatewayButton.setLore(UI.color("Manage gateways", UI.COLOR_TEXT));
         gatewayButton.setClickListener(new ActionGatewayList());
 
-        menu.setButton(gatewayButton, 22);
+        menu.setItem(gatewayButton, 22);
 
         // Orders button
         MenuItemBuilder orderButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
@@ -81,17 +81,17 @@ public class MenuHome implements PredefinedMenu {
         orderButton.setLore(UI.color("Manage orders", UI.COLOR_TEXT));
         orderButton.setClickListener(new ActionOrderList());
 
-        menu.setButton(orderButton, 24);
+        menu.setItem(orderButton, 24);
 
         // Set bottom line
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Close button
         MenuItemBuilder closeButton = MenuItems.CLOSE.clone();
@@ -101,7 +101,7 @@ public class MenuHome implements PredefinedMenu {
             menu.close(player);
         });
 
-        menu.setButton(closeButton, 40);
+        menu.setItem(closeButton, 40);
 
         return menu;
     }

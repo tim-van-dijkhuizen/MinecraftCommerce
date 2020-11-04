@@ -14,8 +14,8 @@ import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -59,7 +59,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
     }
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuItemClick event, Consumer<StorageType> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<StorageType> option, MenuClick event, Consumer<StorageType> callback) {
         PagedMenu menu = new PagedMenu("Choose a storage type", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
         StorageType selected = getValue(config, option);
@@ -81,7 +81,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
                 callback.accept(type);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
         
         // Go back button
@@ -92,7 +92,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
             callback.accept(selected);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         menu.open(player);
     }

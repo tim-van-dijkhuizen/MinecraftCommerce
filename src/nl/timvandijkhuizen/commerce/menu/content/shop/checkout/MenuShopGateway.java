@@ -66,7 +66,7 @@ public class MenuShopGateway implements PredefinedMenu {
                     cart.setGateway(gateway);
 
                     actionLore.set(UI.color("Saving...", UI.COLOR_TEXT));
-                    menu.disableButtons();
+                    menu.disableItems();
                     menu.refresh();
 
                     orderService.saveOrder(cart, success -> {
@@ -78,13 +78,13 @@ public class MenuShopGateway implements PredefinedMenu {
                             actionLore.set(UI.color("Failed to save cart.", UI.COLOR_ERROR));
                         }
 
-                        menu.enableButtons();
+                        menu.enableItems();
                         menu.refresh();
                     });
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Previous (fields) button
@@ -94,10 +94,10 @@ public class MenuShopGateway implements PredefinedMenu {
         previousButton.setLore(UI.color("Fields", UI.COLOR_TEXT));
         previousButton.setClickListener(new ActionShopFields());
 
-        menu.setButton(previousButton, menu.getSize().getSlots() - 9);
+        menu.setItem(previousButton, menu.getSize().getSlots() - 9);
 
         // Cart button
-        menu.setButton(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(ShopHelper.createCartItem(cart), menu.getSize().getSlots() - 9 + 3);
 
         // Next (payment) button
         MenuItemBuilder nextButton = new MenuItemBuilder(XMaterial.EMERALD);
@@ -129,7 +129,7 @@ public class MenuShopGateway implements PredefinedMenu {
             }
         });
 
-        menu.setButton(nextButton, menu.getSize().getSlots() - 1);
+        menu.setItem(nextButton, menu.getSize().getSlots() - 1);
 
         return menu;
     }

@@ -41,7 +41,7 @@ public class MenuFieldIcon implements PredefinedMenu {
                 returnMenu.open(player);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Cancel button
@@ -52,7 +52,7 @@ public class MenuFieldIcon implements PredefinedMenu {
             returnMenu.open(player);
         });
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }

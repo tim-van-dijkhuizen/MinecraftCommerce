@@ -46,7 +46,7 @@ public class MenuOrderView implements PredefinedMenu {
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
         uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_SECONDARY));
 
-        menu.setButton(uniqueIdButton, 11);
+        menu.setItem(uniqueIdButton, 11);
 
         // Username button
         // ===========================
@@ -55,7 +55,7 @@ public class MenuOrderView implements PredefinedMenu {
         usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
         usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
 
-        menu.setButton(usernameButton, 13);
+        menu.setItem(usernameButton, 13);
 
         // Currency button
         // ===========================
@@ -64,7 +64,7 @@ public class MenuOrderView implements PredefinedMenu {
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
         currencyButton.addLore(UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_SECONDARY));
 
-        menu.setButton(currencyButton, 15);
+        menu.setItem(currencyButton, 15);
 
         // Products button
         // ===========================
@@ -94,7 +94,7 @@ public class MenuOrderView implements PredefinedMenu {
             Menus.ORDER_ITEMS.open(player, order);
         });
 
-        menu.setButton(itemsButton, 29);
+        menu.setItem(itemsButton, 29);
 
         // Fields button
         // ===========================
@@ -127,7 +127,7 @@ public class MenuOrderView implements PredefinedMenu {
             Menus.ORDER_FIELDS.open(player, order);
         });
 
-        menu.setButton(fieldsButton, 31);
+        menu.setItem(fieldsButton, 31);
 
         // Transaction button
         // ===========================
@@ -148,25 +148,25 @@ public class MenuOrderView implements PredefinedMenu {
             transactionButton.addLore(UI.color("Date: ", UI.COLOR_TEXT) + UI.color(dateTimeFormatted, UI.COLOR_SECONDARY));
         }
         
-        menu.setButton(transactionButton, 33);
+        menu.setItem(transactionButton, 33);
         
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Go back button
         MenuItemBuilder backButton = MenuItems.BACK.clone();
 
         backButton.setClickListener(new ActionOrderList());
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 4);
 
         return menu;
     }

@@ -5,16 +5,16 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemAction;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class ActionShopOrderHistory implements MenuItemAction {
+public class ActionShopOrderHistory implements MenuClickListener {
 
     @Override
-    public void onClick(MenuItemClick event) {
+    public void onClick(MenuClick event) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
@@ -23,11 +23,11 @@ public class ActionShopOrderHistory implements MenuItemAction {
         UI.playSound(whoClicked, UI.SOUND_CLICK);
 
         clickedItem.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-        activeMenu.disableButtons();
+        activeMenu.disableItems();
         activeMenu.refresh();
         
         orderService.getOrdersByPlayer(whoClicked.getUniqueId(), orders -> {
-            activeMenu.enableButtons();
+            activeMenu.enableItems();
 
             if (orders != null) {
                 Menus.SHOP_ACCOUNT_ORDERS.open(whoClicked, orders);

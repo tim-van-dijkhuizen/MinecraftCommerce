@@ -13,8 +13,8 @@ import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
+import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
-import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemClick;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -59,7 +59,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
     }
 
     @Override
-    public void getValueInput(OptionConfig config, ConfigOption<OrderEffect> option, MenuItemClick event, Consumer<OrderEffect> callback) {
+    public void getValueInput(OptionConfig config, ConfigOption<OrderEffect> option, MenuClick event, Consumer<OrderEffect> callback) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Choose an effect", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
@@ -82,7 +82,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
                 callback.accept(effect);
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -93,7 +93,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
             callback.accept(selected);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
         
         menu.open(player);
     }

@@ -61,7 +61,7 @@ public class MenuProductEdit implements PredefinedMenu {
             Menus.PRODUCT_ICON.open(player, product);
         });
 
-        menu.setButton(iconButton, 11);
+        menu.setItem(iconButton, 11);
 
         // Name button
         // ===========================
@@ -111,7 +111,7 @@ public class MenuProductEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(nameButton, 13);
+        menu.setItem(nameButton, 13);
 
         // Description button
         // ===========================
@@ -165,7 +165,7 @@ public class MenuProductEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(descriptionButton, 15);
+        menu.setItem(descriptionButton, 15);
 
         // Category button
         // ===========================
@@ -197,12 +197,12 @@ public class MenuProductEdit implements PredefinedMenu {
 
             UI.playSound(player, UI.SOUND_CLICK);
             categoryButton.setLore(UI.color("Loading...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Create menu
             categoryService.getCategories(categories -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (categories == null) {
                     UI.playSound(player, UI.SOUND_ERROR);
@@ -215,7 +215,7 @@ public class MenuProductEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(categoryButton, 29);
+        menu.setItem(categoryButton, 29);
 
         // Price button
         // ===========================
@@ -260,7 +260,7 @@ public class MenuProductEdit implements PredefinedMenu {
             conversation.begin();
         });
 
-        menu.setButton(priceButton, 31);
+        menu.setItem(priceButton, 31);
 
         // Commands button
         // ===========================
@@ -283,17 +283,17 @@ public class MenuProductEdit implements PredefinedMenu {
             Menus.PRODUCT_COMMANDS.open(player, product);
         });
 
-        menu.setButton(commandsButton, 33);
+        menu.setItem(commandsButton, 33);
 
         // Set bottom line
         // ===========================
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
-        menu.setButton(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 0);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 1);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 2);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 4);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 6);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 7);
+        menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         // Cancel button
         // ===========================
@@ -301,7 +301,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         cancelButton.setClickListener(new ActionProductList());
 
-        menu.setButton(cancelButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
 
         // Save button
         // ===========================
@@ -314,12 +314,12 @@ public class MenuProductEdit implements PredefinedMenu {
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
-            menu.disableButtons();
+            menu.disableItems();
             menu.refresh();
 
             // Save product
             productService.saveProduct(product, success -> {
-                menu.enableButtons();
+                menu.enableItems();
 
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -332,7 +332,7 @@ public class MenuProductEdit implements PredefinedMenu {
             });
         });
 
-        menu.setButton(saveButton, menu.getSize().getSlots() - 9 + 5);
+        menu.setItem(saveButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
     }

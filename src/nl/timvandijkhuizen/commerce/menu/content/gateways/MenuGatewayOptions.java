@@ -67,7 +67,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
                 }
             });
 
-            menu.addPagedButton(item);
+            menu.addPagedItem(item);
         }
 
         // Go back button
@@ -78,7 +78,7 @@ public class MenuGatewayOptions implements PredefinedMenu {
             Menus.GATEWAY_EDIT.open(player, gateway);
         });
 
-        menu.setButton(backButton, menu.getSize().getSlots() - 9 + 3);
+        menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         return menu;
     }
