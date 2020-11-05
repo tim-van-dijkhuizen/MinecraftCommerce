@@ -1,8 +1,7 @@
 package nl.timvandijkhuizen.commerce.menu.content.orders;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -132,20 +131,16 @@ public class MenuOrderView implements PredefinedMenu {
         // Transaction button
         // ===========================
         MenuItemBuilder transactionButton = new MenuItemBuilder(XMaterial.DROPPER);
-        Transaction transaction = order.getTransaction();
+        Set<Transaction> transactions = order.getTransactions();
 
-        if(transaction != null) {
-            String reference = transaction.getReference();
-            long dateTime = transaction.getDateCreated();
-            
-            // Get used format
-            ConfigOption<SimpleDateFormat> dateFormatOption = config.getOption("general.dateFormat");
-            SimpleDateFormat dateFormat = dateFormatOption.getValue(config);
-            String dateTimeFormatted = dateFormat.format(new Date(dateTime));
-            
-            transactionButton.setName(UI.color("Transaction", UI.COLOR_PRIMARY, ChatColor.BOLD));
-            transactionButton.addLore(UI.color("Reference: ", UI.COLOR_TEXT) + UI.color(reference, UI.COLOR_SECONDARY));
-            transactionButton.addLore(UI.color("Date: ", UI.COLOR_TEXT) + UI.color(dateTimeFormatted, UI.COLOR_SECONDARY));
+        transactionButton.setName(UI.color("Transaction", UI.COLOR_PRIMARY, ChatColor.BOLD));
+
+        if (transactions.size() > 0) {
+            for (Transaction transaction : transactions) {
+                transactionButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " ", UI.COLOR_TEXT) + UI.color(transaction.getReference(), UI.COLOR_SECONDARY));
+            }
+        } else {
+            transactionButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
         
         menu.setItem(transactionButton, 33);

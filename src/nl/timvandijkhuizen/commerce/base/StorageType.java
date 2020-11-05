@@ -317,6 +317,15 @@ public interface StorageType extends Service {
     void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable; 
 
     /**
+     * Returns all Transactions belonging to the specified order.
+     * 
+     * @param orderId
+     * @return
+     * @throws Throwable
+     */
+    public Set<Transaction> getTransactionsByOrderId(int orderId) throws Throwable;
+    
+    /**
      * Creates a Transaction.
      * 
      * @param transaction

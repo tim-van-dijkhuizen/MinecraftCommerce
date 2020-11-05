@@ -1,6 +1,8 @@
 package nl.timvandijkhuizen.commerce.elements;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,10 +26,11 @@ public class Order extends Element {
     private DataList<LineItem> lineItems;
     private OrderFieldData fieldData;
     private Gateway gateway;
+    private boolean completed;
     private PaymentUrl paymentUrl;
-    private Transaction transaction;
+    private Set<Transaction> transactions;
 
-    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, PaymentUrl paymentUrl, Transaction transaction) {
+    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, boolean completed, PaymentUrl paymentUrl, Set<Transaction> transactions) {
         this.setId(id);
         this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
@@ -36,8 +39,9 @@ public class Order extends Element {
         this.lineItems = lineItems;
         this.fieldData = fieldData;
         this.gateway = gateway;
+        this.completed = completed;
         this.paymentUrl = paymentUrl;
-        this.transaction = transaction;
+        this.transactions = transactions;
     }
 
     public Order(UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency) {
@@ -47,6 +51,7 @@ public class Order extends Element {
         this.currency = currency;
         this.lineItems = new DataList<>();
         this.fieldData = new OrderFieldData();
+        this.transactions = new HashSet<>();
     }
 
     @Override
@@ -161,6 +166,14 @@ public class Order extends Element {
     public Gateway getGateway() {
         return gateway;
     }
+    
+    public boolean isCompleted() {
+        return completed;
+    }
+    
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 
     public void setGateway(Gateway gateway) {
         this.gateway = gateway;
@@ -170,8 +183,8 @@ public class Order extends Element {
         return paymentUrl;
     }
     
-    public Transaction getTransaction() {
-        return transaction;
+    public Set<Transaction> getTransactions() {
+        return transactions;
     }
 
 }

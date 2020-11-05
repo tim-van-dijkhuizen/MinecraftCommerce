@@ -204,6 +204,7 @@ public class StorageMysql implements StorageType {
             + "currency VARCHAR(255) NOT NULL,"
             + "fields JSON NOT NULL,"
             + "gatewayId INTEGER,"
+            + "completed BOOLEAN,"
             + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
         + ");");
 
@@ -244,6 +245,7 @@ public class StorageMysql implements StorageType {
         executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (uniqueId);");
         executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (playerUniqueId);");
         executeSafe(connection, "CREATE UNIQUE INDEX idx_gatewayid ON orders (gatewayId);");
+        executeSafe(connection, "CREATE UNIQUE INDEX idx_completed ON orders (completed);");
         
         executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON lineItems (orderId);");
         executeSafe(connection, "CREATE UNIQUE INDEX idx_productid ON lineItems (productId);");
@@ -833,15 +835,13 @@ public class StorageMysql implements StorageType {
     @Override
     public Order getCart(UUID playerUniqueId) throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, orders.completed, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config, "
-            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime, "
-            + "transactions.id, transactions.reference, transactions.dateCreated, transactions.meta "
+            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime "
             + "FROM orders "
             + "LEFT JOIN gateways ON gateways.id = orders.gatewayId "
             + "LEFT JOIN payment_urls ON payment_urls.orderId = orders.id "
-            + "LEFT JOIN transactions ON transactions.orderId = orders.id "
-            + "WHERE orders.playerUniqueId=? AND transactions.id IS NULL LIMIT 1";
+            + "WHERE orders.playerUniqueId=? AND completed=0 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
@@ -865,14 +865,12 @@ public class StorageMysql implements StorageType {
     @Override
     public Order getOrderByUniqueId(UUID uniqueId) throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, orders.completed, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config, "
-            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime, "
-            + "transactions.id, transactions.reference, transactions.dateCreated, transactions.meta "
+            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime "
             + "FROM orders "
             + "LEFT JOIN gateways ON gateways.id = orders.gatewayId "
             + "LEFT JOIN payment_urls ON payment_urls.orderId = orders.id "
-            + "LEFT JOIN transactions ON transactions.orderId = orders.id "
             + "WHERE orders.uniqueId=? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -897,15 +895,13 @@ public class StorageMysql implements StorageType {
     @Override
     public Set<Order> getOrders() throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, orders.completed, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config, "
-            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime, "
-            + "transactions.id, transactions.reference, transactions.dateCreated, transactions.meta "
+            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime "
             + "FROM orders "
             + "LEFT JOIN gateways ON gateways.id = orders.gatewayId "
             + "LEFT JOIN payment_urls ON payment_urls.orderId = orders.id "
-            + "LEFT JOIN transactions ON transactions.orderId = orders.id "
-            + "WHERE transactions.id IS NOT NULL";
+            + "WHERE completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Get result
@@ -931,15 +927,13 @@ public class StorageMysql implements StorageType {
     @Override
     public Set<Order> getOrdersByPlayer(UUID playerUniqueId) throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, "
+        String sql = "SELECT orders.id, orders.uniqueId, orders.playerUniqueId, orders.playerName, orders.currency, orders.fields, orders.completed, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config, "
-            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime, "
-            + "transactions.id, transactions.reference, transactions.dateCreated, transactions.meta "
+            + "payment_urls.id, payment_urls.url, payment_urls.expiryTime "
             + "FROM orders "
             + "LEFT JOIN gateways ON gateways.id = orders.gatewayId "
             + "LEFT JOIN payment_urls ON payment_urls.orderId = orders.id "
-            + "LEFT JOIN transactions ON transactions.orderId = orders.id "
-            + "WHERE orders.playerUniqueId=? AND transactions.id IS NOT NULL";
+            + "WHERE orders.playerUniqueId=? AND completed=1";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setBytes(1, DbHelper.prepareUniqueId(playerUniqueId));
@@ -967,7 +961,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void createOrder(Order order) throws Throwable {
         Connection connection = getConnection();
-        String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, fields, gatewayId) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO orders (uniqueId, playerUniqueId, playerName, currency, fields, gatewayId, completed) VALUES (?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         Gateway gateway = order.getGateway();
         StoreCurrency currency = order.getCurrency();
@@ -984,6 +978,8 @@ public class StorageMysql implements StorageType {
         } else {
             statement.setNull(6, Types.INTEGER);
         }
+        
+        statement.setBoolean(7, order.isCompleted());
 
         // Execute query
         statement.executeUpdate();
@@ -1004,7 +1000,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void updateOrder(Order order) throws Throwable {
         Connection connection = getConnection();
-        String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, fields=?, gatewayId=? WHERE id=?;";
+        String sql = "UPDATE orders SET uniqueId=?, playerUniqueId=?, playerName=?, currency=?, fields=?, gatewayId=?, completed=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
         Gateway gateway = order.getGateway();
         StoreCurrency currency = order.getCurrency();
@@ -1022,7 +1018,8 @@ public class StorageMysql implements StorageType {
             statement.setNull(6, Types.INTEGER);
         }
 
-        statement.setInt(7, order.getId());
+        statement.setBoolean(7, order.isCompleted());
+        statement.setInt(8, order.getId());
 
         // Execute query
         statement.execute();
@@ -1198,6 +1195,38 @@ public class StorageMysql implements StorageType {
     }
 
     @Override
+    public Set<Transaction> getTransactionsByOrderId(int orderId) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT id, reference, dateCreated, meta FROM transactions WHERE orderId=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setInt(1, orderId);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Set<Transaction> transactions = new LinkedHashSet<>();
+
+        while (result.next()) {
+            Integer id = result.getInt(1);
+            String reference = result.getString(2);
+            long dateCreated = result.getLong(3);
+            String rawMeta = result.getString(4);
+
+            // Parse meta
+            JsonObject meta = rawMeta != null ? DbHelper.parseJson(rawMeta) : null;
+
+            transactions.add(new Transaction(id, orderId, reference, dateCreated, meta));
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return transactions;
+    }
+    
+    @Override
     public void createTransaction(Transaction transaction) throws Throwable {
         Connection connection = getConnection();
         String sql = "INSERT INTO transactions (orderId, reference, dateCreated, meta) VALUES (?, ?, ?, ?);";
@@ -1262,6 +1291,7 @@ public class StorageMysql implements StorageType {
         String playerName = result.getString(4);
         String currencyCode = result.getString(5);
         OrderFieldData fields = DbHelper.parseOrderFields(result.getString(6));
+        boolean completed = result.getBoolean(7);
 
         // Get currency
         YamlConfig config = Commerce.getInstance().getConfig();
@@ -1275,10 +1305,10 @@ public class StorageMysql implements StorageType {
 
         // Get Gateway
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
-        Integer gatewayId = DbHelper.getInteger(result, 7);
-        String gatewayDisplayName = result.getString(8);
-        String gatewayTypeHandle = result.getString(9);
-        String gatewayJson = result.getString(10);
+        Integer gatewayId = DbHelper.getInteger(result, 8);
+        String gatewayDisplayName = result.getString(9);
+        String gatewayTypeHandle = result.getString(10);
+        String gatewayJson = result.getString(11);
         Gateway gateway = null;
 
         if (gatewayId != null) {
@@ -1291,32 +1321,22 @@ public class StorageMysql implements StorageType {
         }
 
         // Get PaymentUrl
-        Integer paymentUrlId = DbHelper.getInteger(result, 11);
-        String paymentUrlUrl = result.getString(12);
-        long paymentUrlExpiry = result.getLong(13);
+        Integer paymentUrlId = DbHelper.getInteger(result, 12);
+        String paymentUrlUrl = result.getString(13);
+        long paymentUrlExpiry = result.getLong(14);
         PaymentUrl paymentUrl = null;
 
         if (paymentUrlId != null) {
             paymentUrl = new PaymentUrl(paymentUrlId, id, paymentUrlUrl, paymentUrlExpiry);
         }
-
-        // Get Transaction
-        Integer transactionId = DbHelper.getInteger(result, 14);
-        String transactionReference = result.getString(15);
-        long transactionDateCreated = result.getLong(16);
-        JsonObject transactionMeta = DbHelper.parseJson(result.getString(17));
-        Transaction transaction = null;
-
-        if (transactionId != null) {
-            transaction = new Transaction(transactionId, id, transactionReference, transactionDateCreated, transactionMeta);
-        }
         
         if (currency != null) {
             Set<LineItem> rawLineItems = getLineItemsByOrderId(id);
             DataList<LineItem> lineItems = new DataList<>(rawLineItems);
+            Set<Transaction> transactions = getTransactionsByOrderId(id);
 
             // Add order to list
-            return new Order(id, uniqueId, playerUniqueId, playerName, currency, lineItems, fields, gateway, paymentUrl, transaction);
+            return new Order(id, uniqueId, playerUniqueId, playerName, currency, lineItems, fields, gateway, completed, paymentUrl, transactions);
         } else {
             ConsoleHelper.printError("Failed to load order with id " + id + ", invalid currency: " + currencyCode);
         }

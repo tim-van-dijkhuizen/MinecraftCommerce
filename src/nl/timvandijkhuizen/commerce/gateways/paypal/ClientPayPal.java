@@ -180,7 +180,7 @@ public class ClientPayPal implements GatewayClient {
         String paypalOrderId = queryParams.getString("token");
 
         // Return success if the order has already been completed
-        if (order.getTransaction() != null) {
+        if (order.isCompleted()) {
             return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
         }
 
