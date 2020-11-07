@@ -150,110 +150,139 @@ public class StorageMysql implements StorageType {
 
         // Create tables
         // ===========================
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS categories ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "icon VARCHAR(255) NOT NULL,"
-            + "name VARCHAR(40) NOT NULL,"
-            + "description TEXT NOT NULL"
-        + ");");
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS products ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "icon VARCHAR(255) NOT NULL,"
-            + "name VARCHAR(40) NOT NULL,"
-            + "description TEXT NOT NULL,"
-            + "categoryId INTEGER NOT NULL,"
-            + "price FLOAT NOT NULL,"
-            + "FOREIGN KEY(categoryId) REFERENCES categories(id) ON DELETE CASCADE"
-        + ");");
+        // Create categories table
+        if(!doesTableExist(connection, "categories")) {
+            execute(connection, "CREATE TABLE categories ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "icon VARCHAR(255) NOT NULL,"
+                + "name VARCHAR(40) NOT NULL,"
+                + "description TEXT NOT NULL"
+            + ");");
+        }
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS commands ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "productId INTEGER NOT NULL,"
-            + "command VARCHAR(255) NOT NULL,"
-            + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE"
-        + ");");
+        // Create products table
+        if(!doesTableExist(connection, "products")) {
+            execute(connection, "CREATE TABLE products ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "icon VARCHAR(255) NOT NULL,"
+                + "name VARCHAR(40) NOT NULL,"
+                + "description TEXT NOT NULL,"
+                + "categoryId INTEGER NOT NULL,"
+                + "price FLOAT NOT NULL,"
+                + "FOREIGN KEY(categoryId) REFERENCES categories(id) ON DELETE CASCADE"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_categoryid ON products (categoryId);");
+        }
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS fields ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "icon VARCHAR(255) NOT NULL,"
-            + "handle VARCHAR(40) NOT NULL,"
-            + "name VARCHAR(40) NOT NULL,"
-            + "description TEXT NOT NULL,"
-            + "type VARCHAR(255) NOT NULL,"
-            + "required BOOLEAN NOT NULL"
-        + ");");
+        // Create commands table
+        if(!doesTableExist(connection, "commands")) {
+            execute(connection, "CREATE TABLE commands ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "productId INTEGER NOT NULL,"
+                + "command VARCHAR(255) NOT NULL,"
+                + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_productid ON commands (productId);");
+        }
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS gateways ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "displayName VARCHAR(40) NOT NULL,"
-            + "type VARCHAR(50) NOT NULL,"
-            + "config JSON NOT NULL"
-        + ");");
-        
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS user_preferences ("
-            + "playerUniqueId BINARY(16) PRIMARY KEY,"
-            + "preferences JSON NOT NULL"
-        + ");");
-        
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS orders ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "uniqueId BINARY(16) UNIQUE NOT NULL,"
-            + "playerUniqueId BINARY(16) NOT NULL,"
-            + "playerName VARCHAR(16) NOT NULL,"
-            + "currency VARCHAR(255) NOT NULL,"
-            + "fields JSON NOT NULL,"
-            + "gatewayId INTEGER,"
-            + "completed BOOLEAN,"
-            + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
-        + ");");
+        // Create fields table
+        if(!doesTableExist(connection, "fields")) {
+            execute(connection, "CREATE TABLE fields ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "icon VARCHAR(255) NOT NULL,"
+                + "handle VARCHAR(40) NOT NULL,"
+                + "name VARCHAR(40) NOT NULL,"
+                + "description TEXT NOT NULL,"
+                + "type VARCHAR(255) NOT NULL,"
+                + "required BOOLEAN NOT NULL"
+            + ");");
+        }
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS lineItems ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "orderId INTEGER NOT NULL,"
-            + "productId INTEGER,"
-            + "product JSON NOT NULL,"
-            + "quantity INTEGER NOT NULL,"
-            + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE,"
-            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE SET NULL"
-        + ");");
+        // Create gateways table
+        if(!doesTableExist(connection, "gateways")) {
+            execute(connection, "CREATE TABLE gateways ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "displayName VARCHAR(40) NOT NULL,"
+                + "type VARCHAR(50) NOT NULL,"
+                + "config JSON NOT NULL"
+            + ");");
+        }
+        
+        // Create user_preferences table
+        if(!doesTableExist(connection, "user_preferences")) {
+            execute(connection, "CREATE TABLE user_preferences ("
+                + "playerUniqueId BINARY(16) PRIMARY KEY,"
+                + "preferences JSON NOT NULL"
+            + ");");
+        }
+        
+        // Create orders table
+        if(!doesTableExist(connection, "orders")) {
+            execute(connection, "CREATE TABLE orders ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "uniqueId BINARY(16) UNIQUE NOT NULL,"
+                + "playerUniqueId BINARY(16) NOT NULL,"
+                + "playerName VARCHAR(16) NOT NULL,"
+                + "currency VARCHAR(255) NOT NULL,"
+                + "fields JSON NOT NULL,"
+                + "gatewayId INTEGER,"
+                + "completed BOOLEAN,"
+                + "FOREIGN KEY(gatewayId) REFERENCES gateways(id) ON DELETE SET NULL"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_uniqueid ON orders (uniqueId);");
+            execute(connection, "CREATE INDEX idx_playeruniqueid ON orders (playerUniqueId);");
+            execute(connection, "CREATE INDEX idx_gatewayid ON orders (gatewayId);");
+            execute(connection, "CREATE UNIQUE INDEX idx_completed ON orders (completed);");
+        }
 
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS payment_urls ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "orderId INTEGER NOT NULL,"
-            + "url VARCHAR(255) NOT NULL,"
-            + "expiryTime BIGINT,"
-            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
-        + ");");
-        
-        executeSafe(connection, "CREATE TABLE IF NOT EXISTS transactions ("
-            + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
-            + "orderId INTEGER NOT NULL,"
-            + "reference VARCHAR(255) NOT NULL,"
-            + "meta JSON,"
-            + "dateCreated BIGINT,"
-            + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
-        + ");");
-        
-        // Create indexes
-        // ===========================
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_categoryid ON products (categoryId);");
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_productid ON commands (productId);");
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (uniqueId);");
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_playeruniqueid ON orders (playerUniqueId);");
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_gatewayid ON orders (gatewayId);");
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_completed ON orders (completed);");
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON lineItems (orderId);");
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_productid ON lineItems (productId);");
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON payment_urls (orderId);");
-        
-        executeSafe(connection, "CREATE UNIQUE INDEX idx_orderid ON transactions (orderId);");
+        // Create line_items table
+        if(!doesTableExist(connection, "line_items")) {
+            execute(connection, "CREATE TABLE line_items ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "orderId INTEGER NOT NULL,"
+                + "productId INTEGER,"
+                + "product JSON NOT NULL,"
+                + "quantity INTEGER NOT NULL,"
+                + "FOREIGN KEY(productId) REFERENCES products(id) ON DELETE SET NULL,"
+                + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_orderid ON line_items (orderId);");
+            execute(connection, "CREATE INDEX idx_productid ON line_items (productId);");
+        }
 
+        // Create payment_urls table
+        if(!doesTableExist(connection, "payment_urls")) {
+            execute(connection, "CREATE TABLE payment_urls ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "orderId INTEGER NOT NULL,"
+                + "url VARCHAR(255) NOT NULL,"
+                + "expiryTime BIGINT,"
+                + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_orderid ON payment_urls (orderId);");
+        }
+        
+        // Create transactions table
+        if(!doesTableExist(connection, "transactions")) {
+            execute(connection, "CREATE TABLE transactions ("
+                + "id INTEGER PRIMARY KEY AUTO_INCREMENT,"
+                + "orderId INTEGER NOT NULL,"
+                + "reference VARCHAR(255) NOT NULL,"
+                + "meta JSON,"
+                + "dateCreated BIGINT,"
+                + "FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE"
+            + ");");
+            
+            execute(connection, "CREATE INDEX idx_orderid ON transactions (orderId);");
+        }
+
+        // Close connection
         connection.close();
     }
 
@@ -1053,7 +1082,7 @@ public class StorageMysql implements StorageType {
     @Override
     public Set<LineItem> getLineItemsByOrderId(int orderId) throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT * FROM lineItems WHERE orderId=?";
+        String sql = "SELECT * FROM line_items WHERE orderId=?";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setInt(1, orderId);
@@ -1086,7 +1115,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void createLineItem(LineItem lineItem) throws Throwable {
         Connection connection = getConnection();
-        String sql = "INSERT INTO lineItems (orderId, productId, product, quantity) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO line_items (orderId, productId, product, quantity) VALUES (?, ?, ?, ?);";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         // Prepare product snapshot
@@ -1123,7 +1152,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void updateLineItem(LineItem lineItem) throws Throwable {
         Connection connection = getConnection();
-        String sql = "UPDATE lineItems SET orderId=?, productId=?, product=?, quantity=? WHERE id=?;";
+        String sql = "UPDATE line_items SET orderId=?, productId=?, product=?, quantity=? WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Prepare product snapshot
@@ -1153,7 +1182,7 @@ public class StorageMysql implements StorageType {
     @Override
     public void deleteLineItem(LineItem lineItem) throws Throwable {
         Connection connection = getConnection();
-        String sql = "DELETE FROM lineItems WHERE id=?;";
+        String sql = "DELETE FROM line_items WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set arguments
@@ -1344,16 +1373,44 @@ public class StorageMysql implements StorageType {
         return null;
     }
     
-    private boolean executeSafe(Connection connection, String sql) {
+    /**
+     * Returns whether the specified table exists.
+     * 
+     * @param connection
+     * @param table
+     * @return
+     */
+    private boolean doesTableExist(Connection connection, String table) {
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement("SHOW TABLES LIKE ?;");
             
-            statement.execute();
+            statement.setString(1, table);
+
+            // Get result and close
+            ResultSet result = statement.executeQuery();
+            boolean exists = result.next();
+            
             statement.close();
-            return true;
+            
+            return exists;
         } catch(SQLException e) {
             return false;
         }
+    }
+    
+    /**
+     * Executes a query and catches any errors.
+     * 
+     * @param connection
+     * @param sql
+     * @return
+     * @throws SQLException 
+     */
+    private void execute(Connection connection, String sql) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(sql);
+        
+        statement.execute();
+        statement.close();
     }
 
 }
