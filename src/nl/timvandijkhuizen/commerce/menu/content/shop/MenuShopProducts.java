@@ -60,8 +60,10 @@ public class MenuShopProducts implements PredefinedMenu {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
 
-                lore.add(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY));
                 lore.add("");
+                lore.add(UI.color(ShopHelper.formatPrice(product.getPrice(), cart.getCurrency()), UI.COLOR_PRIMARY));
+                lore.add("");
+                lore.add(UI.color("Right-click to add this item to your cart.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
                 return lore;
             });

@@ -43,7 +43,7 @@ public class MenuShopCurrency implements PredefinedMenu {
 
             // Set category name
             item.setName(UI.color(currency.getCode().getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.addLore("", UI.color("Left-click to select.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            item.addLore("", UI.color("Left-click to select currency.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
             // Add glow if selected
             if (currency.equals(cart.getCurrency())) {
