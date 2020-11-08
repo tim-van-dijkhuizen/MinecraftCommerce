@@ -10,8 +10,12 @@ public class TemplateFunctions {
         return ExceptionHelper.getStackTrace(e);
     }
 
-    public String formatPrice(float price, StoreCurrency currency) {
-        return ShopHelper.formatPrice(price, currency);
+    public String formatPrice(float price, StoreCurrency to) {
+        return ShopHelper.formatPrice(price, to);
+    }
+    
+    public String formatPrice(float price, StoreCurrency from, StoreCurrency to) {
+        return ShopHelper.formatPrice(price, from, to);
     }
 
 }

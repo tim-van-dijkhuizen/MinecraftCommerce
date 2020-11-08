@@ -3,28 +3,35 @@ package nl.timvandijkhuizen.commerce.elements;
 import com.google.gson.JsonObject;
 
 import nl.timvandijkhuizen.commerce.base.Element;
+import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 
 public class Transaction extends Element {
 
     private int orderId;
+    private Gateway gateway;
+    private StoreCurrency currency;
     private String reference;
-    private long dateCreated;
+    private float amount;
     private JsonObject meta;
+    private long dateCreated;
     
-    public Transaction(int id, int orderId, String reference, long dateCreated, JsonObject meta) {
-        this(orderId, reference, dateCreated, meta);
+    public Transaction(int id, int orderId, Gateway gateway, StoreCurrency currency, String reference, float amount, JsonObject meta, long dateCreated) {
+        this(orderId, gateway, currency, reference, amount, meta, dateCreated);
         this.setId(id);
     }
     
-    public Transaction(int orderId, String reference, long dateCreated) {
-        this(orderId, reference, dateCreated, null);
+    public Transaction(int orderId, Gateway gateway, StoreCurrency currency, String reference, float amount, long dateCreated) {
+        this(orderId, gateway, currency, reference, amount, null, dateCreated);
     }
     
-    public Transaction(int orderId, String reference, long dateCreated, JsonObject meta) {
+    public Transaction(int orderId, Gateway gateway, StoreCurrency currency, String reference, float amount, JsonObject meta, long dateCreated) {
         this.orderId = orderId;
+        this.gateway = gateway;
+        this.currency = currency;
         this.reference = reference;
-        this.dateCreated = dateCreated;
+        this.amount = amount;
         this.meta = meta;
+        this.dateCreated = dateCreated;
     }
     
     @Override
@@ -36,16 +43,28 @@ public class Transaction extends Element {
         return orderId;
     }
     
+    public Gateway getGateway() {
+        return gateway;
+    }
+    
+    public StoreCurrency getCurrency() {
+        return currency;
+    }
+    
     public String getReference() {
         return reference;
     }
     
-    public long getDateCreated() {
-        return dateCreated;
+    public float getAmount() {
+        return amount;
     }
     
     public JsonObject getMeta() {
         return meta;
+    }
+    
+    public long getDateCreated() {
+        return dateCreated;
     }
     
 }

@@ -6,9 +6,9 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.MenuClickListener;
-import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 

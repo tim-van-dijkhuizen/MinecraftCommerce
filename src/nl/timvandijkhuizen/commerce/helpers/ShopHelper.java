@@ -23,23 +23,53 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class ShopHelper {
 
-    public static float convertPrice(float price, StoreCurrency currency) {
-        return price * currency.getConversionRate();
-    }
-    
-    public static String formatPrice(float price, StoreCurrency currency) {
-        DecimalFormat format = currency.getFormat();
-        return format.format(convertPrice(price, currency));
-    }
-
-    public static String formatPrice(float price) {
+    public static StoreCurrency getBaseCurrency() {
         YamlConfig config = Commerce.getInstance().getConfig();
         ConfigOption<StoreCurrency> option = config.getOption("general.baseCurrency");
-        StoreCurrency baseCurrency = option.getValue(config);
-
-        return formatPrice(price, baseCurrency);
+        
+        return option.getValue(config);
     }
+    
+    public static float convertPrice(float price, StoreCurrency to) {
+        return convertPrice(price, null, to);
+    }
+    
+    public static float convertPrice(float price, StoreCurrency from, StoreCurrency to) {
+        float fromRate = from != null ? from.getConversionRate() : 1;
+        float basePrice = fromRate == 1 ? price : (price / fromRate);
 
+        return basePrice * to.getConversionRate();
+    }
+    
+    public static String formatPrice(float price) {
+        return formatPrice(price, getBaseCurrency());
+    }
+    
+    public static String formatPrice(float price, StoreCurrency to) {
+        return formatPrice(price, null, to);
+    }
+    
+    public static String formatPrice(float price, StoreCurrency from, StoreCurrency to) {
+        float convertedPrice = convertPrice(price, from, to);
+        DecimalFormat format = to.getFormat();
+        
+        return format.format(convertedPrice);
+    }
+    
+    public static StoreCurrency getCurrencyByCode(String code) {
+        StoreCurrency currency = DbHelper.parseCurrency(code);
+        
+        if(currency == null) {
+            YamlConfig config = Commerce.getInstance().getConfig();
+            ConfigOption<StoreCurrency> baseCurrencyOption = config.getOption("general.baseCurrency");
+            StoreCurrency baseCurrency = baseCurrencyOption.getValue(config);
+            
+            currency = baseCurrency;
+        }
+        
+        return currency;
+    }
+    
     public static MenuItemBuilder createCartItem(Order cart) {
         StoreCurrency currency = cart.getCurrency();
         DataList<LineItem> lineItems = cart.getLineItems();

@@ -3,6 +3,8 @@ package nl.timvandijkhuizen.commerce.helpers;
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -10,11 +12,15 @@ import org.bukkit.Material;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonObject;
 
+import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
+import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
+import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
+import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class DbHelper {
 
@@ -75,6 +81,24 @@ public class DbHelper {
 
     public static OrderFieldData parseOrderFields(String json) {
         return new OrderFieldData(parseJson(json));
+    }
+
+    public static String prepareCurrency(StoreCurrency currency) {
+        return currency.getCode().getCurrencyCode();
+    }
+
+    public static StoreCurrency parseCurrency(String code) {
+        YamlConfig pluginConfig = Commerce.getInstance().getConfig();
+        
+        // Get all currencies
+        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
+        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
+    
+        Optional<StoreCurrency> currency = currencies.stream()
+            .filter(i -> i.getCode().getCurrencyCode().equals(code))
+            .findFirst();
+    
+        return currency.orElse(null);
     }
 
 }

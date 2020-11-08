@@ -15,7 +15,6 @@ import com.cryptomorin.xseries.XMaterial;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopGateways;
 import nl.timvandijkhuizen.commerce.services.PaymentService;
@@ -127,15 +126,6 @@ public class MenuShopPayment implements PredefinedMenu {
 
         payButton.setClickListener(event -> {
             if (cart.isValid(Order.SCENARIO_PAY) && accepted.get()) {
-                PaymentUrl cachedUrl = cart.getPaymentUrl();
-
-                // Return cached URL if we've got one
-                if (cachedUrl != null) {
-                    sendPaymentUrl(player, menu, cachedUrl.getUrl());
-                    return;
-                }
-
-                // Create URL and cache it
                 UI.playSound(player, UI.SOUND_CLICK);
                 payActionLore.set(UI.color("Loading...", UI.COLOR_TEXT));
                 menu.disableItems();
@@ -145,8 +135,16 @@ public class MenuShopPayment implements PredefinedMenu {
                     menu.enableItems();
                     
                     if (url != null) {
-                        payActionLore.set(null);
-                        sendPaymentUrl(player, menu, url.getUrl());
+                        UI.playSound(player, UI.SOUND_SUCCESS);
+                        menu.close(player);
+
+                        // Send message
+                        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
+                        player.sendMessage("");
+                        player.sendMessage(UI.color("Complete your donation using this link:", UI.COLOR_PRIMARY, ChatColor.BOLD));
+                        player.sendMessage(UI.color(url, UI.COLOR_SECONDARY));
+                        player.sendMessage("");
+                        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
                     } else {
                         UI.playSound(player, UI.SOUND_ERROR);
                         payActionLore.set(UI.color("Failed to create payment url.", UI.COLOR_ERROR));
@@ -182,19 +180,6 @@ public class MenuShopPayment implements PredefinedMenu {
         menu.setItem(MenuItems.BACKGROUND, menu.getSize().getSlots() - 9 + 8);
 
         return menu;
-    }
-
-    private void sendPaymentUrl(Player player, Menu menu, String url) {
-        UI.playSound(player, UI.SOUND_SUCCESS);
-        menu.close(player);
-
-        // Send message
-        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
-        player.sendMessage("");
-        player.sendMessage(UI.color("Complete your donation using this link:", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        player.sendMessage(UI.color(url, UI.COLOR_SECONDARY));
-        player.sendMessage("");
-        player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
     }
 
 }

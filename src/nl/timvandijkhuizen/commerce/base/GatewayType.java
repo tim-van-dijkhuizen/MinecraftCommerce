@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.cryptomorin.xseries.XMaterial;
 
-import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
+import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 
 public interface GatewayType {
@@ -40,9 +40,9 @@ public interface GatewayType {
     /**
      * Creates a GatewayClient for this GatewayType.
      * 
-     * @param config
+     * @param gateway
      * @return A new GatewayClient
      */
-    public GatewayClient createClient(GatewayConfig config);
+    public GatewayClient createClient(Gateway gateway);
 
 }

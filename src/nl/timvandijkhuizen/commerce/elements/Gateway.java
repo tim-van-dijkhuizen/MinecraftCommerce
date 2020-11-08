@@ -83,7 +83,7 @@ public class Gateway extends Element {
 
     public GatewayClient getClient() {
         if (client == null) {
-            client = type.createClient(config);
+            client = type.createClient(this);
         }
 
         return client;

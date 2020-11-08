@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.commerce.base;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 
 public interface GatewayClient {
 
@@ -13,7 +12,7 @@ public interface GatewayClient {
      * @param order
      * @return PaymentUrl
      */
-    public PaymentUrl createPaymentUrl(Order order) throws Throwable;
+    public String createPaymentUrl(Order order) throws Throwable;
 
     /**
      * Handles a web request for this gateway.

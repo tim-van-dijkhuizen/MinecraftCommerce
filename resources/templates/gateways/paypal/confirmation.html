@@ -71,7 +71,6 @@
                             <li>Username: <span th:text="${order.playerName}">TestPlayer</span></li>
                             <li>Currency: <span th:text="${order.currency.code.displayName}">USD</span></li>
                             <li th:if="${order.gateway != null}">Gateway: <span th:text="${order.gateway.displayName}">TestGateway</span></li>
-                            <li th:if="${order.transaction != null}">Transaction reference: <span th:text="${order.transaction.reference}">36G551236X13GF23F</span></li>
                             <li>Total: <span th:text="${functions.formatPrice(order.total, order.currency)}">$10.50</span></p>
                         </ul>
                     </div>
@@ -88,12 +87,23 @@
                     </div>
 
                     <!-- Order fields -->
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-lg-5">
                         <h3>Order fields</h3>
 
                         <ul class="mb-0 pl-2 pl-lg-3" th:with="fieldData=${order.fieldData}">
                             <li th:each="option,loop : ${fieldData.options}" th:text="${option.name} + ' &rarr; ' + (${option.isValueEmpty(fieldData)} ? 'None' : ${option.getDisplayValue(fieldData)})">
                                 Key &rarr; Value
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Transactions -->
+                    <div class="col-md-12 mb-4">
+                        <h3>Transactions</h3>
+
+                        <ul class="mb-0 pl-2 pl-lg-3">
+                            <li th:each="transaction,loop : ${order.transactions}" th:text="${transaction.reference} + ' &rarr; ' + ${functions.formatPrice(transaction.amount, transaction.currency, order.currency)}">
+                                36G551236X13GF23F &rarr; $10.50
                             </li>
                         </ul>
                     </div>

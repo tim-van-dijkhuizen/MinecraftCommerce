@@ -10,7 +10,6 @@ import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.spigotutils.services.Service;
@@ -226,6 +225,15 @@ public interface StorageType extends Service {
     Order getCart(UUID playerUniqueId) throws Throwable;
 
     /**
+     * Returns an order by its id.
+     * 
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    Order getOrderById(int id) throws Throwable;
+    
+    /**
      * Returns an order by its UUID.
      * 
      * @param uniqueId
@@ -307,14 +315,6 @@ public interface StorageType extends Service {
      * @throws Throwable
      */
     void deleteLineItem(LineItem lineItem) throws Throwable;
-
-    /**
-     * Creates a PaymentUrl.
-     * 
-     * @param paymentUrl
-     * @throws Throwable
-     */
-    void createPaymentUrl(PaymentUrl paymentUrl) throws Throwable; 
 
     /**
      * Returns all Transactions belonging to the specified order.

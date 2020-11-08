@@ -4,40 +4,39 @@ import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
+import com.google.gson.JsonObject;
 import com.paypal.core.PayPalEnvironment;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.AmountBreakdown;
 import com.paypal.orders.AmountWithBreakdown;
 import com.paypal.orders.ApplicationContext;
-import com.paypal.orders.Item;
+import com.paypal.orders.Capture;
 import com.paypal.orders.LinkDescription;
 import com.paypal.orders.Money;
 import com.paypal.orders.Order;
 import com.paypal.orders.OrderRequest;
 import com.paypal.orders.OrdersCaptureRequest;
 import com.paypal.orders.OrdersCreateRequest;
+import com.paypal.orders.PurchaseUnit;
 import com.paypal.orders.PurchaseUnitRequest;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
-import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
-import nl.timvandijkhuizen.commerce.elements.LineItem;
-import nl.timvandijkhuizen.commerce.elements.PaymentUrl;
+import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
+import nl.timvandijkhuizen.commerce.helpers.JsonHelper;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
-import nl.timvandijkhuizen.commerce.services.OrderService;
+import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
@@ -51,21 +50,23 @@ public class ClientPayPal implements GatewayClient {
 
     public static final String COMPLETE_PATH = "/orders/complete";
     public static final String CONFIRMATION_PATH = "/orders/confirmation";
-    public static final long URL_TTL = TimeUnit.HOURS.toMillis(2);
 
+    private Gateway gateway;
     private PayPalEnvironment environment;
     private PayPalHttpClient client;
     private File template;
     public DecimalFormat amountFormat;
 
-    public ClientPayPal(String clientId, String clientSecret, boolean testMode, File template) {
+    public ClientPayPal(Gateway gateway, String clientId, String clientSecret, boolean testMode, File template) {
+        this.gateway = gateway;
+        
+        // Create environment and client
         if (testMode) {
             environment = new PayPalEnvironment.Sandbox(clientId, clientSecret);
         } else {
             environment = new PayPalEnvironment.Live(clientId, clientSecret);
         }
 
-        // Create client
         client = new PayPalHttpClient(environment);
 
         // Set template
@@ -75,12 +76,11 @@ public class ClientPayPal implements GatewayClient {
         DecimalFormatSymbols amountSymbols = new DecimalFormatSymbols();
             
         amountSymbols.setDecimalSeparator('.');
-        
         amountFormat = new DecimalFormat("##0.##", amountSymbols);
     }
 
     @Override
-    public PaymentUrl createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Throwable {
+    public String createPaymentUrl(nl.timvandijkhuizen.commerce.elements.Order order) throws Throwable {
         PurchaseUnitRequest unit = new PurchaseUnitRequest();
         
         // Get currency
@@ -88,7 +88,8 @@ public class ClientPayPal implements GatewayClient {
         String currencyCode = currency.getCode().getCurrencyCode();
         
         // Get converted price
-        float totalPrice = ShopHelper.convertPrice(order.getTotal(), currency);
+        float unpaid = order.getTotal() - order.getAmountPaid();
+        float totalPrice = ShopHelper.convertPrice(unpaid, currency);
         String totalValue = amountFormat.format(totalPrice);
 
         // Add amount
@@ -103,27 +104,6 @@ public class ClientPayPal implements GatewayClient {
 
         amount.amountBreakdown(new AmountBreakdown().itemTotal(itemTotal));
         unit.amountWithBreakdown(amount);
-
-        // Add items
-        List<Item> items = new ArrayList<>();
-
-        for (LineItem lineItem : order.getLineItems()) {
-            ProductSnapshot product = lineItem.getProduct();
-            Item item = new Item();
-
-            // Get converted price
-            float price = ShopHelper.convertPrice(product.getPrice(), currency);
-            String priceValue = amountFormat.format(price);
-            
-            item.name(product.getName());
-            item.description(product.getDescription());
-            item.unitAmount(new Money().currencyCode(currencyCode).value(priceValue));
-            item.quantity(String.valueOf(lineItem.getQuantity()));
-
-            items.add(item);
-        }
-
-        unit.items(items);
 
         // Create body
         OrderRequest requestBody = new OrderRequest();
@@ -156,7 +136,7 @@ public class ClientPayPal implements GatewayClient {
 
         return links.stream()
             .filter(link -> link.rel().equals("approve"))
-            .map(link -> new PaymentUrl(order.getId(), link.href(), System.currentTimeMillis() + URL_TTL))
+            .map(link -> link.href())
             .findFirst().orElse(null);
     }
 
@@ -175,7 +155,7 @@ public class ClientPayPal implements GatewayClient {
     }
 
     private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Throwable {
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        PaymentService paymentService = Commerce.getInstance().getService("payments");
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
 
@@ -202,10 +182,35 @@ public class ClientPayPal implements GatewayClient {
                 throw new ServerErrorHttpException("Failed to capture payment, please try again.");
             }
 
-            // Complete order
-            Transaction transaction = new Transaction(order.getId(), paypalOrder.id(), System.currentTimeMillis());
+            // Get order information
+            // ===========================
             
-            if (!orderService.completeOrder(order, transaction)) {
+            int orderId = order.getId();
+            StoreCurrency currency = null;
+            String reference = paypalOrder.id();
+            float amount = 0;
+            JsonObject meta = JsonHelper.toJsonObject(paypalOrder);
+            long dateCreated = System.currentTimeMillis();
+
+            // Get total amount and currency
+            PurchaseUnit unit = paypalOrder.purchaseUnits().get(0);
+            
+            for(Capture capture : unit.payments().captures()) {
+                Money money = capture.amount();
+                String currencyCode = money.currencyCode();
+                float captureAmount = Float.valueOf(money.value());
+                
+                if(currency == null) {
+                    currency = ShopHelper.getCurrencyByCode(currencyCode);
+                }
+                
+                amount += captureAmount;
+            }
+            
+            // Complete order
+            Transaction transaction = new Transaction(orderId, gateway, currency, reference, amount, meta, dateCreated);
+            
+            if (!paymentService.saveTransaction(transaction)) {
                 throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
             }
 

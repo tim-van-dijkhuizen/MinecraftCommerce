@@ -11,6 +11,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
+import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigTypes;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeFile;
@@ -52,13 +53,14 @@ public class GatewayPayPal implements GatewayType {
     }
 
     @Override
-    public GatewayClient createClient(GatewayConfig config) {
+    public GatewayClient createClient(Gateway gateway) {
+        GatewayConfig config = gateway.getConfig();
         String clientId = configClientId.getValue(config);
         String clientSecret = configClientSecret.getValue(config);
         boolean testMode = configTestMode.getValue(config);
         File template = configTemplate.getValue(config);
-
-        return new ClientPayPal(clientId, clientSecret, testMode, template);
+        
+        return new ClientPayPal(gateway, clientId, clientSecret, testMode, template);
     }
 
 }

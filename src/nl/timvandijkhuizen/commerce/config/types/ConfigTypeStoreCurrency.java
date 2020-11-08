@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce.config.types;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.bukkit.ChatColor;
@@ -11,6 +10,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
+import nl.timvandijkhuizen.commerce.helpers.DbHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
@@ -33,22 +33,13 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
     
     @Override
     public StoreCurrency getValue(OptionConfig config, ConfigOption<StoreCurrency> option) {
-        YamlConfig pluginConfig = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
-
-        // Get store currency
         String code = config.getString(option.getPath());
 
         if (code == null) {
             return null;
         }
 
-        Optional<StoreCurrency> currency = currencies.stream()
-            .filter(i -> i.getCode().getCurrencyCode().equals(code))
-            .findFirst();
-
-        return currency.orElse(null);
+        return DbHelper.parseCurrency(code);
     }
 
     @Override

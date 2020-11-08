@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
@@ -18,7 +17,6 @@ import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionOrderList;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
-import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -33,7 +31,6 @@ public class MenuOrderView implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        YamlConfig config = Commerce.getInstance().getConfig();
         Menu menu = new Menu("View Order", MenuSize.XXL);
         Order order = args.get(0);
 

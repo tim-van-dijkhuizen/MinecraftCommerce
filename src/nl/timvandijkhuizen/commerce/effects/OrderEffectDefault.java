@@ -41,7 +41,9 @@ public class OrderEffectDefault implements OrderEffect {
         // Send chat message
         player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));
         player.sendMessage("");
-        player.sendMessage(UI.color("Thank you for your donation! We’ve successfully added the items to your account.", UI.COLOR_PRIMARY));
+        player.sendMessage(UI.color("Thank you for your donation!", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        player.sendMessage("");
+        player.sendMessage(UI.color("We’ve successfully added the items to your account.", UI.COLOR_PRIMARY));
         player.sendMessage(UI.color("You can view your donation history using ", UI.COLOR_TEXT) + UI.color("/shop account", UI.COLOR_SECONDARY) + UI.color(".", UI.COLOR_TEXT));
         player.sendMessage("");
         player.sendMessage(UI.color(UI.LINE, UI.COLOR_TEXT, ChatColor.BOLD));

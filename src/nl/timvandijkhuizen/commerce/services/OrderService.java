@@ -23,7 +23,6 @@ import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
-import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
 import nl.timvandijkhuizen.commerce.variables.VariableFields;
@@ -157,6 +156,13 @@ public class OrderService extends BaseService {
             callback.accept(false);
             return;
         }
+        
+        // Update player name
+        Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
+        
+        if(player != null) {
+            order.updatePlayerName(player.getName());
+        }
 
         // Create or edit order
         ThreadHelper.executeAsync(() -> {
@@ -212,11 +218,13 @@ public class OrderService extends BaseService {
      * @param order
      * @return
      */
-    public boolean completeOrder(Order order, Transaction transaction) {
+    public boolean completeOrder(Order order) {
         StorageType storage = Commerce.getInstance().getStorage();
 
+        // Update order, execute commands and play effect
         try {
-            storage.createTransaction(transaction);
+            order.setCompleted(true);
+            storage.updateOrder(order);
             
             // Execute commands & play effect
             ThreadHelper.execute(() -> {
@@ -224,6 +232,7 @@ public class OrderService extends BaseService {
 
                 // Perform product commands
                 // =============================================
+                
                 for (LineItem lineItem : order.getLineItems()) {
                     ProductSnapshot product = lineItem.getProduct();
                     List<String> commands = product.getCommands();
@@ -240,6 +249,7 @@ public class OrderService extends BaseService {
 
                 // Play effect & show title
                 // =============================================
+                
                 Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
                 ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
                 OrderEffect effect = optionEffect.getValue(config);

@@ -10,6 +10,7 @@ import java.util.stream.StreamSupport;
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
+import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 
@@ -26,11 +27,11 @@ public class Order extends Element {
     private DataList<LineItem> lineItems;
     private OrderFieldData fieldData;
     private Gateway gateway;
+    
     private boolean completed;
-    private PaymentUrl paymentUrl;
     private Set<Transaction> transactions;
 
-    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, boolean completed, PaymentUrl paymentUrl, Set<Transaction> transactions) {
+    public Order(int id, UUID uniqueId, UUID playerUniqueId, String playerName, StoreCurrency currency, DataList<LineItem> lineItems, OrderFieldData fieldData, Gateway gateway, boolean completed, Set<Transaction> transactions) {
         this.setId(id);
         this.uniqueId = uniqueId;
         this.playerUniqueId = playerUniqueId;
@@ -40,7 +41,6 @@ public class Order extends Element {
         this.fieldData = fieldData;
         this.gateway = gateway;
         this.completed = completed;
-        this.paymentUrl = paymentUrl;
         this.transactions = transactions;
     }
 
@@ -116,6 +116,10 @@ public class Order extends Element {
     public String getPlayerName() {
         return playerName;
     }
+    
+    public void updatePlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
     public StoreCurrency getCurrency() {
         return currency;
@@ -123,16 +127,6 @@ public class Order extends Element {
 
     public void setCurrency(StoreCurrency currency) {
         this.currency = currency;
-    }
-
-    public float getTotal() {
-        float total = 0;
-
-        for (LineItem item : getLineItems()) {
-            total += item.getPrice();
-        }
-
-        return total;
     }
 
     public void addLineItem(LineItem lineItem) {
@@ -166,6 +160,38 @@ public class Order extends Element {
     public Gateway getGateway() {
         return gateway;
     }
+
+    public void setGateway(Gateway gateway) {
+        this.gateway = gateway;
+    }
+    
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+    
+    public float getTotal() {
+        float total = 0;
+
+        for (LineItem item : lineItems) {
+            total += item.getPrice();
+        }
+
+        return total;
+    }
+    
+    public float getAmountPaid() {
+        StoreCurrency baseCurrency = ShopHelper.getBaseCurrency();
+        float paid = 0;
+
+        for (Transaction transaction : transactions) {
+            float amount = transaction.getAmount();
+            StoreCurrency transactionCurrency = transaction.getCurrency();
+                
+            paid += ShopHelper.convertPrice(amount, transactionCurrency, baseCurrency);
+        }
+
+        return paid;
+    }
     
     public boolean isCompleted() {
         return completed;
@@ -173,18 +199,6 @@ public class Order extends Element {
     
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-    public void setGateway(Gateway gateway) {
-        this.gateway = gateway;
-    }
-
-    public PaymentUrl getPaymentUrl() {
-        return paymentUrl;
-    }
-    
-    public Set<Transaction> getTransactions() {
-        return transactions;
     }
 
 }
