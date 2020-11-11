@@ -1,5 +1,8 @@
 package nl.timvandijkhuizen.commerce.menu.content.products;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversation;
@@ -16,6 +19,7 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
+import nl.timvandijkhuizen.commerce.helpers.ValidationHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionProductList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
@@ -39,26 +43,26 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Icon button
         // ===========================
-        MenuItemBuilder iconButton = new MenuItemBuilder(product.getIcon());
+        MenuItemBuilder iconButton = new MenuItemBuilder();
 
+        iconButton.setTypeGenerator(() -> product.getIcon());
         iconButton.setName(UI.color("Icon", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        // Add validation errors to lore
-        if (product.hasErrors("icon")) {
-            iconButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            iconButton.addEnchantGlow();
-
-            for (String error : product.getErrors("icon")) {
-                iconButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-            }
-        }
-
-        iconButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        iconButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            ValidationHelper.addErrorLore(lore, product, "icon");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         iconButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_ICON.open(player, product);
+            Menus.PRODUCT_ICON.open(player, product, menu);
         });
 
         menu.setItem(iconButton, 11);
@@ -69,23 +73,22 @@ public class MenuProductEdit implements PredefinedMenu {
 
         nameButton.setName(UI.color("Name", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (product.getName().length() > 0) {
-            nameButton.addLore(UI.color(product.getName(), UI.COLOR_SECONDARY));
-        } else {
-            nameButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
-
-        nameButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (product.hasErrors("name")) {
-            nameButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            nameButton.addEnchantGlow();
-
-            for (String error : product.getErrors("name")) {
-                nameButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+        nameButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (product.getName().length() > 0) {
+                lore.add(UI.color(product.getName(), UI.COLOR_SECONDARY));
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        }
+
+            ValidationHelper.addErrorLore(lore, product, "name");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         nameButton.setClickListener(event -> {
@@ -102,7 +105,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 @Override
                 public Prompt acceptInput(ConversationContext context, String input) {
                     product.setName(input);
-                    Menus.PRODUCT_EDIT.open(player, product);
+                    menu.open(player);
                     return null;
                 }
             }).withLocalEcho(false).buildConversation(player);
@@ -119,27 +122,26 @@ public class MenuProductEdit implements PredefinedMenu {
 
         descriptionButton.setName(UI.color("Description", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (product.getDescription().length() > 0) {
-            String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
+        descriptionButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (product.getDescription().length() > 0) {
+                String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
 
-            for (String line : lines) {
-                descriptionButton.addLore(UI.color(line, UI.COLOR_SECONDARY));
+                for (String line : lines) {
+                    lore.add(UI.color(line, UI.COLOR_SECONDARY));
+                }
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        } else {
-            descriptionButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
 
-        descriptionButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (product.hasErrors("description")) {
-            descriptionButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            descriptionButton.addEnchantGlow();
-
-            for (String error : product.getErrors("description")) {
-                descriptionButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-            }
-        }
+            ValidationHelper.addErrorLore(lore, product, "description");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
@@ -156,7 +158,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 @Override
                 public Prompt acceptInput(ConversationContext context, String input) {
                     product.setDescription(input);
-                    Menus.PRODUCT_EDIT.open(player, product);
+                    menu.open(player);
                     return null;
                 }
             }).withLocalEcho(false).buildConversation(player);
@@ -173,23 +175,22 @@ public class MenuProductEdit implements PredefinedMenu {
 
         categoryButton.setName(UI.color("Category", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (product.getCategory() != null) {
-            categoryButton.addLore(UI.color(product.getCategory().getName(), UI.COLOR_SECONDARY));
-        } else {
-            categoryButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
-
-        categoryButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-        // Add validation errors to lore
-        if (product.hasErrors("category")) {
-            categoryButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            categoryButton.addEnchantGlow();
-
-            for (String error : product.getErrors("category")) {
-                categoryButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
+        categoryButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (product.getCategory() != null) {
+                lore.add(UI.color(product.getCategory().getName(), UI.COLOR_SECONDARY));
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        }
+
+            ValidationHelper.addErrorLore(lore, product, "category");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         categoryButton.setClickListener(event -> {
@@ -211,7 +212,7 @@ public class MenuProductEdit implements PredefinedMenu {
                     return;
                 }
 
-                Menus.PRODUCT_CATEGORY.open(player, product, categories);
+                Menus.PRODUCT_CATEGORY.open(player, product, categories, menu);
             });
         });
 
@@ -222,19 +223,19 @@ public class MenuProductEdit implements PredefinedMenu {
         MenuItemBuilder priceButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         priceButton.setName(UI.color("Price", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        priceButton.setLore(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY));
 
-        priceButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+        priceButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            lore.add(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY));
 
-        // Add validation errors to lore
-        if (product.hasErrors("price")) {
-            priceButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR, ChatColor.BOLD));
-            priceButton.addEnchantGlow();
-
-            for (String error : product.getErrors("price")) {
-                priceButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error, UI.COLOR_ERROR));
-            }
-        }
+            ValidationHelper.addErrorLore(lore, product, "price");
+            
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         // Set click listener
         priceButton.setClickListener(event -> {
@@ -251,7 +252,7 @@ public class MenuProductEdit implements PredefinedMenu {
                 @Override
                 protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
                     product.setPrice(input.floatValue());
-                    Menus.PRODUCT_EDIT.open(player, product);
+                    menu.open(player);
                     return null;
                 }
             }).withLocalEcho(false).buildConversation(player);
@@ -268,19 +269,26 @@ public class MenuProductEdit implements PredefinedMenu {
 
         commandsButton.setName(UI.color("Commands", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-        if (product.getCommands().size() > 0) {
-            for (Command command : product.getCommands()) {
-                commandsButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.COLOR_SECONDARY));
+        commandsButton.setLoreGenerator(() -> {
+            List<String> lore = new ArrayList<>();
+            
+            if (product.getCommands().size() > 0) {
+                for (Command command : product.getCommands()) {
+                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.COLOR_SECONDARY));
+                }
+            } else {
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
-        } else {
-            commandsButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-        }
 
-        commandsButton.addLore("", UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add("");
+            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            
+            return lore;
+        });
 
         commandsButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_COMMANDS.open(player, product);
+            Menus.PRODUCT_COMMANDS.open(player, product, menu);
         });
 
         menu.setItem(commandsButton, 33);
@@ -307,12 +315,9 @@ public class MenuProductEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
-        if (product.hasErrors()) {
-            saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
-        }
-
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
+            
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
             menu.disableItems();
             menu.refresh();
@@ -324,11 +329,12 @@ public class MenuProductEdit implements PredefinedMenu {
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");
-                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
-                    Menus.PRODUCT_EDIT.open(player, product);
+                    saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
                 }
+                
+                menu.refresh();
             });
         });
 

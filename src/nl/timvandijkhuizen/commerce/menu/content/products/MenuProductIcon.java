@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Product;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -21,7 +20,10 @@ public class MenuProductIcon implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Product Icon", 3, 7, 1, 1, 1, 5, 7);
+        
+        // Get arguments
         Product product = args.get(0);
+        Menu returnMenu = args.get(1);
         Material selected = product.getIcon();
 
         for (Material icon : Commerce.MATERIAL_ICONS) {
@@ -37,7 +39,7 @@ public class MenuProductIcon implements PredefinedMenu {
             item.setClickListener(event -> {
                 product.setIcon(icon);
                 UI.playSound(player, UI.SOUND_CLICK);
-                Menus.PRODUCT_EDIT.open(player, product);
+                returnMenu.open(player);
             });
 
             menu.addPagedItem(item);
@@ -48,7 +50,7 @@ public class MenuProductIcon implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_EDIT.open(player, product);
+            returnMenu.open(player);
         });
 
         menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);

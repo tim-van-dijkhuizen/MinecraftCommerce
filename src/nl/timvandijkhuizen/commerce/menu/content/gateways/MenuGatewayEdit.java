@@ -77,7 +77,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
                 @Override
                 public Prompt acceptInput(ConversationContext context, String input) {
                     gateway.setDisplayName(input);
-                    Menus.GATEWAY_EDIT.open(player, gateway);
+                    menu.open(player);
                     return null;
                 }
             }).withLocalEcho(false).buildConversation(player);
@@ -191,12 +191,9 @@ public class MenuGatewayEdit implements PredefinedMenu {
         // ===========================
         MenuItemBuilder saveButton = MenuItems.SAVE.clone();
 
-        if (gateway.hasErrors()) {
-            saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
-        }
-
         saveButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
+            
             saveButton.setLore(UI.color("Saving...", UI.COLOR_TEXT));
             menu.disableItems();
             menu.refresh();
@@ -208,11 +205,12 @@ public class MenuGatewayEdit implements PredefinedMenu {
                 if (success) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     saveButton.setLore("");
-                    menu.refresh();
                 } else {
                     UI.playSound(player, UI.SOUND_ERROR);
-                    Menus.GATEWAY_EDIT.open(player, gateway);
+                    saveButton.setLore(UI.color("Error: Field contains an invalid value.", UI.COLOR_ERROR));
                 }
+                
+                menu.refresh();
             });
         });
 

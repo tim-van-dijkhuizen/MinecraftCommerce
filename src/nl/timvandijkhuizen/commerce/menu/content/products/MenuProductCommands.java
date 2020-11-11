@@ -15,7 +15,6 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.OrderVariable;
 import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -32,27 +31,14 @@ public class MenuProductCommands implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
         PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1);
+        
+        // Get arguments
         Product product = args.get(0);
+        Menu returnMenu = args.get(1);
 
         // Add command buttons
         for (Command command : product.getCommands()) {
-            MenuItemBuilder item = new MenuItemBuilder(XMaterial.COMMAND_BLOCK);
-
-            item.setName(UI.color(command.getCommand(), UI.COLOR_PRIMARY, ChatColor.BOLD));
-            item.setLore("", UI.color("Right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-
-            item.setClickListener(event -> {
-                ClickType clickType = event.getClickType();
-
-                if (clickType == ClickType.RIGHT) {
-                    UI.playSound(player, UI.SOUND_DELETE);
-                    product.removeCommand(command);
-                    menu.removePagedItem(item);
-                    menu.refresh();
-                }
-            });
-
-            menu.addPagedItem(item);
+            addCommandButton(player, menu, product, command);
         }
 
         // Go back button
@@ -60,7 +46,7 @@ public class MenuProductCommands implements PredefinedMenu {
 
         backButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_EDIT.open(player, product);
+            returnMenu.open(player);
         });
 
         menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
@@ -107,7 +93,8 @@ public class MenuProductCommands implements PredefinedMenu {
 
                     UI.playSound(player, UI.SOUND_SUCCESS);
                     product.addCommand(newCommand);
-                    Menus.PRODUCT_COMMANDS.open(player, product);
+                    addCommandButton(player, menu, product, newCommand);
+                    menu.open(player);
 
                     return null;
                 }
@@ -120,6 +107,26 @@ public class MenuProductCommands implements PredefinedMenu {
         menu.setItem(createButton, menu.getSize().getSlots() - 9 + 5);
 
         return menu;
+    }
+    
+    private void addCommandButton(Player player, PagedMenu menu, Product product, Command command) {
+        MenuItemBuilder item = new MenuItemBuilder(XMaterial.COMMAND_BLOCK);
+
+        item.setName(UI.color(command.getCommand(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+        item.setLore("", UI.color("Right-click to delete.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+
+        item.setClickListener(event -> {
+            ClickType clickType = event.getClickType();
+
+            if (clickType == ClickType.RIGHT) {
+                UI.playSound(player, UI.SOUND_DELETE);
+                product.removeCommand(command);
+                menu.removePagedItem(item);
+                menu.refresh();
+            }
+        });
+        
+        menu.addPagedItem(item);
     }
 
 }

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import nl.timvandijkhuizen.commerce.elements.Category;
 import nl.timvandijkhuizen.commerce.elements.Product;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -21,8 +20,11 @@ public class MenuProductCategory implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Product Category", 3, 7, 1, 1, 1, 5, 7);
+        
+        // Get arguments
         Product product = args.get(0);
         Set<Category> categories = args.getSet(1);
+        Menu returnMenu = args.get(2);
         Category selected = product.getCategory();
 
         // Add category buttons
@@ -39,7 +41,7 @@ public class MenuProductCategory implements PredefinedMenu {
             item.setClickListener(event -> {
                 product.setCategory(category);
                 UI.playSound(player, UI.SOUND_CLICK);
-                Menus.PRODUCT_EDIT.open(player, product);
+                returnMenu.open(player);
             });
 
             menu.addPagedItem(item);
@@ -50,7 +52,7 @@ public class MenuProductCategory implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.PRODUCT_EDIT.open(player, product);
+            returnMenu.open(player);
         });
 
         menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);
