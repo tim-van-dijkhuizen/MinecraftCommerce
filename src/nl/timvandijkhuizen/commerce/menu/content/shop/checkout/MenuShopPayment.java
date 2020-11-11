@@ -13,11 +13,12 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
+import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopGateways;
-import nl.timvandijkhuizen.commerce.services.PaymentService;
+import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
@@ -35,12 +36,13 @@ public class MenuShopPayment implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         Menu menu = new Menu("Cart " + Icon.ARROW_RIGHT + " Payment (4/4)", MenuSize.LG);
-        PaymentService paymentService = Commerce.getInstance().getService("payments");
+        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         YamlConfig config = Commerce.getInstance().getConfig();
         
         // Get cart
         Order cart = args.get(0);
         Gateway gateway = cart.getGateway();
+        StoreCurrency currency = cart.getCurrency();
 
         // Check if we've got terms
         ConfigOption<List<String>> optionTerms = config.getOption("general.termsAndConditions");
@@ -119,6 +121,10 @@ public class MenuShopPayment implements PredefinedMenu {
                 }
             } else if (!accepted.get()) {
                 lore.add(UI.color("You must accept the terms & conditions.", UI.COLOR_ERROR));
+            } else {
+                lore.add("");
+                lore.add(UI.color("Total: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(cart.getTotal(), currency), UI.COLOR_SECONDARY));
+                lore.add(UI.color("Paid: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(cart.getAmountPaid(), currency), UI.COLOR_SECONDARY));
             }
 
             return lore;
@@ -131,7 +137,7 @@ public class MenuShopPayment implements PredefinedMenu {
                 menu.disableItems();
                 menu.refresh();
 
-                paymentService.createPaymentUrl(cart, url -> {
+                gatewayService.createPaymentUrl(cart, url -> {
                     menu.enableItems();
                     
                     if (url != null) {

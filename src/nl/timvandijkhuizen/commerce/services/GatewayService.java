@@ -6,9 +6,11 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.commerce.Commerce;
+import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
+import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
 import nl.timvandijkhuizen.commerce.gateways.paypal.GatewayPayPal;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
@@ -93,6 +95,32 @@ public class GatewayService extends BaseService {
         ThreadHelper.executeAsync(() -> storage.deleteGateway(gateway), () -> callback.accept(true), error -> {
             callback.accept(false);
             ConsoleHelper.printError("Failed to delete gateway: " + error.getMessage(), error);
+        });
+    }
+    
+    /**
+     * Create a payment URL for the specified order.
+     * 
+     * @param order
+     * @param callback
+     */
+    public void createPaymentUrl(Order order, Consumer<String> callback) {
+        Gateway gateway = order.getGateway();
+
+        // Make sure the gateway was set
+        if (gateway == null) {
+            ConsoleHelper.printError("Unable to create payment link: Missing gateway");
+            callback.accept(null);
+            return;
+        }
+
+        // Create payment link
+        ThreadHelper.getAsync(() -> {
+            GatewayClient client = gateway.getClient();
+            return client.createPaymentUrl(order);
+        }, callback, error -> {
+            callback.accept(null);
+            ConsoleHelper.printError("Failed to create payment url", error);
         });
     }
 

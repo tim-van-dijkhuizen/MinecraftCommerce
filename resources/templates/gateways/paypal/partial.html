@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+        <title th:text="'Partial payment - ' + ${serverName}">Page Title - Minecraft Commerce</title>
+    </head>
+    <body>
+        <style>
+            body {
+                background: url('data:image/png;base64,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') repeat;
+                background-color: #394756;
+                font-family: 'Roboto Slab', serif;
+                font-size: 1.2rem;
+                color: #394756;
+            }
+
+            h1 {
+                color: #85FFC7;
+                font-weight: 700;
+            }
+
+            main {
+                background-color: #FAFAFA;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+            }
+        </style>
+
+        <div class="container">
+            <div class="row">    
+                <div class="col-md-12">
+                    <h1 class="py-5" th:text="${serverName}">Minecraft Commerce</h1>
+                </div>
+            </div>
+
+            <main class="p-4 p-lg-5 mb-5">
+                <div class="row">
+                    <div class="col-md-9 mb-4">
+                        <p class="mb-0">Payment was successful but your donation has not been completed. You've paid less than the total donation value.</p>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <p class="mb-0">Amount paid: <span th:text="${functions.formatPrice(order.amountPaid, order.currency)}">$5.00</span></p>
+                        <p class="mb-0">Donation total: <span th:text="${functions.formatPrice(order.total, order.currency)}">$10.00</span></p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </body>
+</html>

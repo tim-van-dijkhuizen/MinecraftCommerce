@@ -23,8 +23,10 @@ import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
+import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
 import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
+import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.variables.VariableFields;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
@@ -213,16 +215,30 @@ public class OrderService extends BaseService {
     }
 
     /**
-     * Completes an order.
+     * Completes an order. Returns true if the order was
+     * completed and false if the transaction was saved
+     * but there is still an outstanding debt.
      * 
      * @param order
+     * @param transaction
      * @return
+     * @throws Throwable
      */
-    public boolean completeOrder(Order order) {
+    public boolean completeOrder(Order order, Transaction transaction) throws Throwable {
         StorageType storage = Commerce.getInstance().getStorage();
 
-        // Update order, execute commands and play effect
-        try {
+        // Save transaction
+        storage.createTransaction(transaction);
+        
+        // Complete order if they've paid enough
+        StoreCurrency transactionCurrency = transaction.getCurrency();
+        StoreCurrency baseCurrency = ShopHelper.getBaseCurrency();
+        float newAmount = ShopHelper.convertPrice(transaction.getAmount(), transactionCurrency, baseCurrency);
+        float newPaid = order.getAmountPaid() + newAmount;
+        
+        ConsoleHelper.printDebug("COMPLETE ORDER 1 -> " + newPaid + " / " + order.getTotal());
+        
+        if(order.getTotal() <= newPaid) {
             order.setCompleted(true);
             storage.updateOrder(order);
             
@@ -258,12 +274,15 @@ public class OrderService extends BaseService {
                     effect.playEffect(player, order);
                 }
             });
-
+            
+            ConsoleHelper.printDebug("COMPLETE ORDER 1 -> COMPLETED");
+            
             return true;
-        } catch (Throwable e) {
-            ConsoleHelper.printError("Failed to complete order", e);
-            return false;
         }
+        
+        ConsoleHelper.printDebug("COMPLETE ORDER 1 -> PARTIAL");
+
+        return false;
     }
 
     /**

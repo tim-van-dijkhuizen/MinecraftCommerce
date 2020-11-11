@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import com.cryptomorin.xseries.XMaterial;
 
@@ -13,10 +15,12 @@ import nl.timvandijkhuizen.commerce.base.ProductSnapshot;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
+import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopCart;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
+import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
@@ -110,7 +114,18 @@ public class ShopHelper {
             return lore;
         });
 
-        item.setClickListener(new ActionShopCart());
+        item.setClickListener(event -> {
+            Player whoClicked = event.getPlayer();
+            Menu activeMenu = event.getMenu();
+            ClickType clickType = event.getClickType();
+
+            if (clickType == ClickType.LEFT) {
+                new ActionShopCart().onClick(event);
+            } else if (clickType == ClickType.RIGHT) {
+                UI.playSound(whoClicked, UI.SOUND_CLICK);
+                Menus.SHOP_CURRENCY.open(whoClicked, cart, activeMenu);
+            }
+        });
 
         return item;
     }

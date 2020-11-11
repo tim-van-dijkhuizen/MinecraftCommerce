@@ -36,7 +36,7 @@ import nl.timvandijkhuizen.commerce.elements.Transaction;
 import nl.timvandijkhuizen.commerce.helpers.JsonHelper;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
-import nl.timvandijkhuizen.commerce.services.PaymentService;
+import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
@@ -49,6 +49,7 @@ import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 public class ClientPayPal implements GatewayClient {
 
     public static final String COMPLETE_PATH = "/orders/complete";
+    public static final String PARTIAL_PATH = "/orders/partial";
     public static final String CONFIRMATION_PATH = "/orders/confirmation";
 
     private Gateway gateway;
@@ -147,6 +148,8 @@ public class ClientPayPal implements GatewayClient {
 
         if (path.equals(COMPLETE_PATH)) {
             return handleOrderComplete(order, url);
+        } else if (path.equals(PARTIAL_PATH)) {
+            return handleOrderPartial(order);
         } else if (path.equals(CONFIRMATION_PATH)) {
             return handleOrderConfirmation(order);
         } else {
@@ -155,7 +158,7 @@ public class ClientPayPal implements GatewayClient {
     }
 
     private FullHttpResponse handleOrderComplete(nl.timvandijkhuizen.commerce.elements.Order order, URL url) throws Throwable {
-        PaymentService paymentService = Commerce.getInstance().getService("payments");
+        OrderService orderService = Commerce.getInstance().getService("orders");
         QueryParameters queryParams = WebHelper.parseQuery(url);
         String paypalOrderId = queryParams.getString("token");
 
@@ -217,8 +220,8 @@ public class ClientPayPal implements GatewayClient {
             
             Transaction transaction = new Transaction(orderId, gateway, transactionCurrency, reference, transactionAmount, meta, dateCreated);
             
-            if (!paymentService.saveTransaction(transaction)) {
-                throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
+            if (!orderService.completeOrder(order, transaction)) {
+                return WebHelper.createRedirectRequest(PARTIAL_PATH + "?order=" + order.getUniqueId());
             }
 
             return WebHelper.createRedirectRequest(CONFIRMATION_PATH + "?order=" + order.getUniqueId());
@@ -228,6 +231,20 @@ public class ClientPayPal implements GatewayClient {
         }
     }
 
+    private FullHttpResponse handleOrderPartial(nl.timvandijkhuizen.commerce.elements.Order order) {
+        WebService webService = Commerce.getInstance().getService("web");
+
+        // Create map with variables
+        Map<String, Object> variables = new HashMap<>();
+
+        variables.put("order", order);
+
+        // Render template
+        String content = webService.renderTemplate("gateways/paypal/partial.html", variables);
+        
+        return WebHelper.createResponse(content);
+    }
+    
     private FullHttpResponse handleOrderConfirmation(nl.timvandijkhuizen.commerce.elements.Order order) {
         WebService webService = Commerce.getInstance().getService("web");
 

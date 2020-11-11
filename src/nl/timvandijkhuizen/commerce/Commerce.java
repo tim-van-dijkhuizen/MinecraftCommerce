@@ -31,7 +31,6 @@ import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
-import nl.timvandijkhuizen.commerce.services.PaymentService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.commerce.services.UserService;
 import nl.timvandijkhuizen.commerce.services.WebService;
@@ -211,7 +210,6 @@ public class Commerce extends PluginBase {
             new UserService(),
             new OrderService(),
             new FieldService(),
-            new PaymentService(),
             commandService,
             new WebService()
         };
