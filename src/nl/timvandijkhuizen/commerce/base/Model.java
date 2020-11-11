@@ -9,6 +9,14 @@ public abstract class Model implements ModelInterface {
 
     private Map<String, Set<String>> errors = new HashMap<>();
 
+    /**
+     * Validates the model for the specified scenario.
+     * This method should add errors using addError()
+     * and return false.
+     * 
+     * @param scenario
+     * @return
+     */
     protected abstract boolean validate(String scenario);
 
     @Override

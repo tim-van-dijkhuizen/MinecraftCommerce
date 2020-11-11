@@ -30,7 +30,9 @@ public interface OrderVariable {
      * 
      * @param order
      * @param item
+     * @param property
      * @return
+     * @throws Throwable
      */
     String getValue(Order order, LineItem item, String property) throws Throwable;
 

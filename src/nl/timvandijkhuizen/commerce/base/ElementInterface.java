@@ -3,9 +3,9 @@ package nl.timvandijkhuizen.commerce.base;
 public interface ElementInterface extends ModelInterface {
 
     /**
-     * Returns the element id. This can be null.
+     * Returns the element id.
      * 
-     * @return
+     * @return An integer or null if unsaved.
      */
     Integer getId();
 

@@ -10,7 +10,8 @@ public interface GatewayClient {
      * Creates a payment URL for the specified order.
      * 
      * @param order
-     * @return PaymentUrl
+     * @return
+     * @throws Throwable
      */
     public String createPaymentUrl(Order order) throws Throwable;
 
@@ -19,7 +20,8 @@ public interface GatewayClient {
      * 
      * @param order
      * @param request
-     * @return FullHttpResponse
+     * @return
+     * @throws Throwable
      */
     public FullHttpResponse handleWebRequest(Order order, FullHttpRequest request) throws Throwable;
 
