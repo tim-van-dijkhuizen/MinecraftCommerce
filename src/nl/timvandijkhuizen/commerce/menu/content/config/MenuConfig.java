@@ -57,8 +57,8 @@ public class MenuConfig implements PredefinedMenu {
                 }
 
                 lore.add("");
-                lore.add(UI.color("Left-click to edit this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-                lore.add(UI.color("Right-click to reset this setting.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Right-click to reset.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
 
                 return lore;
             });

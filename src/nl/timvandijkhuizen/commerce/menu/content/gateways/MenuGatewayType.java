@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
-import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -22,7 +21,10 @@ public class MenuGatewayType implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         PagedMenu menu = new PagedMenu("Gateway Type", 3, 7, 1, 1, 1, 5, 7);
+        
+        // Get arguments
         Gateway gateway = args.get(0);
+        Menu returnMenu = args.get(1);
         GatewayType selected = gateway.getType();
 
         for (GatewayType type : gatewayService.getTypes()) {
@@ -38,7 +40,7 @@ public class MenuGatewayType implements PredefinedMenu {
             item.setClickListener(event -> {
                 gateway.setType(type);
                 UI.playSound(player, UI.SOUND_CLICK);
-                Menus.GATEWAY_EDIT.open(player, gateway);
+                returnMenu.open(player);
             });
 
             menu.addPagedItem(item);
@@ -49,7 +51,7 @@ public class MenuGatewayType implements PredefinedMenu {
 
         cancelButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
-            Menus.GATEWAY_EDIT.open(player, gateway);
+            returnMenu.open(player);
         });
 
         menu.setItem(cancelButton, menu.getSize().getSlots() - 9 + 3);

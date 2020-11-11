@@ -13,7 +13,7 @@ import nl.timvandijkhuizen.commerce.menu.content.fields.MenuFieldList;
 import nl.timvandijkhuizen.commerce.menu.content.fields.MenuFieldType;
 import nl.timvandijkhuizen.commerce.menu.content.gateways.MenuGatewayEdit;
 import nl.timvandijkhuizen.commerce.menu.content.gateways.MenuGatewayList;
-import nl.timvandijkhuizen.commerce.menu.content.gateways.MenuGatewayOptions;
+import nl.timvandijkhuizen.commerce.menu.content.gateways.MenuGatewayConfig;
 import nl.timvandijkhuizen.commerce.menu.content.gateways.MenuGatewayType;
 import nl.timvandijkhuizen.commerce.menu.content.orders.MenuOrderFields;
 import nl.timvandijkhuizen.commerce.menu.content.orders.MenuOrderItems;
@@ -64,7 +64,7 @@ public enum Menus {
     GATEWAY_LIST(new MenuGatewayList()),
     GATEWAY_EDIT(new MenuGatewayEdit()),
     GATEWAY_TYPE(new MenuGatewayType()),
-    GATEWAY_OPTIONS(new MenuGatewayOptions()),
+    GATEWAY_OPTIONS(new MenuGatewayConfig()),
 
     ORDER_LIST(new MenuOrderList()),
     ORDER_VIEW(new MenuOrderView()),
