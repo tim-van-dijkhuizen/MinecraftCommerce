@@ -44,19 +44,27 @@ public class MenuShopCart implements PredefinedMenu {
             // Set product name
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            // Split lore into smaller lines
-            String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
+            item.setLoreGenerator(() -> {
+                List<String> lore = new ArrayList<>();
+                
+                // Split lore into smaller lines
+                String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
 
-            for (String line : lines) {
-                item.addLore(UI.color(line, UI.COLOR_TEXT));
-            }
+                for (String line : lines) {
+                    lore.add(UI.color(line, UI.COLOR_TEXT));
+                }
 
-            // Category and price
-            item.addLore("", UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
-            item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(lineItem.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY), "");
+                // Category and price
+                lore.add("");
+                lore.add(UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(lineItem.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY));
 
-            item.addLore("", UI.color("Left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
-            item.addLore(UI.color("Right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add("");
+                lore.add(UI.color("Left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("Right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                
+                return lore;
+            });
 
             item.setClickListener(event -> {
                 ClickType type = event.getClickType();
