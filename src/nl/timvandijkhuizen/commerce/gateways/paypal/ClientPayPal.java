@@ -184,31 +184,38 @@ public class ClientPayPal implements GatewayClient {
 
             // Get order information
             // ===========================
-            
-            int orderId = order.getId();
-            StoreCurrency currency = null;
-            String reference = paypalOrder.id();
-            float amount = 0;
-            JsonObject meta = JsonHelper.toJsonObject(paypalOrder);
-            long dateCreated = System.currentTimeMillis();
 
-            // Get total amount and currency
             PurchaseUnit unit = paypalOrder.purchaseUnits().get(0);
+            StoreCurrency transactionCurrency = null;
+            float transactionAmount = 0;
             
             for(Capture capture : unit.payments().captures()) {
                 Money money = capture.amount();
                 String currencyCode = money.currencyCode();
-                float captureAmount = Float.valueOf(money.value());
+                StoreCurrency currency = ShopHelper.getCurrencyByCode(currencyCode);
+                float amount = Float.valueOf(money.value());
                 
-                if(currency == null) {
-                    currency = ShopHelper.getCurrencyByCode(currencyCode);
+                // Set transaction currency
+                if(transactionCurrency == null) {
+                    transactionCurrency = currency;
                 }
                 
-                amount += captureAmount;
+                // Add raw amount or convert if its a different currency
+                if(currency.equals(transactionCurrency)) {
+                    transactionAmount += amount;
+                } else {
+                    transactionAmount += ShopHelper.convertPrice(amount, currency, transactionCurrency);
+                }
+                
             }
             
-            // Complete order
-            Transaction transaction = new Transaction(orderId, gateway, currency, reference, amount, meta, dateCreated);
+            // Create transaction
+            int orderId = order.getId();
+            String reference = paypalOrder.id();
+            JsonObject meta = JsonHelper.toJsonObject(paypalOrder);
+            long dateCreated = System.currentTimeMillis();
+            
+            Transaction transaction = new Transaction(orderId, gateway, transactionCurrency, reference, transactionAmount, meta, dateCreated);
             
             if (!paymentService.saveTransaction(transaction)) {
                 throw new ServerErrorHttpException("An error occurred while completing your order, please contact an administrator.");
