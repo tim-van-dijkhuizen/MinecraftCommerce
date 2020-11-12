@@ -73,6 +73,7 @@ public class Commerce extends PluginBase {
     private ConfigOption<Integer> configWebPort;
     private ConfigOption<File> configWebCertificate;
     private ConfigOption<File> configWebPrivateKey;
+    private ConfigOption<File> configWebFavicon;
     private ConfigOption<StorageType> configStorageType;
 
     @Override
@@ -93,6 +94,7 @@ public class Commerce extends PluginBase {
 
         // Create options
         ConfigTypeFile configTypeCert = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.pem$") });
+        ConfigTypeFile configTypeIco = new ConfigTypeFile(new Pattern[] { Pattern.compile("^.*\\.ico$") });
 
         configServerName = new ConfigOption<>("general.serverName", "Server Name", XMaterial.PAPER, ConfigTypes.STRING)
             .setRequired(true)
@@ -135,11 +137,13 @@ public class Commerce extends PluginBase {
             .setDefaultValue(8080)
             .setMeta(new DataArguments(true));
 
-        configWebCertificate = new ConfigOption<>("webserver.certificate", "SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
+        configWebCertificate = new ConfigOption<>("webserver.certificate", "Webserver SSL Certificate", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
 
-        configWebPrivateKey = new ConfigOption<>("webserver.privateKey", "SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
+        configWebPrivateKey = new ConfigOption<>("webserver.privateKey", "Webserver SSL Private Key", XMaterial.TRIPWIRE_HOOK, configTypeCert)
             .setMeta(new DataArguments(true));
+        
+        configWebFavicon = new ConfigOption<>("webserver.favicon", "Webserver Favicon", XMaterial.PAINTING, configTypeIco);
         
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", XMaterial.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
@@ -160,6 +164,7 @@ public class Commerce extends PluginBase {
         config.addOption(configWebPort);
         config.addOption(configWebCertificate);
         config.addOption(configWebPrivateKey);
+        config.addOption(configWebFavicon);
         config.addOption(configStorageType);
     }
 

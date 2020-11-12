@@ -20,15 +20,17 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpChunkedInput;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedStream;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.webserver.ContentType;
@@ -220,34 +222,25 @@ public class WebHelper {
 
     public static void sendFileResponse(ChannelHandlerContext ctx, FullHttpRequest request, String contentType, InputStream stream) throws IOException {
         boolean keepAlive = request != null ? HttpUtil.isKeepAlive(request) : false;
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        long fileLength = stream.available();
 
-        // Add headers
-        ZonedDateTime dateTime = ZonedDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
-
-        DefaultHttpHeaders headers = (DefaultHttpHeaders) response.headers();
-        headers.set(HttpHeaderNames.DATE, dateTime.format(formatter));
+        HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpHeaders headers = response.headers();
+        
+        HttpUtil.setContentLength(response, fileLength);
         headers.set(HttpHeaderNames.CONTENT_TYPE, contentType);
-        headers.set(HttpHeaderNames.CONTENT_LENGTH, Integer.toString(stream.available()));
-        headers.set(HttpHeaderNames.TRANSFER_ENCODING, HttpHeaderValues.CHUNKED);
 
-        if (keepAlive) {
-            headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        } else {
+        if (!keepAlive) {
             headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+        } else if (request.protocolVersion().equals(HttpVersion.HTTP_1_0)) {
+            headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
-        // Write the initial response
+        // Write the initial line and the header.
         ctx.write(response);
 
-        // Write content and close
-        ChunkedStream chunkedFile = new ChunkedStream(stream, 8192);
-
-        ctx.write(new HttpChunkedInput(chunkedFile), ctx.newProgressivePromise());
-
-        // Send empty chunk
-        ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        // Write the content.
+        ChannelFuture future = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedStream(stream)), ctx.newProgressivePromise());
 
         if (!keepAlive) {
             future.addListener(ChannelFutureListener.CLOSE);
