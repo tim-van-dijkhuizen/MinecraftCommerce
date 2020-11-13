@@ -67,8 +67,6 @@ public class Commerce extends PluginBase {
     private ConfigOption<SimpleDateFormat> configDateFormat;
     private ConfigOption<List<String>> configTerms;
     private ConfigOption<OrderEffect> configOrderEffect;
-    private ConfigOption<String> configOrderTitle;
-    private ConfigOption<String> configOrderSubtitle;
     private ConfigOption<String> configWebHost;
     private ConfigOption<Integer> configWebPort;
     private ConfigOption<File> configWebCertificate;
@@ -122,12 +120,6 @@ public class Commerce extends PluginBase {
             .setRequired(true)
             .setDefaultValue(new OrderEffectDefault());
 
-        configOrderTitle = new ConfigOption<>("general.completeTitle", "Order Complete Title", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
-            .setDefaultValue("&a&lOrder Completed");
-
-        configOrderSubtitle = new ConfigOption<>("general.completeSubtitle", "Order Complete Subtitle", XMaterial.OAK_SIGN, ConfigTypes.MESSAGE)
-            .setDefaultValue("&7Thanks for your order {playerUsername}");
-
         configWebHost = new ConfigOption<>("webserver.host", "Webserver Host", XMaterial.COBWEB, ConfigTypes.STRING)
             .setRequired(true)
             .setDefaultValue(getServer().getIp());
@@ -158,8 +150,6 @@ public class Commerce extends PluginBase {
         config.addOption(configDateFormat);
         config.addOption(configTerms);
         config.addOption(configOrderEffect);
-        config.addOption(configOrderTitle);
-        config.addOption(configOrderSubtitle);
         config.addOption(configWebHost);
         config.addOption(configWebPort);
         config.addOption(configWebCertificate);
