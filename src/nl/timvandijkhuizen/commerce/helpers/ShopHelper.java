@@ -80,18 +80,16 @@ public class ShopHelper {
         item.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
 
-            lore.add(UI.color("Items:", UI.COLOR_TEXT));
-
             if (lineItems.size() > 0) {
                 for (LineItem lineItem : lineItems) {
                     ProductSnapshot product = lineItem.getProduct();
                     String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
                     String price = ShopHelper.formatPrice(lineItem.getPrice(), currency);
 
-                    lore.add(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+                    lore.add(UI.color(Icon.SQUARE + " " + quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_TEXT));
                 }
             } else {
-                lore.add(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             }
 
             // Add total to lore

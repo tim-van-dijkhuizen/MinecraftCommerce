@@ -37,7 +37,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         Gateway gateway = args.get(0, new Gateway());
-        Menu menu = new Menu((gateway.getId() != null ? "Edit" : "Create") + " Gateway", MenuSize.LG);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (gateway.getId() != null ? "Edit" : "Create") + " Gateway", MenuSize.LG);
 
         // Display name button
         // ===========================
@@ -49,9 +49,9 @@ public class MenuGatewayEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (gateway.getDisplayName().length() > 0) {
-                lore.add(UI.color(gateway.getDisplayName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(gateway.getDisplayName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, gateway, "displayName");
@@ -98,9 +98,9 @@ public class MenuGatewayEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (gateway.getType() != null) {
-                lore.add(UI.color(gateway.getType().getDisplayName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(gateway.getType().getDisplayName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, gateway, "type");
@@ -137,9 +137,9 @@ public class MenuGatewayEdit implements PredefinedMenu {
                         GatewayConfig config = gateway.getConfig();
 
                         if (!option.isValueEmpty(config)) {
-                            lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color(option.getDisplayValue(config), UI.COLOR_SECONDARY));
+                            lore.add(UI.color(Icon.SQUARE + " " + option.getName() + ": " + option.getDisplayValue(config), UI.COLOR_TEXT));
                         } else {
-                            lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                            lore.add(UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
                         }
                     }
                 } else {

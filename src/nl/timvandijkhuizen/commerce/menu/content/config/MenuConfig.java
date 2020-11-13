@@ -28,7 +28,7 @@ public class MenuConfig implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         Commerce plugin = Commerce.getInstance();
-        PagedMenu menu = new PagedMenu("Configuration", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Configuration", 3, 7, 1, 1, 1, 5, 7);
         YamlConfig config = plugin.getConfig();
 
         // Add configuration options
@@ -46,9 +46,9 @@ public class MenuConfig implements PredefinedMenu {
                 List<String> lore = new ArrayList<>();
 
                 if (!option.isValueEmpty(config)) {
-                    lore.add(UI.color(option.getDisplayValue(config), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getDisplayValue(config), UI.COLOR_TEXT));
                 } else {
-                    lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                    lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
                 }
 
                 if (restart) {

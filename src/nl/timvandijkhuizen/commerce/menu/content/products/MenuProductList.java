@@ -29,7 +29,7 @@ public class MenuProductList implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         ProductService productService = Commerce.getInstance().getService("products");
-        PagedMenu menu = new PagedMenu("Products", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Products", 3, 7, 1, 1);
 
         // Add product buttons
         Set<Product> products = args.getSet(0);
@@ -52,7 +52,7 @@ public class MenuProductList implements PredefinedMenu {
             item.addLore(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY), "");
 
             // Commands
-            item.addLore(UI.color("Commands:", UI.COLOR_TEXT));
+            item.addLore(UI.color("Commands:", UI.COLOR_PRIMARY));
 
             if (product.getCommands().size() > 0) {
                 for (Command command : product.getCommands()) {

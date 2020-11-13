@@ -22,6 +22,7 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuFieldEdit implements PredefinedMenu {
@@ -30,7 +31,7 @@ public class MenuFieldEdit implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         FieldService fieldService = Commerce.getInstance().getService("fields");
         Field field = args.get(0, new Field());
-        Menu menu = new Menu((field.getId() != null ? "Edit" : "Create") + " Field", MenuSize.XXL);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (field.getId() != null ? "Edit" : "Create") + " Field", MenuSize.XXL);
 
         // Icon button
         // ===========================
@@ -58,9 +59,9 @@ public class MenuFieldEdit implements PredefinedMenu {
 
         menu.setItem(iconButton, 11);
 
-        // Name button
+        // Handle button
         // ===========================
-        MenuItemBuilder handleButton = new MenuItemBuilder(XMaterial.PAPER);
+        MenuItemBuilder handleButton = new MenuItemBuilder(XMaterial.LEVER);
 
         handleButton.setName(UI.color("Handle", UI.COLOR_PRIMARY, ChatColor.BOLD));
 
@@ -68,9 +69,9 @@ public class MenuFieldEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (field.getHandle().length() > 0) {
-                lore.add(UI.color(field.getHandle(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(field.getHandle(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, field, "handle");
@@ -105,9 +106,9 @@ public class MenuFieldEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (field.getName().length() > 0) {
-                lore.add(UI.color(field.getName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(field.getName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, field, "name");
@@ -145,10 +146,10 @@ public class MenuFieldEdit implements PredefinedMenu {
                 String[] lines = WordUtils.wrap(field.getDescription(), 40).split("\n");
 
                 for (String line : lines) {
-                    lore.add(UI.color(line, UI.COLOR_SECONDARY));
+                    lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
             
             ValidationHelper.addErrorLore(lore, field, "description");
@@ -183,9 +184,9 @@ public class MenuFieldEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (field.getType() != null) {
-                lore.add(UI.color(field.getType().getDisplayName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(field.getType().getDisplayName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, field, "type");

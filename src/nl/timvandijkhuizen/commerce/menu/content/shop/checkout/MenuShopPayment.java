@@ -35,7 +35,7 @@ public class MenuShopPayment implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        Menu menu = new Menu("Cart " + Icon.ARROW_RIGHT + " Payment (4/4)", MenuSize.LG);
+        Menu menu = new Menu("Shop " + Icon.ARROW_RIGHT + " Payment (4/4)", MenuSize.LG);
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
         YamlConfig config = Commerce.getInstance().getConfig();
         

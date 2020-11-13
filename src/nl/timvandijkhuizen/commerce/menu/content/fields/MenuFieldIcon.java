@@ -13,13 +13,14 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuFieldIcon implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Field Icon", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Field Icon", 3, 7, 1, 1, 1, 5, 7);
         
         Field field = args.get(0);
         Menu returnMenu = args.get(1);

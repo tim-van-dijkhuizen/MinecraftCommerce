@@ -45,21 +45,18 @@ public class MenuShopCart implements PredefinedMenu {
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             item.setLoreGenerator(() -> {
+                String[] description = WordUtils.wrap(product.getDescription(), 40).split("\n");
                 List<String> lore = new ArrayList<>();
                 
-                // Split lore into smaller lines
-                String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
-
-                for (String line : lines) {
+                // Create lore
+                for (String line : description) {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
 
-                // Category and price
                 lore.add("");
-                lore.add(UI.color("Category: ", UI.COLOR_TEXT) + UI.color(product.getCategoryName(), UI.COLOR_SECONDARY));
-                lore.add(UI.color("Price: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(lineItem.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY));
-
+                lore.add(UI.color(ShopHelper.formatPrice(lineItem.getPrice(), cart.getCurrency()), UI.COLOR_SECONDARY));
                 lore.add("");
+                
                 lore.add(UI.color("Left-click to increase the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 lore.add(UI.color("Right-click to decrease the quantity.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 

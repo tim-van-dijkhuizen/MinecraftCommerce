@@ -16,13 +16,14 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuGatewayConfig implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Gateway Config", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Gateway Config", 3, 7, 1, 1, 1, 5, 7);
         
         // Get arguments
         Gateway gateway = args.get(0);
@@ -39,9 +40,9 @@ public class MenuGatewayConfig implements PredefinedMenu {
                 List<String> lore = new ArrayList<>();
 
                 if (!option.isValueEmpty(config)) {
-                    lore.add(UI.color(option.getDisplayValue(config), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getDisplayValue(config), UI.COLOR_TEXT));
                 } else {
-                    lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                    lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
                 }
 
                 lore.add("");

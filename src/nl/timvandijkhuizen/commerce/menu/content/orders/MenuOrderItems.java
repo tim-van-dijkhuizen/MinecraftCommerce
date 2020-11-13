@@ -22,7 +22,7 @@ public class MenuOrderItems implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Order Items", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Order Items", 3, 7, 1, 1, 1, 5, 7);
         Order order = args.get(0);
 
         for (LineItem lineItem : order.getLineItems()) {

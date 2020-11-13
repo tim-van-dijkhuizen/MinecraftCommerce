@@ -25,7 +25,7 @@ import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
-public class MenuShopAccountOrders implements PredefinedMenu {
+public class MenuShopOrders implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
@@ -39,12 +39,15 @@ public class MenuShopAccountOrders implements PredefinedMenu {
 
             // Set order name
             item.setName(UI.color(order.getUniqueId().toString(), UI.COLOR_PRIMARY, ChatColor.BOLD));
+            
+            // Set order lore
             item.addLore(UI.color("Currency: ", UI.COLOR_TEXT) + UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_SECONDARY));
+            item.addLore(UI.color("Total: ", UI.COLOR_TEXT) + UI.color(ShopHelper.formatPrice(order.getTotal(), order.getCurrency()), UI.COLOR_SECONDARY));
 
             // Add LineItems
             DataList<LineItem> lineItems = order.getLineItems();
 
-            item.addLore("", UI.color("Items", UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.addLore("", UI.color("Items", UI.COLOR_PRIMARY));
 
             if (lineItems.size() > 0) {
                 for (LineItem lineItem : lineItems) {
@@ -52,17 +55,17 @@ public class MenuShopAccountOrders implements PredefinedMenu {
                     String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
                     String price = ShopHelper.formatPrice(lineItem.getPrice(), order.getCurrency());
 
-                    item.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+                    item.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_TEXT));
                 }
             } else {
-                item.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                item.addLore(UI.TAB + UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             // Add fields
             OrderFieldData fieldData = order.getFieldData();
             Collection<ConfigOption<?>> options = fieldData.getOptions();
 
-            item.addLore("", UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
+            item.addLore("", UI.color("Fields", UI.COLOR_PRIMARY));
 
             if (options.size() > 0) {
                 for (ConfigOption<?> option : options) {
@@ -75,7 +78,7 @@ public class MenuShopAccountOrders implements PredefinedMenu {
                     item.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
                 }
             } else {
-                item.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                item.addLore(UI.TAB + UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             menu.addPagedItem(item);

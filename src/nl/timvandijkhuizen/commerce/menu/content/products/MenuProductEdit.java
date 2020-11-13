@@ -39,7 +39,7 @@ public class MenuProductEdit implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         ProductService productService = Commerce.getInstance().getService("products");
         Product product = args.get(0, new Product());
-        Menu menu = new Menu((product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);
 
         // Icon button
         // ===========================
@@ -77,9 +77,9 @@ public class MenuProductEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (product.getName().length() > 0) {
-                lore.add(UI.color(product.getName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(product.getName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, product, "name");
@@ -129,10 +129,10 @@ public class MenuProductEdit implements PredefinedMenu {
                 String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
 
                 for (String line : lines) {
-                    lore.add(UI.color(line, UI.COLOR_SECONDARY));
+                    lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, product, "description");
@@ -179,9 +179,9 @@ public class MenuProductEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (product.getCategory() != null) {
-                lore.add(UI.color(product.getCategory().getName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(product.getCategory().getName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, product, "category");
@@ -227,7 +227,7 @@ public class MenuProductEdit implements PredefinedMenu {
         priceButton.setLoreGenerator(() -> {
             List<String> lore = new ArrayList<>();
             
-            lore.add(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_SECONDARY));
+            lore.add(UI.color(ShopHelper.formatPrice(product.getPrice()), UI.COLOR_TEXT));
 
             ValidationHelper.addErrorLore(lore, product, "price");
             
@@ -274,10 +274,10 @@ public class MenuProductEdit implements PredefinedMenu {
             
             if (product.getCommands().size() > 0) {
                 for (Command command : product.getCommands()) {
-                    lore.add(UI.color(UI.TAB + Icon.SQUARE + " " + command.getCommand(), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(Icon.SQUARE + " " + command.getCommand(), UI.COLOR_TEXT));
                 }
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             lore.add("");

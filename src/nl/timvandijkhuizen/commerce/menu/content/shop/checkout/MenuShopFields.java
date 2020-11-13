@@ -30,7 +30,7 @@ public class MenuShopFields implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Cart " + Icon.ARROW_RIGHT + " Fields (2/4)", 3, 7, 1, 1, 2, 5, 6);
+        PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Fields (2/4)", 3, 7, 1, 1, 2, 5, 6);
         OrderService orderService = Commerce.getInstance().getService("orders");
 
         // Add field buttons

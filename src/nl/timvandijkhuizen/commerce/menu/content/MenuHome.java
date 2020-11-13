@@ -17,19 +17,20 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuHome implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        Menu menu = new Menu("Commerce", MenuSize.XL);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " Home", MenuSize.XL);
 
         // Configuration button
         MenuItemBuilder configButton = new MenuItemBuilder(XMaterial.COMPARATOR);
 
         configButton.setName(UI.color("Configuration", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        configButton.setLore(UI.color("Manage your configuration", UI.COLOR_TEXT));
+        configButton.setLore(UI.color("Manage your configuration.", UI.COLOR_TEXT));
 
         configButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
@@ -41,8 +42,8 @@ public class MenuHome implements PredefinedMenu {
         // Categories button
         MenuItemBuilder categoriesButton = new MenuItemBuilder(XMaterial.CHEST_MINECART);
 
-        categoriesButton.setName(UI.color("Product Categories", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        categoriesButton.setLore(UI.color("Manage product categories", UI.COLOR_TEXT));
+        categoriesButton.setName(UI.color("Categories", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        categoriesButton.setLore(UI.color("Manage your categories.", UI.COLOR_TEXT));
         categoriesButton.setClickListener(new ActionCategoryList());
 
         menu.setItem(categoriesButton, 13);
@@ -51,7 +52,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder productsButton = new MenuItemBuilder(XMaterial.CHEST);
 
         productsButton.setName(UI.color("Products", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        productsButton.setLore(UI.color("Manage products", UI.COLOR_TEXT));
+        productsButton.setLore(UI.color("Manage your products.", UI.COLOR_TEXT));
         productsButton.setClickListener(new ActionProductList());
 
         menu.setItem(productsButton, 15);
@@ -59,8 +60,8 @@ public class MenuHome implements PredefinedMenu {
         // Order fields button
         MenuItemBuilder fieldsButton = new MenuItemBuilder(XMaterial.OAK_SIGN);
 
-        fieldsButton.setName(UI.color("Order fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        fieldsButton.setLore(UI.color("Manage order fields", UI.COLOR_TEXT));
+        fieldsButton.setName(UI.color("Fields", UI.COLOR_PRIMARY, ChatColor.BOLD));
+        fieldsButton.setLore(UI.color("Manage your fields.", UI.COLOR_TEXT));
         fieldsButton.setClickListener(new ActionFieldList());
 
         menu.setItem(fieldsButton, 20);
@@ -69,7 +70,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder gatewayButton = new MenuItemBuilder(XMaterial.OAK_FENCE_GATE);
 
         gatewayButton.setName(UI.color("Gateways", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        gatewayButton.setLore(UI.color("Manage gateways", UI.COLOR_TEXT));
+        gatewayButton.setLore(UI.color("Manage your gateways.", UI.COLOR_TEXT));
         gatewayButton.setClickListener(new ActionGatewayList());
 
         menu.setItem(gatewayButton, 22);
@@ -78,7 +79,7 @@ public class MenuHome implements PredefinedMenu {
         MenuItemBuilder orderButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 
         orderButton.setName(UI.color("Orders", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        orderButton.setLore(UI.color("Manage orders", UI.COLOR_TEXT));
+        orderButton.setLore(UI.color("Manage your orders.", UI.COLOR_TEXT));
         orderButton.setClickListener(new ActionOrderList());
 
         menu.setItem(orderButton, 24);

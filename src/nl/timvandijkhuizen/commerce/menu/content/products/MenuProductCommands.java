@@ -30,7 +30,7 @@ public class MenuProductCommands implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         OrderService orderService = Commerce.getInstance().getService("orders");
-        PagedMenu menu = new PagedMenu("Product Commands", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Product Commands", 3, 7, 1, 1);
         
         // Get arguments
         Product product = args.get(0);

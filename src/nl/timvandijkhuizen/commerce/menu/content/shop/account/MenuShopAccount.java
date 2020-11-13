@@ -26,7 +26,7 @@ public class MenuShopAccount implements PredefinedMenu {
         MenuItemBuilder preferencesButton = new MenuItemBuilder(XMaterial.COMPARATOR);
 
         preferencesButton.setName(UI.color("My Preferences", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        preferencesButton.setLore(UI.color("Manage your preferences", UI.COLOR_TEXT));
+        preferencesButton.setLore(UI.color("Manage your preferences.", UI.COLOR_TEXT));
 
         preferencesButton.setClickListener(event -> {
             UI.playSound(player, UI.SOUND_CLICK);
@@ -47,7 +47,7 @@ public class MenuShopAccount implements PredefinedMenu {
         MenuItemBuilder ordersButton = new MenuItemBuilder(XMaterial.WRITABLE_BOOK);
 
         ordersButton.setName(UI.color("My Donations", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        ordersButton.setLore(UI.color("View your donation history", UI.COLOR_TEXT));
+        ordersButton.setLore(UI.color("View your donation history.", UI.COLOR_TEXT));
         ordersButton.setClickListener(new ActionShopOrderHistory());
 
         menu.setItem(ordersButton, 15);

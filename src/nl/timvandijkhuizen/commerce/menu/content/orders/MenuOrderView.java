@@ -31,7 +31,7 @@ public class MenuOrderView implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        Menu menu = new Menu("View Order", MenuSize.XXL);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " View Order", MenuSize.XXL);
         Order order = args.get(0);
 
         // UniqueId button
@@ -40,7 +40,7 @@ public class MenuOrderView implements PredefinedMenu {
 
         uniqueIdButton.setSkullOwner(order.getPlayerUniqueId());
         uniqueIdButton.setName(UI.color("Player UniqueId", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_SECONDARY));
+        uniqueIdButton.addLore(UI.color(order.getPlayerUniqueId().toString(), UI.COLOR_TEXT));
 
         menu.setItem(uniqueIdButton, 11);
 
@@ -49,7 +49,7 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder usernameButton = new MenuItemBuilder(XMaterial.NAME_TAG);
 
         usernameButton.setName(UI.color("Player Username", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_SECONDARY));
+        usernameButton.addLore(UI.color(order.getPlayerName(), UI.COLOR_TEXT));
 
         menu.setItem(usernameButton, 13);
 
@@ -58,7 +58,7 @@ public class MenuOrderView implements PredefinedMenu {
         MenuItemBuilder currencyButton = new MenuItemBuilder(XMaterial.SUNFLOWER);
 
         currencyButton.setName(UI.color("Currency", UI.COLOR_PRIMARY, ChatColor.BOLD));
-        currencyButton.addLore(UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_SECONDARY));
+        currencyButton.addLore(UI.color(order.getCurrency().getCode().getDisplayName(), UI.COLOR_TEXT));
 
         menu.setItem(currencyButton, 15);
 
@@ -77,10 +77,10 @@ public class MenuOrderView implements PredefinedMenu {
                 String quantity = lineItem.getQuantity() > 1 ? (lineItem.getQuantity() + "x ") : "";
                 String price = ShopHelper.formatPrice(lineItem.getPrice());
 
-                itemsButton.addLore(UI.TAB + UI.color(Icon.SQUARE, UI.COLOR_TEXT) + " " + UI.color(quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_SECONDARY));
+                itemsButton.addLore(UI.color(Icon.SQUARE + " " + quantity + product.getName() + " " + Icon.ARROW_RIGHT + " " + price, UI.COLOR_TEXT));
             }
         } else {
-            itemsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            itemsButton.addLore(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
         }
 
         itemsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -110,10 +110,10 @@ public class MenuOrderView implements PredefinedMenu {
                     value = UI.color(option.getDisplayValue(fieldData), UI.COLOR_SECONDARY);
                 }
 
-                fieldsButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
+                fieldsButton.addLore(UI.color(Icon.SQUARE + " " + option.getName() + ": ", UI.COLOR_TEXT) + value);
             }
         } else {
-            fieldsButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            fieldsButton.addLore(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
         }
 
         fieldsButton.addLore("", UI.color("Click to view details.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
@@ -134,10 +134,10 @@ public class MenuOrderView implements PredefinedMenu {
 
         if (transactions.size() > 0) {
             for (Transaction transaction : transactions) {
-                transactionButton.addLore(UI.TAB + UI.color(Icon.SQUARE + " ", UI.COLOR_TEXT) + UI.color(transaction.getReference(), UI.COLOR_SECONDARY));
+                transactionButton.addLore(UI.color(Icon.SQUARE + " " + transaction.getReference(), UI.COLOR_TEXT));
             }
         } else {
-            transactionButton.addLore(UI.TAB + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            transactionButton.addLore(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
         }
         
         menu.setItem(transactionButton, 33);

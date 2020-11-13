@@ -13,13 +13,14 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuProductCategory implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Product Category", 3, 7, 1, 1, 1, 5, 7);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Product Category", 3, 7, 1, 1, 1, 5, 7);
         
         // Get arguments
         Product product = args.get(0);

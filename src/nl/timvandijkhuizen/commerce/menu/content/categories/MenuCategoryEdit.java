@@ -26,6 +26,7 @@ import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuCategoryEdit implements PredefinedMenu {
@@ -34,7 +35,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
     public Menu create(Player player, DataArguments args) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
         Category category = args.get(0, new Category());
-        Menu menu = new Menu((category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
+        Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
 
         // Icon button
         // ===========================
@@ -72,9 +73,9 @@ public class MenuCategoryEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (category.getName().length() > 0) {
-                lore.add(UI.color(category.getName(), UI.COLOR_SECONDARY));
+                lore.add(UI.color(category.getName(), UI.COLOR_TEXT));
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, category, "name");
@@ -124,10 +125,10 @@ public class MenuCategoryEdit implements PredefinedMenu {
                 String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
 
                 for (String line : lines) {
-                    lore.add(UI.color(line, UI.COLOR_SECONDARY));
+                    lore.add(UI.color(line, UI.COLOR_TEXT));
                 }
             } else {
-                lore.add(UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
             }
 
             ValidationHelper.addErrorLore(lore, category, "description");

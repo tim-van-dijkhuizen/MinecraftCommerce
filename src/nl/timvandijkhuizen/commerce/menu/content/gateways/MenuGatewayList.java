@@ -29,7 +29,7 @@ public class MenuGatewayList implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         GatewayService gatewayService = Commerce.getInstance().getService("gateways");
-        PagedMenu menu = new PagedMenu("Gateways", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Gateways", 3, 7, 1, 1);
 
         // Add gateway buttons
         Set<Gateway> gateways = args.getSet(0);
@@ -43,7 +43,7 @@ public class MenuGatewayList implements PredefinedMenu {
             item.setLore(UI.color("Type: ", UI.COLOR_TEXT) + UI.color(gateway.getType().getDisplayName(), UI.COLOR_SECONDARY), "");
 
             // Add configuration to lore
-            item.addLore(UI.color("Configuration:", UI.COLOR_TEXT));
+            item.addLore(UI.color("Configuration:", UI.COLOR_PRIMARY));
 
             if (options.size() > 0) {
                 for (ConfigOption<?> option : options) {

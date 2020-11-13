@@ -48,9 +48,9 @@ public class MenuShopPreferences implements PredefinedMenu {
                 }
                 
                 if (!option.isValueEmpty(preferences)) {
-                    lore.add(UI.color("Value: ", UI.COLOR_TEXT) + UI.color(option.getDisplayValue(preferences), UI.COLOR_SECONDARY));
+                    lore.add(UI.color(option.getDisplayValue(preferences), UI.COLOR_TEXT));
                 } else {
-                    lore.add(UI.color("Value: ", UI.COLOR_TEXT) + UI.color("None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+                    lore.add(UI.color("None", UI.COLOR_TEXT, ChatColor.ITALIC));
                 }
 
                 lore.add("");

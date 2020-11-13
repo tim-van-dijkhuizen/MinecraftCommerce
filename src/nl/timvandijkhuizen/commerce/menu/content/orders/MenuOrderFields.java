@@ -17,13 +17,14 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuOrderFields implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        PagedMenu menu = new PagedMenu("Order Fields", 3, 7, 1, 1, 2, 5, 6);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Order Fields", 3, 7, 1, 1, 2, 5, 6);
 
         // Get order and fields
         Order order = args.get(0);

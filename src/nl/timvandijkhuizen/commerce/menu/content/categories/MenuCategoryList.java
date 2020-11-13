@@ -19,6 +19,7 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
 public class MenuCategoryList implements PredefinedMenu {
@@ -26,7 +27,7 @@ public class MenuCategoryList implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         CategoryService categoryService = Commerce.getInstance().getService("categories");
-        PagedMenu menu = new PagedMenu("Product Categories", 3, 7, 1, 1);
+        PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Categories", 3, 7, 1, 1);
 
         // Add category buttons
         Set<Category> categories = args.getSet(0);
