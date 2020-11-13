@@ -42,7 +42,6 @@ import nl.timvandijkhuizen.commerce.webserver.QueryParameters;
 import nl.timvandijkhuizen.commerce.webserver.errors.BadRequestHttpException;
 import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
 import nl.timvandijkhuizen.commerce.webserver.errors.ServerErrorHttpException;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
