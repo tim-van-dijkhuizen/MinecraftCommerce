@@ -17,7 +17,6 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.shop.ActionShopCart;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -29,9 +28,7 @@ public class ShopHelper {
 
     public static StoreCurrency getBaseCurrency() {
         YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<StoreCurrency> option = config.getOption("general.baseCurrency");
-        
-        return option.getValue(config);
+        return config.getOptionValue("general.baseCurrency");
     }
     
     public static float convertPrice(float price, StoreCurrency to) {
@@ -61,14 +58,11 @@ public class ShopHelper {
     }
     
     public static StoreCurrency getCurrencyByCode(String code) {
+        YamlConfig config = Commerce.getInstance().getConfig();
         StoreCurrency currency = DbHelper.parseCurrency(code);
         
         if(currency == null) {
-            YamlConfig config = Commerce.getInstance().getConfig();
-            ConfigOption<StoreCurrency> baseCurrencyOption = config.getOption("general.baseCurrency");
-            StoreCurrency baseCurrency = baseCurrencyOption.getValue(config);
-            
-            currency = baseCurrency;
+            currency = config.getOptionValue("general.baseCurrency");
         }
         
         return currency;

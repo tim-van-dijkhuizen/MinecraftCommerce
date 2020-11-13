@@ -18,7 +18,6 @@ import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.config.sources.GatewayConfig;
 import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
@@ -91,8 +90,7 @@ public class DbHelper {
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
         
         // Get all currencies
-        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
+        List<StoreCurrency> currencies = pluginConfig.getOptionValue("general.currencies");
     
         Optional<StoreCurrency> currency = currencies.stream()
             .filter(i -> i.getCode().getCurrencyCode().equals(code))

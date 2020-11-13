@@ -114,11 +114,10 @@ public class ClientPayPal implements GatewayClient {
 
         // Set application context
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
-        ConfigOption<String> optionServerName = pluginConfig.getOption("general.serverName");
         URL returnUrl = WebHelper.createWebUrl(COMPLETE_PATH + "?order=" + order.getUniqueId());
 
         ApplicationContext context = new ApplicationContext()
-            .brandName(optionServerName.getValue(pluginConfig))
+            .brandName(pluginConfig.getOptionValue("general.serverName"))
             .returnUrl(returnUrl.toString()).landingPage("LOGIN");
 
         requestBody.applicationContext(context);

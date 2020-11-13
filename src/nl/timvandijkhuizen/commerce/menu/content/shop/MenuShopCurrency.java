@@ -11,7 +11,6 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.services.OrderService;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
@@ -35,8 +34,7 @@ public class MenuShopCurrency implements PredefinedMenu {
 
         // Get available currencies
         YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = config.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(config);
+        List<StoreCurrency> currencies = config.getOptionValue("general.currencies");
 
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);

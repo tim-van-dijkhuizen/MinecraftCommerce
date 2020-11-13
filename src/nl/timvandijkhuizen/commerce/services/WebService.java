@@ -72,8 +72,7 @@ public class WebService extends BaseService {
         bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
 
         // Bind to configured port
-        ConfigOption<Integer> optionPort = config.getOption("webserver.port");
-        int port = optionPort.getValue(config);
+        int port = config.getOptionValue("webserver.port");
 
         ConsoleHelper.printInfo("Starting webserver on port " + port);
 
@@ -142,11 +141,8 @@ public class WebService extends BaseService {
         Context context = new Context();
 
         // Add globals
-        ConfigOption<String> serverName = config.getOption("general.serverName");
-        ConfigOption<Boolean> devMode = config.getOption("general.devMode");
-
-        context.setVariable("serverName", serverName.getValue(config));
-        context.setVariable("devMode", devMode.getValue(config));
+        context.setVariable("serverName", config.getOptionValue("general.serverName"));
+        context.setVariable("devMode", config.getOptionValue("general.devMode"));
 
         // Add functions
         context.setVariable("functions", templateFunctions);

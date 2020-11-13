@@ -76,17 +76,13 @@ public class MenuShopPayment implements PredefinedMenu {
                     menu.refresh();
                 } else if (!optionTerms.isValueEmpty(config) && type == ClickType.RIGHT) {
                     List<String> terms = optionTerms.getValue(config);
-                    
-                    // Get server name
-                    ConfigOption<String> optionServerName = config.getOption("general.serverName");
-                    String serverName = optionServerName.getValue(config);
-                    
+
                     // Create book
                     ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
                     BookMeta meta = (BookMeta) book.getItemMeta();
                     
                     meta.setTitle("Terms & Conditions");
-                    meta.setAuthor(serverName);
+                    meta.setAuthor(config.getOptionValue("general.serverName"));
                     meta.setPages(terms);
                     
                     book.setItemMeta(meta);

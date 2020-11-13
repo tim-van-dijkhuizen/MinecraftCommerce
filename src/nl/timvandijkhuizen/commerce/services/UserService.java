@@ -31,8 +31,7 @@ public class UserService extends BaseService {
     @Override
     public void init() throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<StoreCurrency> optionBaseCurrency = config.getOption("general.baseCurrency");
-        StoreCurrency baseCurrency = optionBaseCurrency.getValue(config);
+        StoreCurrency baseCurrency = config.getOptionValue("general.baseCurrency");
 
         // Create user options
         ConfigOption<StoreCurrency> optionCurrency = new ConfigOption<>("currency", "Currency", XMaterial.SUNFLOWER, new ConfigTypeStoreCurrency(false))

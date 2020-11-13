@@ -32,7 +32,6 @@ import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUsername;
 import nl.timvandijkhuizen.commerce.variables.VariableQuantity;
 import nl.timvandijkhuizen.commerce.variables.VariableUniqueId;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
@@ -108,8 +107,7 @@ public class OrderService extends BaseService {
     public Order createCart(Player player) {
         UserService userService = Commerce.getInstance().getService("users");
         UserPreferences preferences = userService.getPreferences(player);
-        ConfigOption<StoreCurrency> optionCurrency = preferences.getOption("currency");
-        StoreCurrency currency = optionCurrency.getValue(preferences);
+        StoreCurrency currency = preferences.getOptionValue("currency");
 
         return new Order(UUID.randomUUID(), player.getUniqueId(), player.getName(), currency);
     }
@@ -267,8 +265,7 @@ public class OrderService extends BaseService {
                 // =============================================
                 
                 Player player = Bukkit.getPlayer(order.getPlayerUniqueId());
-                ConfigOption<OrderEffect> optionEffect = config.getOption("general.completeEffect");
-                OrderEffect effect = optionEffect.getValue(config);
+                OrderEffect effect = config.getOptionValue("general.completeEffect");
 
                 if (player != null) {
                     effect.playEffect(player, order);

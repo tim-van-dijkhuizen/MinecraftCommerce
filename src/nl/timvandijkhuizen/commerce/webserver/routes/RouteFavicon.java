@@ -10,7 +10,6 @@ import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.webserver.ContentType;
 import nl.timvandijkhuizen.commerce.webserver.StaticRoute;
 import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
-import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 
 public class RouteFavicon implements StaticRoute {
@@ -18,8 +17,7 @@ public class RouteFavicon implements StaticRoute {
     @Override
     public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
-        ConfigOption<File> option = config.getOption("webserver.favicon");
-        File favicon = option.getValue(config);
+        File favicon = config.getOptionValue("webserver.favicon");
 
         if (favicon == null) {
             throw new NotFoundHttpException("");

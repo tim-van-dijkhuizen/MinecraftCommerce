@@ -70,8 +70,7 @@ public class ConfigTypeStoreCurrency implements ConfigType<StoreCurrency> {
 
         // Get available currencies
         YamlConfig pluginConfig = Commerce.getInstance().getConfig();
-        ConfigOption<List<StoreCurrency>> currenciesOption = pluginConfig.getOption("general.currencies");
-        List<StoreCurrency> currencies = currenciesOption.getValue(pluginConfig);
+        List<StoreCurrency> currencies = pluginConfig.getOptionValue("general.currencies");
 
         for (StoreCurrency currency : currencies) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.SUNFLOWER);
