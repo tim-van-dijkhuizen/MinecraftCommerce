@@ -1,11 +1,6 @@
 package nl.timvandijkhuizen.commerce.menu.content.products;
 
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -17,6 +12,7 @@ import nl.timvandijkhuizen.commerce.elements.Command;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
@@ -77,31 +73,19 @@ public class MenuProductCommands implements PredefinedMenu {
         }
 
         createButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("Type the command you want to add:", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    Command newCommand = new Command(input);
-
-                    UI.playSound(player, UI.SOUND_SUCCESS);
-                    product.addCommand(newCommand);
-                    addCommandButton(player, menu, product, newCommand);
-                    menu.open(player);
-
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("Type the command you want to add:", UI.COLOR_PRIMARY), (ctx, input) -> {
+                Command newCommand = new Command(input);
+
+                UI.playSound(player, UI.SOUND_SUCCESS);
+                product.addCommand(newCommand);
+                addCommandButton(player, menu, product, newCommand);
+                menu.open(player);
+
+                return null; 
+            });
         });
 
         menu.setItem(createButton, menu.getSize().getSlots() - 9 + 5);

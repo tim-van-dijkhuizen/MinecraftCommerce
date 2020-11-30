@@ -5,11 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
@@ -21,6 +16,7 @@ import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionCategoryList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -88,26 +84,14 @@ public class MenuCategoryEdit implements PredefinedMenu {
 
         // Set click listener
         nameButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the name of the category?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    category.setName(input);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+            
+            InputHelper.getString(player, UI.color("What should be the name of the category?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                category.setName(input);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(nameButton, 13);
@@ -141,26 +125,14 @@ public class MenuCategoryEdit implements PredefinedMenu {
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the description of the category?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    category.setDescription(input);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the description of the category?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                category.setDescription(input);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(descriptionButton, 15);

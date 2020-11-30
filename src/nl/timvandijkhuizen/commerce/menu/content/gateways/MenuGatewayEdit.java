@@ -5,11 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
@@ -23,6 +18,7 @@ import nl.timvandijkhuizen.commerce.menu.actions.ActionGatewayList;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -64,26 +60,14 @@ public class MenuGatewayEdit implements PredefinedMenu {
 
         // Set click listener
         displayNameButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the display name of the gateway?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    gateway.setDisplayName(input);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the display name of the gateway?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                gateway.setDisplayName(input);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(displayNameButton, 11);

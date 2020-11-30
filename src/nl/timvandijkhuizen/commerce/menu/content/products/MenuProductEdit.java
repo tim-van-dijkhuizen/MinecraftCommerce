@@ -5,12 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.NumericPrompt;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
@@ -25,6 +19,7 @@ import nl.timvandijkhuizen.commerce.menu.actions.ActionProductList;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -92,26 +87,14 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set click listener
         nameButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the name of the product?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    product.setName(input);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the name of the product?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                product.setName(input);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(nameButton, 13);
@@ -145,26 +128,14 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the description of the product?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    product.setDescription(input);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getString(player, UI.color("What should be the description of the product?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                product.setDescription(input);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(descriptionButton, 15);
@@ -239,26 +210,14 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set click listener
         priceButton.setClickListener(event -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
-
-            Conversation conversation = factory.withFirstPrompt(new NumericPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the price of the product?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-                    product.setPrice(input.floatValue());
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+
+            InputHelper.getNumber(player, UI.color("What should be the price of the product?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                product.setPrice(input.floatValue());
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(priceButton, 31);

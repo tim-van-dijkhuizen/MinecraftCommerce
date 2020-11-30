@@ -8,21 +8,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.NumericPrompt;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
-import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.Model;
 import nl.timvandijkhuizen.commerce.helpers.ValidationHelper;
 import nl.timvandijkhuizen.spigotutils.config.ConfigObject;
 import nl.timvandijkhuizen.spigotutils.config.ConfigObjectData;
+import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuClick;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
@@ -213,26 +207,15 @@ public class StoreCurrency extends Model implements ConfigObject {
 
         // Set click listener
         conversionRateButton.setClickListener(clickEvent -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
 
-            Conversation conversation = factory.withFirstPrompt(new NumericPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the conversion rate?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-                    conversionRate = input.floatValue();
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+            
+            InputHelper.getNumber(player, UI.color("What should be the conversion rate?", UI.COLOR_PRIMARY), (ctx, value) -> {
+                conversionRate = value.floatValue();
+                menu.open(player);
+                return null;  
+            });
         });
 
         menu.setItem(conversionRateButton, 13);
@@ -264,26 +247,15 @@ public class StoreCurrency extends Model implements ConfigObject {
 
         // Set click listener
         patternButton.setClickListener(clickEvent -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
 
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the pattern?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    pattern = input;
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+            
+            InputHelper.getString(player, UI.color("What should be the pattern?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                pattern = input;
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(patternButton, 15);
@@ -314,26 +286,15 @@ public class StoreCurrency extends Model implements ConfigObject {
 
         // Set click listener
         groupSeparatorButton.setClickListener(clickEvent -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
 
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the group separator?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    groupSeparator = input.charAt(0);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+            
+            InputHelper.getString(player, UI.color("What should be the group separator?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                groupSeparator = input.charAt(0);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(groupSeparatorButton, 21);
@@ -364,26 +325,15 @@ public class StoreCurrency extends Model implements ConfigObject {
 
         // Set click listener
         decimalSeparatorButton.setClickListener(clickEvent -> {
-            ConversationFactory factory = new ConversationFactory(Commerce.getInstance());
-
             UI.playSound(player, UI.SOUND_CLICK);
 
-            Conversation conversation = factory.withFirstPrompt(new StringPrompt() {
-                @Override
-                public String getPromptText(ConversationContext context) {
-                    return UI.color("What should be the decimal separator?", UI.COLOR_PRIMARY);
-                }
-
-                @Override
-                public Prompt acceptInput(ConversationContext context, String input) {
-                    decimalSeparator = input.charAt(0);
-                    menu.open(player);
-                    return null;
-                }
-            }).withLocalEcho(false).buildConversation(player);
-
             menu.close(player);
-            conversation.begin();
+            
+            InputHelper.getString(player, UI.color("What should be the decimal separator?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                decimalSeparator = input.charAt(0);
+                menu.open(player);
+                return null;
+            });
         });
 
         menu.setItem(decimalSeparatorButton, 23);
