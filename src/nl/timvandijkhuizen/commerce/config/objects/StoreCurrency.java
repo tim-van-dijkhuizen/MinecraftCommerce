@@ -75,7 +75,7 @@ public class StoreCurrency extends Model implements ConfigObject {
         }
         
         if(conversionRate == null) {
-            addError("code", "Code is required");
+            addError("conversionRate", "Code is required");
             return false;
         }
         
