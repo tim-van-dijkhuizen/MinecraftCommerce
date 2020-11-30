@@ -33,7 +33,6 @@ import nl.timvandijkhuizen.commerce.base.GatewayClient;
 import nl.timvandijkhuizen.commerce.config.objects.StoreCurrency;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
-import nl.timvandijkhuizen.commerce.helpers.JsonHelper;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.helpers.WebHelper;
 import nl.timvandijkhuizen.commerce.services.OrderService;
@@ -44,6 +43,7 @@ import nl.timvandijkhuizen.commerce.webserver.errors.NotFoundHttpException;
 import nl.timvandijkhuizen.commerce.webserver.errors.ServerErrorHttpException;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.JsonHelper;
 
 public class ClientPayPal implements GatewayClient {
 

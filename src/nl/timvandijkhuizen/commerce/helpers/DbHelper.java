@@ -20,6 +20,7 @@ import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.helpers.JsonHelper;
 
 public class DbHelper {
 
