@@ -1,17 +1,15 @@
 package nl.timvandijkhuizen.commerce.services;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Field;
-import nl.timvandijkhuizen.commerce.events.RegisterFieldTypesEvent;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeBoolean;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeInteger;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeString;
@@ -22,7 +20,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class FieldService extends BaseService {
 
-    private Set<FieldType<?>> fieldTypes;
+    private Set<FieldType<?>> fieldTypes = new HashSet<>();
     private Set<ConfigOption<?>> options = null;
 
     @Override
@@ -32,15 +30,9 @@ public class FieldService extends BaseService {
 
     @Override
     public void init() throws Throwable {
-        RegisterFieldTypesEvent event = new RegisterFieldTypesEvent();
-
-        // Register field types
-        event.addType(new FieldTypeString());
-        event.addType(new FieldTypeInteger());
-        event.addType(new FieldTypeBoolean());
-
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        this.fieldTypes = event.getTypes();
+        fieldTypes.add(new FieldTypeString());
+        fieldTypes.add(new FieldTypeInteger());
+        fieldTypes.add(new FieldTypeBoolean());
     }
 
     @Override
@@ -58,6 +50,37 @@ public class FieldService extends BaseService {
         });
     }
 
+    /**
+     * Registers a new field type.
+     * 
+     * @param fieldType
+     */
+    public void registerFieldType(FieldType<?> fieldType) {
+        fieldTypes.add(fieldType);
+    }
+    
+    /**
+     * Returns all registered field types.
+     * 
+     * @return
+     */
+    public Set<FieldType<?>> getFieldTypes() {
+        return fieldTypes;
+    }
+
+    /**
+     * Returns a field type by its handle or null.
+     * 
+     * @param handle
+     * @return
+     */
+    public FieldType<?> getFieldTypeByHandle(String handle) {
+        return fieldTypes.stream()
+            .filter(i -> i.getHandle().equals(handle))
+            .findFirst()
+            .orElse(null);
+    }
+    
     public void getFields(Consumer<Set<Field>> callback) {
         StorageType storage = Commerce.getInstance().getStorage();
 
@@ -122,28 +145,6 @@ public class FieldService extends BaseService {
             callback.accept(false);
             ConsoleHelper.printError("Failed to delete field: " + error.getMessage(), error);
         });
-    }
-
-    /**
-     * Returns all registered field types.
-     * 
-     * @return
-     */
-    public Set<FieldType<?>> getFieldTypes() {
-        return fieldTypes;
-    }
-
-    /**
-     * Returns a field type by its handle or null.
-     * 
-     * @param handle
-     * @return
-     */
-    public FieldType<?> getFieldTypeByHandle(String handle) {
-        return fieldTypes.stream()
-            .filter(i -> i.getHandle().equals(handle))
-            .findFirst()
-            .orElse(null);
     }
 
     public Set<ConfigOption<?>> getOptions() {

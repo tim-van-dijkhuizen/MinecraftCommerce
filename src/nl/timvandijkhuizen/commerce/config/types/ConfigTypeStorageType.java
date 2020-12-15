@@ -11,6 +11,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
+import nl.timvandijkhuizen.commerce.services.StorageService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.ConfigType;
 import nl.timvandijkhuizen.spigotutils.config.OptionConfig;
@@ -24,13 +25,17 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public StorageType getValue(OptionConfig config, ConfigOption<StorageType> option) {
-        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        StorageService storageService = Commerce.getInstance().getService("storage");
+        Set<StorageType> types = storageService.getStorageTypes();
+        
+        // Get handle
         String handle = config.getString(option.getPath());
 
         if (handle == null) {
             return null;
         }
 
+        // Find type with that handle
         Optional<StorageType> type = types.stream()
             .filter(i -> i.getType().equals(handle))
             .findFirst();
@@ -65,7 +70,8 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
         StorageType selected = getValue(config, option);
 
         // Add available types
-        Set<StorageType> types = Commerce.getInstance().getStorageTypes();
+        StorageService storageService = Commerce.getInstance().getService("storage");
+        Set<StorageType> types = storageService.getStorageTypes();
         
         for (StorageType type : types) {
             MenuItemBuilder item = new MenuItemBuilder(XMaterial.BOOKSHELF);

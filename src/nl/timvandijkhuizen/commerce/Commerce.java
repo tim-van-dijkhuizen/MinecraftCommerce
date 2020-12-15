@@ -7,7 +7,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -25,16 +24,16 @@ import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStorageType;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeStoreCurrency;
 import nl.timvandijkhuizen.commerce.config.types.ConfigTypeTerms;
 import nl.timvandijkhuizen.commerce.effects.OrderEffectDefault;
-import nl.timvandijkhuizen.commerce.events.RegisterStorageTypesEvent;
 import nl.timvandijkhuizen.commerce.services.CacheService;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.ProductService;
+import nl.timvandijkhuizen.commerce.services.StorageService;
 import nl.timvandijkhuizen.commerce.services.UserService;
 import nl.timvandijkhuizen.commerce.services.WebService;
-import nl.timvandijkhuizen.commerce.storage.StorageMysql;
+import nl.timvandijkhuizen.commerce.storagetypes.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -56,7 +55,6 @@ public class Commerce extends PluginBase {
     
     private static Commerce instance;
     private YamlConfig config;
-    private Set<StorageType> storageTypes;
 
     // Configuration options
     private ConfigOption<String> configServerName;
@@ -76,14 +74,6 @@ public class Commerce extends PluginBase {
     @Override
     public void init() throws Throwable {
         instance = this;
-
-        // Register storage types
-        RegisterStorageTypesEvent storageEvent = new RegisterStorageTypesEvent();
-
-        storageEvent.addStorageType(new StorageMysql());
-
-        getServer().getPluginManager().callEvent(storageEvent);
-        storageTypes = storageEvent.getStorageTypes();
 
         // Setup configuration options
         config = new YamlConfig(this);
@@ -190,11 +180,8 @@ public class Commerce extends PluginBase {
         // Register command
         commandService.register(new CommandCommerce());
 
-        // Get storage driver
-        StorageType storageType = configStorageType.getValue(config);
-
         return new Service[] {
-            storageType,
+            new StorageService(),
             new CacheService(),
             new MenuService(),
             new CategoryService(),
@@ -216,12 +203,14 @@ public class Commerce extends PluginBase {
         return config;
     }
 
-    public Set<StorageType> getStorageTypes() {
-        return storageTypes;
-    }
-
     public StorageType getStorage() {
-        return getService("storage");
+        StorageService service = getService("storage");
+        
+        if(service == null) {
+            throw new RuntimeException("Storage service hasn't been initialized yet.");
+        }
+        
+        return service.getStorage();
     }
 
 }

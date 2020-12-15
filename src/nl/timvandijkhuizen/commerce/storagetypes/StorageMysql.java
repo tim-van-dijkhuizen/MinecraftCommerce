@@ -1,4 +1,4 @@
-package nl.timvandijkhuizen.commerce.storage;
+package nl.timvandijkhuizen.commerce.storagetypes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

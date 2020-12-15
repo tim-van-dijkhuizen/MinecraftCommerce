@@ -104,12 +104,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.paypal.sdk</groupId>
-			<artifactId>checkout-sdk</artifactId>
-			<version>1.0.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec-http</artifactId>
 			<version>4.1.52.Final</version>

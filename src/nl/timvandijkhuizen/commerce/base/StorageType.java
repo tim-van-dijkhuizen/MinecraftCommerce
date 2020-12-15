@@ -12,13 +12,8 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
-import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public interface StorageType extends Service {
-
-    default public String getHandle() {
-        return "storage";
-    }
+public interface StorageType {
 
     /**
      * Returns the type handle. This value must be unique.
@@ -27,6 +22,27 @@ public interface StorageType extends Service {
      */
     public String getType();
 
+    /**
+     * Called when the storage type is created.
+     * 
+     * @throws Throwable
+     */
+    public void init() throws Throwable;
+
+    /**
+     * Called when the storage type is loaded.
+     * 
+     * @throws Throwable
+     */
+    public void load() throws Throwable;
+
+    /**
+     * Called when the storage type is unloaded.
+     * 
+     * @throws Throwable
+     */
+    public void unload() throws Throwable;
+    
     /**
      * Returns the display name used in menu's.
      * 

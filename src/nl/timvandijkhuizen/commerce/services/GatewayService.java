@@ -1,9 +1,8 @@
 package nl.timvandijkhuizen.commerce.services;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import org.bukkit.Bukkit;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.GatewayClient;
@@ -11,32 +10,47 @@ import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
-import nl.timvandijkhuizen.commerce.events.RegisterGatewayTypesEvent;
-import nl.timvandijkhuizen.commerce.gateways.paypal.GatewayPayPal;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class GatewayService extends BaseService {
 
-    private Set<GatewayType> types;
+    private Set<GatewayType> types = new HashSet<>();
 
     @Override
     public String getHandle() {
         return "gateways";
     }
 
-    @Override
-    public void init() throws Throwable {
-        RegisterGatewayTypesEvent event = new RegisterGatewayTypesEvent();
-
-        // Add core gateways
-        event.addType(new GatewayPayPal());
-
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        types = event.getTypes();
+    /**
+     * Register a gateway type
+     * 
+     * @param type
+     */
+    public void registerGatewayType(GatewayType gatewayType) {
+        types.add(gatewayType);
+    }
+    
+    /**
+     * Returns all available gateway types.
+     * 
+     * @return
+     */
+    public Set<GatewayType> getTypes() {
+        return types;
     }
 
+    /**
+     * Returns a gateway type by its handle.
+     * 
+     * @param handle
+     * @return
+     */
+    public GatewayType getTypeByHandle(String handle) {
+        return types.stream().filter(i -> i.getHandle().equals(handle)).findFirst().orElse(null);
+    }
+    
     /**
      * Returns all gateways.
      * 
@@ -122,25 +136,6 @@ public class GatewayService extends BaseService {
             callback.accept(null);
             ConsoleHelper.printError("Failed to create payment url", error);
         });
-    }
-
-    /**
-     * Returns all available gateway types.
-     * 
-     * @return
-     */
-    public Set<GatewayType> getTypes() {
-        return types;
-    }
-
-    /**
-     * Returns a gateway type by its handle.
-     * 
-     * @param handle
-     * @return
-     */
-    public GatewayType getTypeByHandle(String handle) {
-        return types.stream().filter(i -> i.getHandle().equals(handle)).findFirst().orElse(null);
     }
 
 }

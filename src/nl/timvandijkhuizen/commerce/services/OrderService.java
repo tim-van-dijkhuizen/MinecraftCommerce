@@ -2,6 +2,7 @@ package nl.timvandijkhuizen.commerce.services;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,8 +25,6 @@ import nl.timvandijkhuizen.commerce.elements.LineItem;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.commerce.elements.Product;
 import nl.timvandijkhuizen.commerce.elements.Transaction;
-import nl.timvandijkhuizen.commerce.events.RegisterOrderEffectsEvent;
-import nl.timvandijkhuizen.commerce.events.RegisterOrderVariablesEvent;
 import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.variables.VariableFields;
 import nl.timvandijkhuizen.commerce.variables.VariablePlayerUniqueId;
@@ -43,8 +42,8 @@ public class OrderService extends BaseService {
 
     public static final Pattern VARIABLE_FORMAT = Pattern.compile("\\{(.*?)\\}");
     
-    private Set<OrderVariable> orderVariables;
-    private Set<OrderEffect> orderEffects;
+    private Set<OrderVariable> orderVariables = new HashSet<>();
+    private Set<OrderEffect> orderEffects = new HashSet<>();
 
     @Override
     public String getHandle() {
@@ -53,27 +52,51 @@ public class OrderService extends BaseService {
 
     @Override
     public void init() throws Throwable {
-        RegisterOrderVariablesEvent variableEvent = new RegisterOrderVariablesEvent();
-        RegisterOrderEffectsEvent effectEvent = new RegisterOrderEffectsEvent();
+        orderVariables.add(new VariableUniqueId());
+        orderVariables.add(new VariablePlayerUsername());
+        orderVariables.add(new VariablePlayerUniqueId());
+        orderVariables.add(new VariableQuantity());
+        orderVariables.add(new VariableFields());
 
-        // Add core variables
-        variableEvent.addVariable(new VariableUniqueId());
-        variableEvent.addVariable(new VariablePlayerUsername());
-        variableEvent.addVariable(new VariablePlayerUniqueId());
-        variableEvent.addVariable(new VariableQuantity());
-        variableEvent.addVariable(new VariableFields());
-
-        // Add core effects
-        effectEvent.addEffect(new OrderEffectDefault());
-
-        // Register custom variables and effects
-        Bukkit.getServer().getPluginManager().callEvent(variableEvent);
-        Bukkit.getServer().getPluginManager().callEvent(effectEvent);
-
-        orderVariables = variableEvent.getVariables();
-        orderEffects = effectEvent.getEffects();
+        orderEffects.add(new OrderEffectDefault());
     }
 
+    /**
+     * Register a new order variable.
+     * 
+     * @param orderVariable
+     */
+    public void registerOrderVariable(OrderVariable orderVariable) {
+        orderVariables.add(orderVariable);
+    }
+    
+    /**
+     * Returns all available order variables.
+     * 
+     * @return
+     */
+    public Collection<OrderVariable> getOrderVariables() {
+        return Collections.unmodifiableSet(orderVariables);
+    }
+
+    /**
+     * Register a new order effect.
+     * 
+     * @param orderEffect
+     */
+    public void registerOrderEffect(OrderEffect orderEffect) {
+        orderEffects.add(orderEffect);
+    }
+    
+    /**
+     * Returns all available order effects.
+     * 
+     * @return
+     */
+    public Collection<OrderEffect> getOrderEffects() {
+        return Collections.unmodifiableSet(orderEffects);
+    }
+    
     /**
      * Returns the cart of the specified user.
      * 
@@ -340,24 +363,6 @@ public class OrderService extends BaseService {
         }
         
         return value;
-    }
-
-    /**
-     * Returns all available order variables.
-     * 
-     * @return
-     */
-    public Collection<OrderVariable> getOrderVariables() {
-        return Collections.unmodifiableSet(orderVariables);
-    }
-
-    /**
-     * Returns all available order effects.
-     * 
-     * @return
-     */
-    public Collection<OrderEffect> getOrderEffects() {
-        return Collections.unmodifiableSet(orderEffects);
     }
 
 }
