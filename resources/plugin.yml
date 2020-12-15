@@ -4,6 +4,7 @@ author: Tim van Dijkhuizen
 version: "1.0.0"
 api-version: 1.13
 main: nl.timvandijkhuizen.commerce.Commerce
+depend: [SpigotUtils]
 
 commands:
    commerce:

@@ -44,7 +44,6 @@ import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeFile;
 import nl.timvandijkhuizen.spigotutils.config.types.ConfigTypeList;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
 import nl.timvandijkhuizen.spigotutils.menu.MenuService;
 import nl.timvandijkhuizen.spigotutils.services.Service;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
@@ -77,7 +76,6 @@ public class Commerce extends PluginBase {
     @Override
     public void init() throws Throwable {
         instance = this;
-        ThreadHelper.setPlugin(this);
 
         // Register storage types
         RegisterStorageTypesEvent storageEvent = new RegisterStorageTypesEvent();
