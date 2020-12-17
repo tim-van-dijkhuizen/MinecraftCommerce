@@ -20,6 +20,7 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
+				
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -57,16 +58,6 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
-
-	    <repository>
-	       <id>bungeecord-repo</id>
-	       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	    </repository>
-
-        <repository>
-            <id>minecraft-repo</id>
-            <url>https://libraries.minecraft.net/</url>
-        </repository>
 	</repositories>
 
 	<dependencies>
@@ -76,31 +67,12 @@
 			<version>1.16.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>1.5.25</version>
-            <scope>provided</scope>
-        </dependency>
         
 		<dependency>
 			<groupId>timvandijkhuizen</groupId>
 			<artifactId>SpigotUtils</artifactId>
 			<version>1.0.0</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>3.4.5</version>
-		</dependency>
-
-		<dependency> 
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.7.10</version>
 		</dependency>
 
 		<dependency>

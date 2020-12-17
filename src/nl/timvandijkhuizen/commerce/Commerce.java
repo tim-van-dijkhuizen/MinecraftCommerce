@@ -33,7 +33,6 @@ import nl.timvandijkhuizen.commerce.services.ProductService;
 import nl.timvandijkhuizen.commerce.services.StorageService;
 import nl.timvandijkhuizen.commerce.services.UserService;
 import nl.timvandijkhuizen.commerce.services.WebService;
-import nl.timvandijkhuizen.commerce.storagetypes.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.PluginBase;
 import nl.timvandijkhuizen.spigotutils.commands.CommandService;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -127,7 +126,6 @@ public class Commerce extends PluginBase {
         
         configStorageType = new ConfigOption<>("storage.type", "Storage Type", XMaterial.BARREL, new ConfigTypeStorageType())
             .setRequired(true)
-            .setDefaultValue(new StorageMysql())
             .setMeta(new DataArguments(true));
 
         // Add options

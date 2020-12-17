@@ -1,11 +1,11 @@
 package nl.timvandijkhuizen.commerce.services;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
-import nl.timvandijkhuizen.commerce.storagetypes.StorageMysql;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
@@ -22,12 +22,20 @@ public class StorageService extends BaseService {
     @Override
     public void init() throws Throwable {
         YamlConfig config = Commerce.getInstance().getConfig();
-        
-        // Add core types
-        storageTypes.add(new StorageMysql());
-        
+
         // Initialize storage
         storage = config.getOptionValue("storage.type");
+        
+        if(storage == null) {
+            Optional<StorageType> fallback = storageTypes.stream().findFirst();
+            
+            if(!fallback.isPresent()) {
+                throw new Exception("You must install at least one storage type.");
+            }
+            
+            storage = fallback.get();
+        }
+        
         storage.init();
     }
     
