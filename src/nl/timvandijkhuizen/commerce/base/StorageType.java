@@ -16,11 +16,11 @@ import nl.timvandijkhuizen.commerce.elements.Transaction;
 public interface StorageType {
 
     /**
-     * Returns the type handle. This value must be unique.
+     * Returns the handle. This value must be unique.
      * 
      * @return
      */
-    public String getType();
+    public String getHandle();
 
     /**
      * Called when the storage type is created.

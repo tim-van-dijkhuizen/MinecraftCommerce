@@ -9,6 +9,7 @@ import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.StorageService;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class CommerceApi {
 
@@ -20,6 +21,7 @@ public class CommerceApi {
         }
         
         service.registerStorageType(storageType);
+        ConsoleHelper.printDebug("Registered storage type: " + storageType.getHandle());
     }
     
     public static void registerFieldType(FieldType<?> fieldType) {
@@ -30,6 +32,7 @@ public class CommerceApi {
         }
         
         service.registerFieldType(fieldType);
+        ConsoleHelper.printDebug("Registered field type: " + fieldType.getHandle());
     }
     
     public static void registerGatewayType(GatewayType gatewayType) {
@@ -40,6 +43,7 @@ public class CommerceApi {
         }
         
         service.registerGatewayType(gatewayType);
+        ConsoleHelper.printDebug("Registered gateway type: " + gatewayType.getHandle());
     }
     
     public static void registerOrderVariable(OrderVariable orderVariable) {
@@ -50,6 +54,7 @@ public class CommerceApi {
         }
         
         service.registerOrderVariable(orderVariable);
+        ConsoleHelper.printDebug("Registered order variable: " + orderVariable.getKey());
     }
     
     public static void registerOrderEffect(OrderEffect orderEffect) {
@@ -60,6 +65,7 @@ public class CommerceApi {
         }
         
         service.registerOrderEffect(orderEffect);
+        ConsoleHelper.printDebug("Registered order effect: " + orderEffect.getHandle());
     }
     
 }

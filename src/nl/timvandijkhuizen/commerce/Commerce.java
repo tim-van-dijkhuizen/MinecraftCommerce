@@ -69,12 +69,14 @@ public class Commerce extends PluginBase {
     private ConfigOption<File> configWebPrivateKey;
     private ConfigOption<File> configWebFavicon;
     private ConfigOption<StorageType> configStorageType;
-
+    
+    @Override
+    public void setup() throws Throwable {
+        instance = this;
+    }
+    
     @Override
     public void init() throws Throwable {
-        instance = this;
-
-        // Setup configuration options
         config = new YamlConfig(this);
 
         // Create options

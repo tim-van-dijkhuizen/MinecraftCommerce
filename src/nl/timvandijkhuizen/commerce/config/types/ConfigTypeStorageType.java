@@ -37,7 +37,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
         // Find type with that handle
         Optional<StorageType> type = types.stream()
-            .filter(i -> i.getType().equals(handle))
+            .filter(i -> i.getHandle().equals(handle))
             .findFirst();
 
         return type.orElse(null);
@@ -45,12 +45,12 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public void setValue(OptionConfig config, ConfigOption<StorageType> option, StorageType value) {
-        config.set(option.getPath(), value != null ? value.getType() : null);
+        config.set(option.getPath(), value != null ? value.getHandle() : null);
     }
 
     @Override
     public String getRawValue(OptionConfig config, ConfigOption<StorageType> option) {
-        return !isValueEmpty(config, option) ? getValue(config, option).getType() : "";
+        return !isValueEmpty(config, option) ? getValue(config, option).getHandle() : "";
     }
     
     @Override
@@ -78,7 +78,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
             item.setName(UI.color(type.getDisplayName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
-            if (selected != null && type.getType().equals(selected.getType())) {
+            if (selected != null && type.getHandle().equals(selected.getHandle())) {
                 item.addEnchantGlow();
             }
 
