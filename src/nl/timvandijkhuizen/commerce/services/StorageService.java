@@ -1,7 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import nl.timvandijkhuizen.commerce.Commerce;
@@ -25,28 +24,21 @@ public class StorageService extends BaseService {
 
         // Initialize storage
         storage = config.getOptionValue("storage.type");
-        
-        if(storage == null) {
-            Optional<StorageType> fallback = storageTypes.stream().findFirst();
-            
-            if(!fallback.isPresent()) {
-                throw new Exception("You must install at least one storage type.");
-            }
-            
-            storage = fallback.get();
-        }
-        
         storage.init();
     }
     
     @Override
     public void load() throws Throwable {
-        storage.load();
+        if(storage != null) {
+            storage.load();
+        }
     }
     
     @Override
     public void unload() throws Throwable {
-        storage.unload();
+        if(storage != null) {
+            storage.unload();
+        }
     }
     
     public void registerStorageType(StorageType storageType) {

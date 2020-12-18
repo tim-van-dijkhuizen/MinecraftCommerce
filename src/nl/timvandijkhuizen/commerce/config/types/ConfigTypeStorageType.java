@@ -32,7 +32,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
         String handle = config.getString(option.getPath());
 
         if (handle == null) {
-            return null;
+            return getFallbackType();
         }
 
         // Find type with that handle
@@ -40,7 +40,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
             .filter(i -> i.getHandle().equals(handle))
             .findFirst();
 
-        return type.orElse(null);
+        return type.orElse(getFallbackType());
     }
 
     @Override
@@ -101,6 +101,18 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
         menu.setItem(backButton, menu.getSize().getSlots() - 9 + 3);
 
         menu.open(player);
+    }
+    
+    private StorageType getFallbackType() throws RuntimeException {
+        StorageService storageService = Commerce.getInstance().getService("storage");
+        Set<StorageType> storageTypes = storageService.getStorageTypes();
+        
+        // Get first type
+        Optional<StorageType> fallback = storageTypes
+            .stream()
+            .findFirst();
+
+        return fallback.orElseThrow(() -> new RuntimeException("You must install at least one storage type."));
     }
 
 }

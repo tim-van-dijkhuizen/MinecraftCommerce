@@ -6,7 +6,7 @@ import nl.timvandijkhuizen.spigotutils.helpers.ExceptionHelper;
 
 public class TemplateFunctions {
 
-    public String[] getStackTrace(Exception e) {
+    public String[] getStackTrace(Throwable e) {
         return ExceptionHelper.getStackTrace(e);
     }
 
