@@ -11,6 +11,7 @@ import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.elements.Field;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeBoolean;
+import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeDouble;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeInteger;
 import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeString;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
@@ -32,6 +33,7 @@ public class FieldService extends BaseService {
     public void init() throws Throwable {
         fieldTypes.add(new FieldTypeString());
         fieldTypes.add(new FieldTypeInteger());
+        fieldTypes.add(new FieldTypeDouble());
         fieldTypes.add(new FieldTypeBoolean());
     }
 

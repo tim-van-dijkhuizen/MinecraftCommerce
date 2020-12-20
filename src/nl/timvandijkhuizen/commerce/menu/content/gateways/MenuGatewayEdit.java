@@ -130,7 +130,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
                     lore.add(UI.color(UI.TAB + "None", UI.COLOR_SECONDARY, ChatColor.ITALIC));
                 }
             } else {
-                lore.add(UI.color("Select a gateway type first.", UI.COLOR_ERROR, ChatColor.ITALIC));
+                lore.add(UI.color("Select a gateway type first.", UI.COLOR_ERROR));
             }
 
             ValidationHelper.addErrorLore(lore, gateway, "config");
