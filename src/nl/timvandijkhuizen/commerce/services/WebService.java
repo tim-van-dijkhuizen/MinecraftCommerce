@@ -9,6 +9,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -34,11 +35,11 @@ public class WebService extends BaseService {
     public static final String BRANDING_HTML = "<!-- Powered by MinecraftCommerce -->";
     private static final EventLoopGroup THREAD_GROUP = new NioEventLoopGroup(4);
 
-    private ServerBootstrap bootstrap;
-    private Map<String, StaticRoute> routes;
+    private ServerBootstrap bootstrap = new ServerBootstrap();
+    private Map<String, StaticRoute> routes = new HashMap<>();
 
-    private TemplateEngine templateEngine;
-    private TemplateFunctions templateFunctions;
+    private TemplateEngine templateEngine = new TemplateEngine();
+    private TemplateFunctions templateFunctions = new TemplateFunctions();
 
     @Override
     public String getHandle() {
@@ -61,8 +62,6 @@ public class WebService extends BaseService {
 
         // Setup web-server
         // =================================================
-        bootstrap = new ServerBootstrap();
-
         bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
         bootstrap.group(THREAD_GROUP);
@@ -85,15 +84,11 @@ public class WebService extends BaseService {
 
         // Setup routes
         // =================================================
-        routes = new HashMap<>();
-
         routes.put("/favicon.ico", new RouteFavicon());
         routes.put("/robots.txt", new RouteRobots());
 
         // Setup template engine
         // =================================================
-        templateEngine = new TemplateEngine();
-        templateFunctions = new TemplateFunctions();
 
         // Add file resolver
         FileTemplateResolver fileResolver = new FileTemplateResolver();
@@ -127,6 +122,15 @@ public class WebService extends BaseService {
      */
     public Map<String, StaticRoute> getRoutes() {
         return routes;
+    }
+    
+    /**
+     * Registers a template resolver.
+     * 
+     * @param templateResolver
+     */
+    public void registerTemplateResolver(ITemplateResolver templateResolver) {
+        templateEngine.addTemplateResolver(templateResolver);
     }
 
     /**

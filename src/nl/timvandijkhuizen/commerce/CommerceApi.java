@@ -1,5 +1,7 @@
 package nl.timvandijkhuizen.commerce;
 
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.commerce.base.GatewayType;
 import nl.timvandijkhuizen.commerce.base.OrderEffect;
@@ -9,6 +11,7 @@ import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.commerce.services.GatewayService;
 import nl.timvandijkhuizen.commerce.services.OrderService;
 import nl.timvandijkhuizen.commerce.services.StorageService;
+import nl.timvandijkhuizen.commerce.services.WebService;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 
 public class CommerceApi {
@@ -66,6 +69,17 @@ public class CommerceApi {
         
         service.registerOrderEffect(orderEffect);
         ConsoleHelper.printDebug("Registered order effect: " + orderEffect.getHandle());
+    }
+    
+    public static void registerTemplateResolver(ITemplateResolver templateResolver) {
+        WebService service = Commerce.getInstance().getService("web");
+        
+        if(service == null) {
+            throw new RuntimeException("Web service has not been registered yet.");
+        }
+        
+        service.registerTemplateResolver(templateResolver);
+        ConsoleHelper.printDebug("Registered template resovler: " + templateResolver);
     }
     
 }
