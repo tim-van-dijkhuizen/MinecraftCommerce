@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -16,7 +16,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class GatewayService extends BaseService {
 
-    private Set<GatewayType> types = new HashSet<>();
+    private Set<GatewayType> types = new LinkedHashSet<>();
 
     @Override
     public String getHandle() {

@@ -1,6 +1,5 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -21,7 +20,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class FieldService extends BaseService {
 
-    private Set<FieldType<?>> fieldTypes = new HashSet<>();
+    private Set<FieldType<?>> fieldTypes = new LinkedHashSet<>();
     private Set<ConfigOption<?>> options = null;
 
     @Override

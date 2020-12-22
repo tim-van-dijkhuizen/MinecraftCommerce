@@ -2,7 +2,7 @@ package nl.timvandijkhuizen.commerce.services;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -42,8 +42,8 @@ public class OrderService extends BaseService {
 
     public static final Pattern VARIABLE_FORMAT = Pattern.compile("\\{(.*?)\\}");
     
-    private Set<OrderVariable> orderVariables = new HashSet<>();
-    private Set<OrderEffect> orderEffects = new HashSet<>();
+    private Set<OrderVariable> orderVariables = new LinkedHashSet<>();
+    private Set<OrderEffect> orderEffects = new LinkedHashSet<>();
 
     @Override
     public String getHandle() {

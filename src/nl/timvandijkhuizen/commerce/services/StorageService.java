@@ -1,6 +1,6 @@
 package nl.timvandijkhuizen.commerce.services;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nl.timvandijkhuizen.commerce.Commerce;
@@ -10,7 +10,7 @@ import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class StorageService extends BaseService {
 
-    private Set<StorageType> storageTypes = new HashSet<>();
+    private Set<StorageType> storageTypes = new LinkedHashSet<>();
     private StorageType storage;
     
     @Override
