@@ -6,6 +6,7 @@ import java.util.Set;
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.services.BaseService;
 
 public class StorageService extends BaseService {
@@ -24,7 +25,12 @@ public class StorageService extends BaseService {
 
         // Initialize storage
         storage = config.getOptionValue("storage.type");
-        storage.init();
+        
+        if(storage != null) {
+            storage.init();
+        } else {
+            ConsoleHelper.printError("You must install at least one storage type. Take a look at the installation guide for more information.");
+        }
     }
     
     @Override

@@ -103,7 +103,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
         menu.open(player);
     }
     
-    private StorageType getFallbackType() throws RuntimeException {
+    private StorageType getFallbackType() {
         StorageService storageService = Commerce.getInstance().getService("storage");
         Set<StorageType> storageTypes = storageService.getStorageTypes();
         
@@ -112,7 +112,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
             .stream()
             .findFirst();
 
-        return fallback.orElseThrow(() -> new RuntimeException("You must install at least one storage type."));
+        return fallback.orElse(null);
     }
 
 }
