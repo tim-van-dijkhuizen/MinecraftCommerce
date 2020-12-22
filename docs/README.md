@@ -2,15 +2,20 @@
 A Spigot plugin for creating in-game donation stores.
 
 ### Storage types
-* [MySQL](https://github.com/TimvanDijkhuizen/MinecraftCommerce-MySQL)
+* [MySQL](https://www.spigotmc.org/resources/minecraftcommerce-mysql.86974/)
 
 ### Gateways
-* [PayPal](https://github.com/TimvanDijkhuizen/MinecraftCommerce-PayPal)
+* [PayPal](https://www.spigotmc.org/resources/minecraftcommerce-paypal.86975/)
+
+### Requirements
+* Java 8
+* [SpigotUtils](https://www.spigotmc.org/resources/spigotutils.86830/)
+* Extra port
 
 ### Installation
 1. Download the plugin and place it in your plugins folder.
 2. Download a storage type plugin and place it in your plugins folder.
-3. Download one or more gatway type plugins and place it in your plugins folder.
+3. Download one or more gatway type plugins and place them in your plugins folder.
 2. Start your server.
 3. Configure the plugin by executing `/commerce admin` and navigating to "Configuration".
 
