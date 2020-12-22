@@ -2,10 +2,10 @@
 A Spigot plugin for creating in-game donation stores.
 
 ### Storage types
-* [MySQL](https://github.com/TimvanDijkhuizen/MinecraftCommerce-MySQL)
+* [MySQL](https://www.spigotmc.org/resources/minecraftcommerce-mysql.86974/)
 
 ### Gateways
-* [PayPal](https://github.com/TimvanDijkhuizen/MinecraftCommerce-PayPal)
+* [PayPal](https://www.spigotmc.org/resources/minecraftcommerce-paypal.86975/)
 
 ### Requirements
 * Java 8
