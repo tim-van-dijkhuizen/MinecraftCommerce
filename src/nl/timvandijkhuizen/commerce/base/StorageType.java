@@ -23,6 +23,13 @@ public interface StorageType {
     public String getHandle();
 
     /**
+     * Returns the display name used in menu's.
+     * 
+     * @return
+     */
+    public String getDisplayName();
+    
+    /**
      * Called when the storage type is created.
      * 
      * @throws Throwable
@@ -42,13 +49,6 @@ public interface StorageType {
      * @throws Throwable
      */
     public void unload() throws Throwable;
-    
-    /**
-     * Returns the display name used in menu's.
-     * 
-     * @return
-     */
-    public String getDisplayName();
 
     /**
      * Returns all categories.
