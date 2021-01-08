@@ -1,4 +1,4 @@
-# Configuration
+# Setup - Configuration
 Options with a * are required.
 
 ### General

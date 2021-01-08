@@ -1,4 +1,4 @@
-# Set up SSL using CloudFlare
+# Setup - SSL with CloudFlare
 CloudFlare is well known for their DDOS-protection, but they also offer free SSL certificates. Follow the steps below to set up SSL using CloudFlare.
 
 ### Steps
