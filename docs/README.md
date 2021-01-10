@@ -21,9 +21,9 @@ The developer API allows you to extend MinecraftCommerce. You should only intera
 All extensions should be registered before MinecraftCommerce is initiated. To do this you must either register them from `onLoad()` or `setup()` if you're using the plugin API from SpigotUtils.
 
 ##### What can I do with the API?
-* [Custom storage types](STORAGE_TYPES.md)
-* [Custom field types](FIELD_TYPES.md)
-* [Custom gateway types](GATEWAY_TYPES.md)
-* [Custom order variables](FIELD_TYPES.md)
-* [Custom order effects](FIELD_TYPES.md)
-* [Custom template resolvers](FIELD_TYPES.md)
+* [Custom storage types](api/STORAGE_TYPES.md)
+* [Custom field types](api/FIELD_TYPES.md)
+* [Custom gateway types](api/GATEWAY_TYPES.md)
+* [Custom order variables](api/ORDER_VARIABLES.md)
+* [Custom order effects](api/ORDER_EFFECTS.md)
+* [Custom template resolvers](api/TEMPLATE_RESOLVERS.md)
