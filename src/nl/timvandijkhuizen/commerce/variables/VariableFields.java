@@ -17,7 +17,7 @@ public class VariableFields implements OrderVariable {
 
     @Override
     public String[] getProperties() {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         
         return fieldService.getOptions().stream()
             .map(option -> option.getPath())

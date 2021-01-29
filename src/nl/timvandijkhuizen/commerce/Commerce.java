@@ -204,7 +204,7 @@ public class Commerce extends PluginBase {
     }
 
     public StorageType getStorage() {
-        StorageService service = getService("storage");
+        StorageService service = getService(StorageService.class);
         
         if(service == null) {
             throw new RuntimeException("Storage service hasn't been initialized yet.");

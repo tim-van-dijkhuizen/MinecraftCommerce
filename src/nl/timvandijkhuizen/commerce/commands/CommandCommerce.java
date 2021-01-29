@@ -24,8 +24,8 @@ public class CommandCommerce extends BaseCommand {
 
     @Override
     public void onPlayerUse(Player player, String[] args) throws Throwable {
-        CategoryService categoryService = Commerce.getInstance().getService("categories");
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        CategoryService categoryService = Commerce.getInstance().getService(CategoryService.class);
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
 
         player.sendMessage(UI.color("Loading...", UI.COLOR_TEXT));
 

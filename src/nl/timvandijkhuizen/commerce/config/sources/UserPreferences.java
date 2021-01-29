@@ -31,7 +31,7 @@ public class UserPreferences extends JsonConfig {
 
     @Override
     public Collection<ConfigOption<?>> getOptions() {
-        UserService userService = Commerce.getInstance().getService("users");
+        UserService userService = Commerce.getInstance().getService(UserService.class);
         return userService.getUserOptions();
     }
 

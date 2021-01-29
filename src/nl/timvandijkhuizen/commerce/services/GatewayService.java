@@ -12,9 +12,9 @@ import nl.timvandijkhuizen.commerce.elements.Gateway;
 import nl.timvandijkhuizen.commerce.elements.Order;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class GatewayService extends BaseService {
+public class GatewayService implements Service {
 
     private Set<GatewayType> types = new LinkedHashSet<>();
 

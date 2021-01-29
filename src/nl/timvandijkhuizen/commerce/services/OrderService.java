@@ -36,9 +36,9 @@ import nl.timvandijkhuizen.spigotutils.data.DataAction;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class OrderService extends BaseService {
+public class OrderService implements Service {
 
     public static final Pattern VARIABLE_FORMAT = Pattern.compile("\\{(.*?)\\}");
     
@@ -128,7 +128,7 @@ public class OrderService extends BaseService {
      * @return
      */
     public Order createCart(Player player) {
-        UserService userService = Commerce.getInstance().getService("users");
+        UserService userService = Commerce.getInstance().getService(UserService.class);
         UserPreferences preferences = userService.getPreferences(player);
         StoreCurrency currency = preferences.getOptionValue("currency");
 

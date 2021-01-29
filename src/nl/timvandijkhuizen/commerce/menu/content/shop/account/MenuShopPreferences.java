@@ -24,8 +24,9 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopPreferences implements PredefinedMenu {
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Menu create(Player player, DataArguments args) {
-        UserService userService = Commerce.getInstance().getService("users");
+        UserService userService = Commerce.getInstance().getService(UserService.class);
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Preferences", 3, 7, 1, 1, 1, 5, 7);
         UserPreferences preferences = userService.getPreferences(player);
 

@@ -29,7 +29,7 @@ public class MenuFieldEdit implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         Field field = args.get(0, new Field());
         Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (field.getId() != null ? "Edit" : "Create") + " Field", MenuSize.XXL);
 

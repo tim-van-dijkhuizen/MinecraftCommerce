@@ -26,7 +26,7 @@ public class MenuFieldList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Fields", 3, 7, 1, 1);
 
         // Add field buttons

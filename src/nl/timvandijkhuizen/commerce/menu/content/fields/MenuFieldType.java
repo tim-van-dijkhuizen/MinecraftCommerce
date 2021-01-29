@@ -22,7 +22,7 @@ public class MenuFieldType implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Field Type", 3, 7, 1, 1, 1, 5, 7);
         
         Field field = args.get(0);

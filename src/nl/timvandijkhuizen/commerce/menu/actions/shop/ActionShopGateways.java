@@ -16,8 +16,8 @@ public class ActionShopGateways implements MenuClickListener {
 
     @Override
     public void onClick(MenuClick event) {
-        OrderService orderService = Commerce.getInstance().getService("orders");
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();

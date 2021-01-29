@@ -29,7 +29,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        CategoryService categoryService = Commerce.getInstance().getService("categories");
+        CategoryService categoryService = Commerce.getInstance().getService(CategoryService.class);
         Category category = args.get(0, new Category());
         Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (category.getId() != null ? "Edit" : "Create") + " Category", MenuSize.LG);
 

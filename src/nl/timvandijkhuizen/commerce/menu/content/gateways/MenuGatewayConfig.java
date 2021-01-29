@@ -22,6 +22,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuGatewayConfig implements PredefinedMenu {
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Gateway Config", 3, 7, 1, 1, 1, 5, 7);
         

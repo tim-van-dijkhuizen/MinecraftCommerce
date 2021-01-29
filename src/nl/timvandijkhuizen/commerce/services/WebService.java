@@ -28,9 +28,9 @@ import nl.timvandijkhuizen.commerce.webserver.templating.TemplateFunctions;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class WebService extends BaseService {
+public class WebService implements Service {
 
     public static final String BRANDING_HTML = "<!-- Powered by MinecraftCommerce -->";
     private static final EventLoopGroup THREAD_GROUP = new NioEventLoopGroup(4);

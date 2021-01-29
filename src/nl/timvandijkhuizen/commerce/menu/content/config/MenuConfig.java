@@ -26,6 +26,7 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuConfig implements PredefinedMenu {
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Menu create(Player player, DataArguments args) {
         Commerce plugin = Commerce.getInstance();
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Configuration", 3, 7, 1, 1, 1, 5, 7);

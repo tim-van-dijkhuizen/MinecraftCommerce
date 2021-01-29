@@ -32,7 +32,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        ProductService productService = Commerce.getInstance().getService("products");
+        ProductService productService = Commerce.getInstance().getService(ProductService.class);
         Product product = args.get(0, new Product());
         Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (product.getId() != null ? "Edit" : "Create") + " Product", MenuSize.XXL);
 
@@ -165,7 +165,7 @@ public class MenuProductEdit implements PredefinedMenu {
 
         // Set click listener
         categoryButton.setClickListener(event -> {
-            CategoryService categoryService = Commerce.getInstance().getService("categories");
+            CategoryService categoryService = Commerce.getInstance().getService(CategoryService.class);
 
             UI.playSound(player, UI.SOUND_CLICK);
             categoryButton.setLore(UI.color("Loading...", UI.COLOR_TEXT));

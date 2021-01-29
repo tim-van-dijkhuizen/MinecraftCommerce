@@ -24,7 +24,7 @@ public class ActionCategoryList implements MenuClickListener {
 
     @Override
     public void onClick(MenuClick event) {
-        CategoryService categoryService = Commerce.getInstance().getService("categories");
+        CategoryService categoryService = Commerce.getInstance().getService(CategoryService.class);
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();

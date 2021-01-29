@@ -16,9 +16,9 @@ import nl.timvandijkhuizen.commerce.fieldtypes.FieldTypeString;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class FieldService extends BaseService {
+public class FieldService implements Service {
 
     private Set<FieldType<?>> fieldTypes = new LinkedHashSet<>();
     private Set<ConfigOption<?>> options = null;

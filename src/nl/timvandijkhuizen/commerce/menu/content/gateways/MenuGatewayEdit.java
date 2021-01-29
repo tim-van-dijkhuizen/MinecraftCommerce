@@ -31,7 +31,7 @@ public class MenuGatewayEdit implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
         Gateway gateway = args.get(0, new Gateway());
         Menu menu = new Menu("Admin " + Icon.ARROW_RIGHT + " " + (gateway.getId() != null ? "Edit" : "Create") + " Gateway", MenuSize.LG);
 

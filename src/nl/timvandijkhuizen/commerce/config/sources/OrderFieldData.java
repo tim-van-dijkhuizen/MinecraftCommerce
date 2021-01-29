@@ -31,7 +31,7 @@ public class OrderFieldData extends JsonConfig {
 
     @Override
     public Collection<ConfigOption<?>> getOptions() {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         return fieldService.getOptions();
     }
 
