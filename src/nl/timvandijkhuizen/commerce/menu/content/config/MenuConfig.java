@@ -20,6 +20,7 @@ import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItemBuilder;
 import nl.timvandijkhuizen.spigotutils.menu.items.MenuItems;
 import nl.timvandijkhuizen.spigotutils.menu.types.PagedMenu;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 import nl.timvandijkhuizen.spigotutils.ui.Icon;
 import nl.timvandijkhuizen.spigotutils.ui.UI;
 
@@ -110,7 +111,7 @@ public class MenuConfig implements PredefinedMenu {
                 plugin.reload();
 
                 // Check for errors
-                Map<String, String> errors = plugin.getServiceErrors();
+                Map<Class<? extends Service>, String> errors = plugin.getAllServiceErrors();
 
                 if (errors.isEmpty()) {
                     UI.playSound(player, UI.SOUND_SUCCESS);
@@ -120,8 +121,8 @@ public class MenuConfig implements PredefinedMenu {
                     saveButton.setLore(UI.color("Failed to save config.", UI.COLOR_ERROR));
                     saveButton.addLore("", UI.color("Errors:", UI.COLOR_ERROR));
 
-                    for (Entry<String, String> error : errors.entrySet()) {
-                        saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue(), UI.COLOR_ERROR));
+                    for (Entry<Class<? extends Service>, String> error : errors.entrySet()) {
+                        saveButton.addLore(UI.color(UI.TAB + Icon.SQUARE + " " + error.getKey().getSimpleName() + ": " + error.getValue(), UI.COLOR_ERROR));
                     }
                 }
 

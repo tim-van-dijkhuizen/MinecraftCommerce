@@ -156,7 +156,7 @@ public class Commerce extends PluginBase {
 
     @Override
     public void ready() throws Throwable {
-        Map<String, String> setupErrors = getServiceErrors();
+        Map<Class<? extends Service>, String> setupErrors = getAllServiceErrors();
 
         if (!setupErrors.isEmpty()) {
             ConsoleHelper.printError("========================================================");
@@ -164,8 +164,8 @@ public class Commerce extends PluginBase {
             ConsoleHelper.printError("");
             ConsoleHelper.printError("Errors:");
 
-            for (Entry<String, String> error : setupErrors.entrySet()) {
-                ConsoleHelper.printError(UI.TAB + Icon.SQUARE + " " + error.getKey() + ": " + error.getValue());
+            for (Entry<Class<? extends Service>, String> error : setupErrors.entrySet()) {
+                ConsoleHelper.printError(UI.TAB + Icon.SQUARE + " " + error.getKey().getSimpleName() + ": " + error.getValue());
             }
 
             ConsoleHelper.printError("");
