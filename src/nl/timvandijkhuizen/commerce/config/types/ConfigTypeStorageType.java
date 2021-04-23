@@ -25,7 +25,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
 
     @Override
     public StorageType getValue(OptionConfig config, ConfigOption<StorageType> option) {
-        StorageService storageService = Commerce.getInstance().getService("storage");
+        StorageService storageService = Commerce.getInstance().getService(StorageService.class);
         Set<StorageType> types = storageService.getStorageTypes();
         
         // Get handle
@@ -70,7 +70,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
         StorageType selected = getValue(config, option);
 
         // Add available types
-        StorageService storageService = Commerce.getInstance().getService("storage");
+        StorageService storageService = Commerce.getInstance().getService(StorageService.class);
         Set<StorageType> types = storageService.getStorageTypes();
         
         for (StorageType type : types) {
@@ -104,7 +104,7 @@ public class ConfigTypeStorageType implements ConfigType<StorageType> {
     }
     
     private StorageType getFallbackType() {
-        StorageService storageService = Commerce.getInstance().getService("storage");
+        StorageService storageService = Commerce.getInstance().getService(StorageService.class);
         Set<StorageType> storageTypes = storageService.getStorageTypes();
         
         // Get first type

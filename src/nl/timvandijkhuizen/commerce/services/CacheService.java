@@ -15,9 +15,9 @@ import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.base.StorageType;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class CacheService extends BaseService implements Listener {
+public class CacheService implements Service, Listener {
 
     private Map<UUID, UserPreferences> userPreferences = new HashMap<>();
 

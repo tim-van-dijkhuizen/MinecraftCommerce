@@ -30,7 +30,7 @@ public class MenuShopGateway implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Gateways (3/4)", 3, 7, 1, 1, 2, 5, 6);
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
 
         // Add gateways buttons
         Set<Gateway> gateways = args.get(0);

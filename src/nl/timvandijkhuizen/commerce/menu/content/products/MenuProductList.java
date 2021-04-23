@@ -28,7 +28,7 @@ public class MenuProductList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        ProductService productService = Commerce.getInstance().getService("products");
+        ProductService productService = Commerce.getInstance().getService(ProductService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Products", 3, 7, 1, 1);
 
         // Add product buttons

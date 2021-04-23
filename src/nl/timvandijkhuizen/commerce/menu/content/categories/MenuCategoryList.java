@@ -26,7 +26,7 @@ public class MenuCategoryList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        CategoryService categoryService = Commerce.getInstance().getService("categories");
+        CategoryService categoryService = Commerce.getInstance().getService(CategoryService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Categories", 3, 7, 1, 1);
 
         // Add category buttons

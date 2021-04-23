@@ -26,7 +26,7 @@ public class MenuShopCurrency implements PredefinedMenu {
     @Override
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Currency", 3, 7, 1, 1, 1, 5, 7);
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
 
         // Get cart & return menu
         Order cart = args.get(0);

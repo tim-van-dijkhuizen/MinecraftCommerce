@@ -17,9 +17,9 @@ import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
 import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.ThreadHelper;
-import nl.timvandijkhuizen.spigotutils.services.BaseService;
+import nl.timvandijkhuizen.spigotutils.services.Service;
 
-public class UserService extends BaseService {
+public class UserService implements Service {
 
     private Set<ConfigOption<?>> userOptions = new LinkedHashSet<>();
 
@@ -47,7 +47,7 @@ public class UserService extends BaseService {
     }
 
     public UserPreferences getPreferences(Player player) {
-        CacheService cacheService = Commerce.getInstance().getService("cache");
+        CacheService cacheService = Commerce.getInstance().getService(CacheService.class);
         UserPreferences preferences = cacheService.getPreferences(player);
 
         // Set default if null

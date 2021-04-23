@@ -23,7 +23,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
     @Override
     public OrderEffect getValue(OptionConfig config, ConfigOption<OrderEffect> option) {
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
         Collection<OrderEffect> effects = orderService.getOrderEffects();
         String handle = config.getString(option.getPath());
 
@@ -60,7 +60,7 @@ public class ConfigTypeOrderEffect implements ConfigType<OrderEffect> {
 
     @Override
     public void getValueInput(OptionConfig config, ConfigOption<OrderEffect> option, MenuClick event, Consumer<OrderEffect> callback) {
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
         PagedMenu menu = new PagedMenu("Choose an effect", 3, 7, 1, 1, 1, 5, 7);
         Player player = event.getPlayer();
         OrderEffect selected = getValue(config, option);

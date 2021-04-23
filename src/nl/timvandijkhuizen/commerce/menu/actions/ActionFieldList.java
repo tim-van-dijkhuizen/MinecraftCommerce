@@ -24,7 +24,7 @@ public class ActionFieldList implements MenuClickListener {
 
     @Override
     public void onClick(MenuClick event) {
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
         Player whoClicked = event.getPlayer();
         Menu activeMenu = event.getMenu();
         MenuItemBuilder clickedItem = event.getItem();

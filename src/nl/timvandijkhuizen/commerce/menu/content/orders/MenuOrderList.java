@@ -32,7 +32,7 @@ public class MenuOrderList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Orders", 3, 7, 1, 1, 1, 5, 7);
 
         // Add order buttons

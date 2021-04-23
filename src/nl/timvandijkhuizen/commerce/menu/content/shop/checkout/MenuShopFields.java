@@ -29,9 +29,10 @@ import nl.timvandijkhuizen.spigotutils.ui.UI;
 public class MenuShopFields implements PredefinedMenu {
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Menu create(Player player, DataArguments args) {
         PagedMenu menu = new PagedMenu("Shop " + Icon.ARROW_RIGHT + " Fields (2/4)", 3, 7, 1, 1, 2, 5, 6);
-        OrderService orderService = Commerce.getInstance().getService("orders");
+        OrderService orderService = Commerce.getInstance().getService(OrderService.class);
 
         // Add field buttons
         Order cart = args.get(0);

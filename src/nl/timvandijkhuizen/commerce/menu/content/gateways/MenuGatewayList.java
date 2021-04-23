@@ -28,7 +28,7 @@ public class MenuGatewayList implements PredefinedMenu {
 
     @Override
     public Menu create(Player player, DataArguments args) {
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
         PagedMenu menu = new PagedMenu("Admin " + Icon.ARROW_RIGHT + " Gateways", 3, 7, 1, 1);
 
         // Add gateway buttons

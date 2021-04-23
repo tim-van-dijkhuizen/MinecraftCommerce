@@ -17,7 +17,7 @@ import nl.timvandijkhuizen.spigotutils.helpers.ConsoleHelper;
 public class CommerceApi {
 
     public static void registerStorageType(StorageType storageType) {
-        StorageService service = Commerce.getInstance().getService("storage");
+        StorageService service = Commerce.getInstance().getService(StorageService.class);
         
         if(service == null) {
             throw new RuntimeException("Storage service has not been registered yet.");
@@ -28,7 +28,7 @@ public class CommerceApi {
     }
     
     public static void registerFieldType(FieldType<?> fieldType) {
-        FieldService service = Commerce.getInstance().getService("fields");
+        FieldService service = Commerce.getInstance().getService(FieldService.class);
         
         if(service == null) {
             throw new RuntimeException("Field service has not been registered yet.");
@@ -39,7 +39,7 @@ public class CommerceApi {
     }
     
     public static void registerGatewayType(GatewayType gatewayType) {
-        GatewayService service = Commerce.getInstance().getService("gateways");
+        GatewayService service = Commerce.getInstance().getService(GatewayService.class);
         
         if(service == null) {
             throw new RuntimeException("Gateway service has not been registered yet.");
@@ -50,7 +50,7 @@ public class CommerceApi {
     }
     
     public static void registerOrderVariable(OrderVariable orderVariable) {
-        OrderService service = Commerce.getInstance().getService("orders");
+        OrderService service = Commerce.getInstance().getService(OrderService.class);
         
         if(service == null) {
             throw new RuntimeException("Order service has not been registered yet.");
@@ -61,7 +61,7 @@ public class CommerceApi {
     }
     
     public static void registerOrderEffect(OrderEffect orderEffect) {
-        OrderService service = Commerce.getInstance().getService("orders");
+        OrderService service = Commerce.getInstance().getService(OrderService.class);
         
         if(service == null) {
             throw new RuntimeException("Order service has not been registered yet.");
@@ -72,7 +72,7 @@ public class CommerceApi {
     }
     
     public static void registerTemplateResolver(ITemplateResolver templateResolver) {
-        WebService service = Commerce.getInstance().getService("web");
+        WebService service = Commerce.getInstance().getService(WebService.class);
         
         if(service == null) {
             throw new RuntimeException("Web service has not been registered yet.");

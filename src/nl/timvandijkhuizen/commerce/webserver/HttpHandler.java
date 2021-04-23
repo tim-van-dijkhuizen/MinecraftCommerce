@@ -75,7 +75,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private boolean handleRouteRequest(ChannelHandlerContext ctx, FullHttpRequest request, URL url) throws Throwable {
-        WebService webService = Commerce.getInstance().getService("web");
+        WebService webService = Commerce.getInstance().getService(WebService.class);
         StaticRoute route = webService.getRoutes().get(url.getPath());
 
         ConsoleHelper.printDebug("Trying to find route for action: " + url.getPath());
@@ -132,7 +132,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
      * @throws Throwable
      */
     private void handleError(ChannelHandlerContext ctx, FullHttpRequest request, HttpResponseStatus statusCode, Throwable error) {
-        WebService webService = Commerce.getInstance().getService("web");
+        WebService webService = Commerce.getInstance().getService(WebService.class);
         String content;
 
         // Try to render error template
