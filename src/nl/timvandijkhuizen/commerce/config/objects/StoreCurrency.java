@@ -222,7 +222,7 @@ public class StoreCurrency extends Model implements ConfigObject {
 
         // Pattern button
         // ===========================
-        MenuItemBuilder patternButton = new MenuItemBuilder(XMaterial.CREEPER_BANNER_PATTERN);
+        MenuItemBuilder patternButton = new MenuItemBuilder(XMaterial.WHITE_BANNER);
 
         patternButton.setName(UI.color("Pattern", UI.COLOR_PRIMARY, ChatColor.BOLD));
         patternButton.hideAttributes();
