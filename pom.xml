@@ -68,8 +68,8 @@
 		</repository>
 
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/spigot-utils</url>
+            <id>spigot-utils</id>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/spigotutils</url>
         </repository>
 	</repositories>
 
