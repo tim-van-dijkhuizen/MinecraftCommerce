@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>timvandijkhuizen</groupId>
 	<artifactId>minecraft-commerce</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 	<name>Minecraft Commerce</name>
 
     <distributionManagement>
@@ -69,7 +69,7 @@
 
         <repository>
             <id>spigot-utils</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/spigotutils</url>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/spigot-utils</url>
         </repository>
 	</repositories>
 
