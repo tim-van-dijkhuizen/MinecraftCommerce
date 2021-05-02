@@ -1,7 +1,7 @@
 name: MinecraftCommerce
 description: An in-game shop plugin with real money
 author: Tim van Dijkhuizen
-version: "1.2.2"
+version: "1.2.3"
 api-version: 1.13
 main: nl.timvandijkhuizen.commerce.Commerce
 depend: [SpigotUtils]
