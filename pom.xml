@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>timvandijkhuizen</groupId>
 	<artifactId>minecraft-commerce</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<name>Minecraft Commerce</name>
 
     <distributionManagement>
@@ -46,15 +46,6 @@
 						<goals>
 							<goal>shade</goal>
 						</goals>
-
-						<configuration>
-							<relocations>
-								<relocation>
-									<pattern>io.netty</pattern>
-									<shadedPattern>nl.timvandijkhuizen.commerce.io.netty</shadedPattern>
-								</relocation>
-							</relocations>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -92,12 +83,7 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec-http</artifactId>
 			<version>4.1.59.Final</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-transport-native-epoll</artifactId>
-			<version>4.1.59.Final</version>
+            <scope>provided</scope>
 		</dependency>
 
 		<dependency>
