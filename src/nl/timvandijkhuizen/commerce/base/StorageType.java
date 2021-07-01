@@ -342,6 +342,15 @@ public interface StorageType {
     public Set<Transaction> getTransactionsByOrderId(int orderId) throws Throwable;
     
     /**
+     * Returns Transaction by its reference.
+     * 
+     * @param reference
+     * @return
+     * @throws Throwable
+     */
+    public Transaction getTransactionByReference(String reference) throws Throwable;
+    
+    /**
      * Creates a Transaction.
      * 
      * @param transaction

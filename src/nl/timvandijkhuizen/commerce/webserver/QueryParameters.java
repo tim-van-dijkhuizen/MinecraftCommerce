@@ -1,5 +1,6 @@
 package nl.timvandijkhuizen.commerce.webserver;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -10,6 +11,10 @@ public class QueryParameters {
 
     public QueryParameters(Map<String, String> params) {
         this.params = params;
+    }
+    
+    public QueryParameters() {
+        this(new HashMap<>());
     }
 
     public String getString(String key) {

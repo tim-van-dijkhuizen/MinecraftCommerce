@@ -95,14 +95,28 @@ public class WebHelper {
      * @throws UnsupportedEncodingException
      */
     public static QueryParameters parseQuery(URL url) throws UnsupportedEncodingException {
-        Map<String, String> map = new HashMap<String, String>();
         String query = url.getQuery();
 
         if (query != null) {
-            for (String pair : query.split("&")) {
-                int idx = pair.indexOf("=");
-                map.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-            }
+            return parseQuery(query);
+        }
+
+        return new QueryParameters();
+    }
+    
+    /**
+     * Parses a string into a Map of query params.
+     * 
+     * @param url
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public static QueryParameters parseQuery(String query) throws UnsupportedEncodingException {
+        Map<String, String> map = new HashMap<String, String>();
+
+        for (String pair : query.split("&")) {
+            int idx = pair.indexOf("=");
+            map.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
         }
 
         return new QueryParameters(map);
@@ -123,6 +137,15 @@ public class WebHelper {
         return response;
     }
 
+    /**
+     * Creates an OK response with an empty body.
+     * 
+     * @return
+     */
+    public static FullHttpResponse createResponse() {
+        return createResponse(HttpResponseStatus.OK, ContentType.TEXT_HTML, "");
+    }
+    
     /**
      * Creates an OK response with the specified content.
      * 
