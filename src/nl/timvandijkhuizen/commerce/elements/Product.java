@@ -6,6 +6,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.spigotutils.data.DataList;
+import nl.timvandijkhuizen.spigotutils.helpers.InventoryHelper;
 
 public class Product extends Element {
 
@@ -18,7 +19,7 @@ public class Product extends Element {
     private DataList<Command> commands;
 
     public Product() {
-        this.icon = XMaterial.CHEST.parseMaterial(true);
+        this.icon = InventoryHelper.parseMaterial(XMaterial.CHEST);
         this.name = "";
         this.description = "";
         this.category = null;

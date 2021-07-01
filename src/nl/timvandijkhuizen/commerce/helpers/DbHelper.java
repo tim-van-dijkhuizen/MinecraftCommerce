@@ -20,6 +20,7 @@ import nl.timvandijkhuizen.commerce.config.sources.OrderFieldData;
 import nl.timvandijkhuizen.commerce.config.sources.UserPreferences;
 import nl.timvandijkhuizen.spigotutils.config.sources.JsonConfig;
 import nl.timvandijkhuizen.spigotutils.config.sources.YamlConfig;
+import nl.timvandijkhuizen.spigotutils.helpers.InventoryHelper;
 import nl.timvandijkhuizen.spigotutils.helpers.JsonHelper;
 
 public class DbHelper {
@@ -55,7 +56,7 @@ public class DbHelper {
         try {
             return Material.valueOf(raw);
         } catch (IllegalArgumentException e) {
-            return XMaterial.BARRIER.parseMaterial(true);
+            return InventoryHelper.parseMaterial(XMaterial.BARRIER);
         }
     }
 

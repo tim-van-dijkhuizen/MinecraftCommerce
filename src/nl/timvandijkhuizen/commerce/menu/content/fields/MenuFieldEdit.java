@@ -17,6 +17,7 @@ import nl.timvandijkhuizen.commerce.menu.actions.ActionFieldList;
 import nl.timvandijkhuizen.commerce.services.FieldService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
 import nl.timvandijkhuizen.spigotutils.helpers.InputHelper;
+import nl.timvandijkhuizen.spigotutils.helpers.InventoryHelper;
 import nl.timvandijkhuizen.spigotutils.menu.Menu;
 import nl.timvandijkhuizen.spigotutils.menu.MenuSize;
 import nl.timvandijkhuizen.spigotutils.menu.PredefinedMenu;
@@ -210,7 +211,7 @@ public class MenuFieldEdit implements PredefinedMenu {
         MenuItemBuilder requiredButton = new MenuItemBuilder();
 
         requiredButton.setTypeGenerator(() -> {
-            return field.isRequired() ? XMaterial.LIME_TERRACOTTA.parseMaterial() : XMaterial.LIGHT_GRAY_TERRACOTTA.parseMaterial();
+            return InventoryHelper.parseMaterial(field.isRequired() ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA);
         });
         
         requiredButton.setName(UI.color("Required", UI.COLOR_PRIMARY, ChatColor.BOLD));

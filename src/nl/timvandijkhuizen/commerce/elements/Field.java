@@ -8,6 +8,7 @@ import nl.timvandijkhuizen.commerce.base.Element;
 import nl.timvandijkhuizen.commerce.base.FieldType;
 import nl.timvandijkhuizen.spigotutils.config.ConfigOption;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
+import nl.timvandijkhuizen.spigotutils.helpers.InventoryHelper;
 
 public class Field extends Element {
 
@@ -19,7 +20,7 @@ public class Field extends Element {
     private boolean required;
 
     public Field() {
-        this.icon = XMaterial.OAK_SIGN.parseMaterial(true);
+        this.icon = InventoryHelper.parseMaterial(XMaterial.OAK_SIGN);
         this.handle = "";
         this.name = "";
         this.description = "";

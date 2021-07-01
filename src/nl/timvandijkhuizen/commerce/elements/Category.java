@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.base.Element;
+import nl.timvandijkhuizen.spigotutils.helpers.InventoryHelper;
 
 public class Category extends Element {
 
@@ -13,7 +14,7 @@ public class Category extends Element {
     private String description;
 
     public Category() {
-        this.icon = XMaterial.CHEST_MINECART.parseMaterial(true);
+        this.icon = InventoryHelper.parseMaterial(XMaterial.CHEST_MINECART);
         this.name = "";
         this.description = "";
     }
