@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.menu.content.products;
 
 import java.util.Set;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -41,7 +40,7 @@ public class MenuProductList implements PredefinedMenu {
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Split lore into smaller lines
-            String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
+            String[] lines = ShopHelper.parseDescription(product.getDescription());
 
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));

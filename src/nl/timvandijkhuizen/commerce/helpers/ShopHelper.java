@@ -68,6 +68,16 @@ public class ShopHelper {
         return currency;
     }
     
+    public static String[] parseDescription(String raw) {
+        String[] lines = raw.split("\n");
+        
+        for(int i = 0; i < lines.length; i++) {
+            lines[i] = ChatColor.translateAlternateColorCodes('&', lines[i]);
+        }
+        
+        return lines;
+    }
+    
     public static MenuItemBuilder createCartItem(Order cart) {
         StoreCurrency currency = cart.getCurrency();
         DataList<LineItem> lineItems = cart.getLineItems();

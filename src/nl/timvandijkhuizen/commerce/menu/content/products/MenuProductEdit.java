@@ -3,9 +3,9 @@ package nl.timvandijkhuizen.commerce.menu.content.products;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import com.cryptomorin.xseries.XMaterial;
 
@@ -109,7 +109,7 @@ public class MenuProductEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (product.getDescription().length() > 0) {
-                String[] lines = WordUtils.wrap(product.getDescription(), 40).split("\n");
+                String[] lines = ShopHelper.parseDescription(product.getDescription());
 
                 for (String line : lines) {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
@@ -121,21 +121,35 @@ public class MenuProductEdit implements PredefinedMenu {
             ValidationHelper.addErrorLore(lore, product, "description");
             
             lore.add("");
-            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Left-click to edit using chat.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Right-click to edit using a book.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             return lore;
         });
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
+            ClickType type = event.getClickType();
+            
             UI.playSound(player, UI.SOUND_CLICK);
-            menu.close(player);
-
-            InputHelper.getString(player, UI.color("What should be the description of the product?", UI.COLOR_PRIMARY), (ctx, input) -> {
-                product.setDescription(input);
-                menu.open(player);
-                return null;
-            });
+            
+            if(type == ClickType.LEFT) {
+                menu.close(player);
+                
+                InputHelper.getString(player, UI.color("What should be the description of the product?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                    product.setDescription(input);
+                    menu.open(player);
+                    return null;
+                });
+            } else if(type == ClickType.RIGHT) {
+                InputHelper.getText(player, input -> {
+                    if(input != null) {
+                        product.setDescription(String.join("\n", input));
+                    }
+                    
+                    menu.open(player);
+                });
+            }
         });
 
         menu.setItem(descriptionButton, 15);

@@ -2,7 +2,6 @@ package nl.timvandijkhuizen.commerce.menu.content.categories;
 
 import java.util.Set;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -11,6 +10,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
+import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.services.CategoryService;
 import nl.timvandijkhuizen.spigotutils.data.DataArguments;
@@ -39,7 +39,7 @@ public class MenuCategoryList implements PredefinedMenu {
             item.setName(UI.color(category.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             // Split lore into smaller lines
-            String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
+            String[] lines = ShopHelper.parseDescription(category.getDescription());
 
             for (String line : lines) {
                 item.addLore(UI.color(line, UI.COLOR_TEXT));

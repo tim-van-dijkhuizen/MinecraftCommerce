@@ -3,14 +3,15 @@ package nl.timvandijkhuizen.commerce.menu.content.categories;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 import com.cryptomorin.xseries.XMaterial;
 
 import nl.timvandijkhuizen.commerce.Commerce;
 import nl.timvandijkhuizen.commerce.elements.Category;
+import nl.timvandijkhuizen.commerce.helpers.ShopHelper;
 import nl.timvandijkhuizen.commerce.helpers.ValidationHelper;
 import nl.timvandijkhuizen.commerce.menu.Menus;
 import nl.timvandijkhuizen.commerce.menu.actions.ActionCategoryList;
@@ -106,7 +107,7 @@ public class MenuCategoryEdit implements PredefinedMenu {
             List<String> lore = new ArrayList<>();
             
             if (category.getDescription().length() > 0) {
-                String[] lines = WordUtils.wrap(category.getDescription(), 40).split("\n");
+                String[] lines = ShopHelper.parseDescription(category.getDescription());
 
                 for (String line : lines) {
                     lore.add(UI.color(line, UI.COLOR_TEXT));
@@ -118,21 +119,35 @@ public class MenuCategoryEdit implements PredefinedMenu {
             ValidationHelper.addErrorLore(lore, category, "description");
             
             lore.add("");
-            lore.add(UI.color("Left-click to edit.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Left-click to edit using chat.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
+            lore.add(UI.color("Right-click to edit using a book.", UI.COLOR_SECONDARY, ChatColor.ITALIC));
             
             return lore;
         });
 
         // Set click listener
         descriptionButton.setClickListener(event -> {
+            ClickType type = event.getClickType();
+            
             UI.playSound(player, UI.SOUND_CLICK);
-            menu.close(player);
-
-            InputHelper.getString(player, UI.color("What should be the description of the category?", UI.COLOR_PRIMARY), (ctx, input) -> {
-                category.setDescription(input);
-                menu.open(player);
-                return null;
-            });
+            
+            if(type == ClickType.LEFT) {
+                menu.close(player);
+                
+                InputHelper.getString(player, UI.color("What should be the description of the category?", UI.COLOR_PRIMARY), (ctx, input) -> {
+                    category.setDescription(input);
+                    menu.open(player);
+                    return null;
+                });
+            } else if(type == ClickType.RIGHT) {
+                InputHelper.getText(player, input -> {
+                    if(input != null) {
+                        category.setDescription(String.join("\n", input));
+                    }
+                    
+                    menu.open(player);
+                });
+            }
         });
 
         menu.setItem(descriptionButton, 15);

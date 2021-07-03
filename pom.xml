@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>timvandijkhuizen</groupId>
 	<artifactId>minecraft-commerce</artifactId>
-	<version>1.2.2</version>
+	<version>1.2.3</version>
 	<name>Minecraft Commerce</name>
 
     <distributionManagement>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>timvandijkhuizen</groupId>
             <artifactId>spigot-utils</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.5</version>
             <scope>provided</scope>
         </dependency>
 

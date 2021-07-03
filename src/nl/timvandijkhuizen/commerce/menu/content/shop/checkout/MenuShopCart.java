@@ -3,7 +3,6 @@ package nl.timvandijkhuizen.commerce.menu.content.shop.checkout;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -45,7 +44,7 @@ public class MenuShopCart implements PredefinedMenu {
             item.setName(UI.color(product.getName(), UI.COLOR_PRIMARY, ChatColor.BOLD));
 
             item.setLoreGenerator(() -> {
-                String[] description = WordUtils.wrap(product.getDescription(), 40).split("\n");
+                String[] description = ShopHelper.parseDescription(product.getDescription());
                 List<String> lore = new ArrayList<>();
                 
                 // Create lore
