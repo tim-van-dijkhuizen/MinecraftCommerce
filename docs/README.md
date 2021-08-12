@@ -1,3 +1,5 @@
+_Due to lack of time and motivation, I will no longer develop new major features. As of now, I will still be fixing bugs, updating the plugin and making minor improvements. This project was started as a proof of concept and even though I'm happy with the results, there isn't much people who can use this plugin. The plugin is open-source, so feel free to continue developing this project for your own personal use._
+
 # MinecraftCommerce
 A Spigot plugin for creating in-game donation stores.
 
